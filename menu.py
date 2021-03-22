@@ -1,6 +1,7 @@
 import pygame
 import pygame_gui
-from pygame_gui.elements import *
+from pygame_gui.elements import UIWindow, UIPanel, UITextBox, UITextBox, UIButton, UISelectionList, UITextEntryLine
+from pygame_gui.elements.ui_text_box import UITextBox
 
 from board import Board
 from constants import *
@@ -19,167 +20,167 @@ class ConfigMenu(UIWindow):
         pose_y = 70
         gap = 160
 
-        self.INITIAL_BOARD_LAYOUT = pygame_gui.elements.UIPanel(relative_rect=pygame.Rect((pose_x, pose_y), (600, 100)),
+        self.INITIAL_BOARD_LAYOUT = UIPanel(relative_rect=pygame.Rect((pose_x, pose_y), (600, 100)),
                                                                 starting_layer_height=2, manager=self.manager,
                                                                 container=self)
-        self.PLAYER_OPTIONS_LAYOUT = pygame_gui.elements.UIPanel(
+        self.PLAYER_OPTIONS_LAYOUT = UIPanel(
             relative_rect=pygame.Rect((pose_x, pose_y + gap), (345, 125)),
             starting_layer_height=2, manager=self.manager, container=self)
-        self.GAME_OPTIONS_LAYOUT = pygame_gui.elements.UIPanel(
+        self.GAME_OPTIONS_LAYOUT = UIPanel(
             relative_rect=pygame.Rect((pose_x + 2.5 * gap // 1, pose_y + gap), (168, 125)),
             starting_layer_height=2, manager=self.manager, container=self)
-        self.SELECTED_CONFIGURATIONS = pygame_gui.elements.UIPanel(
+        self.SELECTED_CONFIGURATIONS = UIPanel(
             relative_rect=pygame.Rect((pose_x, pose_y + 2 * gap), (600, 125)),
             starting_layer_height=2, manager=self.manager, container=self)
         # labels below here
-        self.MAIN_TITLE = pygame_gui.elements.ui_text_box.UITextBox(
-            html_text="<body bgcolor='#000000'><font face='verdana' color='#FFFFFF' size=6><b>Abalone</b></font></body>",
+        self.MAIN_TITLE = UITextBox(
+            html_text=f"<body bgcolor={UI_TEXT_BG_COLOR}><font face='verdana' color={UI_TEXT_COLOR} size=6><b>Abalone</b></font></body>",
             relative_rect=pygame.Rect((self.rect.width / 2 - 35, 40), (-1, -1)), manager=self.manager,
             layer_starting_height=2,
             object_id="mTitle", container=self)
-        self.CONFIG_TITLE_PLAYER = pygame_gui.elements.ui_text_box.UITextBox(
-            html_text="<body bgcolor='#000000'><font face='verdana' color='#FFFFFF' size=3><b><i>Player "
+        self.CONFIG_TITLE_PLAYER = UITextBox(
+            html_text=f"<body bgcolor={UI_TEXT_BG_COLOR}><font face='verdana' color={UI_TEXT_COLOR} size=3><b><i>Player "
                       "Configurations</i></b></font></body>", object_id="title",
             relative_rect=pygame.Rect((pose_x, 180), (-1, -1)), manager=self.manager, layer_starting_height=2,
             container=self)
-        self.CONFIG_TITLE_GAME = pygame_gui.elements.ui_text_box.UITextBox(
-            html_text="<body bgcolor='#000000'><font face='verdana' color='#FFFFFF' size=3><b><i>Game "
+        self.CONFIG_TITLE_GAME = UITextBox(
+            html_text=f"<body bgcolor={UI_TEXT_BG_COLOR}><font face='verdana' color={UI_TEXT_COLOR} size=3><b><i>Game "
                       "Configurations</i></b></font></body>", object_id="title",
             relative_rect=pygame.Rect((pose_x + 2.5 * gap, 180), (-1, -1)), manager=self.manager,
             layer_starting_height=2, container=self)
-        self.CONFIG_TITLE_OPTIONS = pygame_gui.elements.ui_text_box.UITextBox(
-            html_text="<body bgcolor='#000000'><font face='verdana' color='#FFFFFF' size=3><b><i>Selected "
+        self.CONFIG_TITLE_OPTIONS = UITextBox(
+            html_text=f"<body bgcolor={UI_TEXT_BG_COLOR}><font face='verdana' color={UI_TEXT_COLOR} size=3><b><i>Selected "
                       "Options</i></b></font></body>", object_id="title",
             relative_rect=pygame.Rect((pose_x, 360), (-1, -1)), manager=self.manager, layer_starting_height=2,
             container=self)
-        self.TIME_LIMIT_PLAYER_LABEL = pygame_gui.elements.UITextBox(
-            html_text="<body bgcolor='#000000'><font face='verdana' color='#FFFFFF' size=1><b><i>"
+        self.TIME_LIMIT_PLAYER_LABEL = UITextBox(
+            html_text=f"<body bgcolor={UI_TEXT_BG_COLOR}><font face='verdana' color={UI_TEXT_COLOR} size=1><b><i>"
                       "Time Limit per player:</i></b></font></body>", object_id="label",
             relative_rect=pygame.Rect((10, 35), (-1, -1)), manager=self.manager, container=self.PLAYER_OPTIONS_LAYOUT
         )
-        self.INITIAL_PLACEMENT_LABEL = pygame_gui.elements.UITextBox(
-            html_text="<body bgcolor='#000000'><font face='verdana' color='#FFFFFF' size=1><b><i>"
+        self.INITIAL_PLACEMENT_LABEL = UITextBox(
+            html_text=f"<body bgcolor={UI_TEXT_BG_COLOR}><font face='verdana' color={UI_TEXT_COLOR} size=1><b><i>"
                       "Starting board layout:</i></b></font></body>", object_id="label",
             relative_rect=pygame.Rect((10, 0), (-1, -1)), manager=self.manager, container=self.INITIAL_BOARD_LAYOUT
         )
-        self.INITIAL_PLACEMENT_INPUT_LABEL = pygame_gui.elements.UITextBox(
-            html_text="<body bgcolor='#000000'><font face='verdana' color='#FFFFFF' size=1><b><i>"
+        self.INITIAL_PLACEMENT_INPUT_LABEL = UITextBox(
+            html_text=f"<body bgcolor={UI_TEXT_BG_COLOR}><font face='verdana' color={UI_TEXT_COLOR} size=1><b><i>"
                       "Selected layout:</i></b></font></body>", object_id="label",
             relative_rect=pygame.Rect((8, 8), (-1, -1)), manager=self.manager, container=self.SELECTED_CONFIGURATIONS
         )
-        self.WHITE_OPTIONS_LABEL = pygame_gui.elements.UITextBox(
-            html_text="<body bgcolor='#000000'><font face='verdana' color='#FFFFFF' size=1><b><i>"
+        self.WHITE_OPTIONS_LABEL = UITextBox(
+            html_text=f"<body bgcolor={UI_TEXT_BG_COLOR}><font face='verdana' color={UI_TEXT_COLOR} size=1><b><i>"
                       "Whites Settings:</i></b></font></body>", object_id="label",
             relative_rect=pygame.Rect((200, 8), (-1, -1)), manager=self.manager, container=self.SELECTED_CONFIGURATIONS
         )
-        self.BLACK_OPTIONS_LABEL = pygame_gui.elements.UITextBox(
-            html_text="<body bgcolor='#000000'><font face='verdana' color='#FFFFFF' size=1><b><i>"
+        self.BLACK_OPTIONS_LABEL = UITextBox(
+            html_text=f"<body bgcolor={UI_TEXT_BG_COLOR}><font face='verdana' color={UI_TEXT_COLOR} size=1><b><i>"
                       "Blacks Settings:</i></b></font></body>", object_id="label",
             relative_rect=pygame.Rect((400, 8), (-1, -1)), manager=self.manager, container=self.SELECTED_CONFIGURATIONS
         )
-        self.SELECTED_INITIAL = pygame_gui.elements.UITextBox(
+        self.SELECTED_INITIAL = UITextBox(
             relative_rect=pygame.Rect((8, 60), (-1, -1)), manager=self.manager, container=self.SELECTED_CONFIGURATIONS,
-            html_text='Standard'
+            html_text=f'Standard'
         )
-        self.WHITE_TIME_LABEL = pygame_gui.elements.UITextBox(
+        self.WHITE_TIME_LABEL = UITextBox(
             relative_rect=pygame.Rect((200, 40), (-1, -1)), manager=self.manager,
             container=self.SELECTED_CONFIGURATIONS,
-            html_text='Time:'
+            html_text=f'Time:'
         )
-        self.WHITE_TYPE_LABEL = pygame_gui.elements.UITextBox(
+        self.WHITE_TYPE_LABEL = UITextBox(
             relative_rect=pygame.Rect((200, 80), (-1, -1)), manager=self.manager,
             container=self.SELECTED_CONFIGURATIONS,
-            html_text='Type:'
+            html_text=f'Type:'
         )
-        self.BLACK_TIME_LABEL = pygame_gui.elements.UITextBox(
+        self.BLACK_TIME_LABEL = UITextBox(
             relative_rect=pygame.Rect((400, 40), (-1, -1)), manager=self.manager,
             container=self.SELECTED_CONFIGURATIONS,
-            html_text='Time:'
+            html_text=f'Time:'
         )
-        self.BLACK_TYPE_LABEL = pygame_gui.elements.UITextBox(
+        self.BLACK_TYPE_LABEL = UITextBox(
             relative_rect=pygame.Rect((400, 80), (-1, -1)), manager=self.manager,
             container=self.SELECTED_CONFIGURATIONS,
-            html_text='Type:'
+            html_text=f'Type:'
         )
-        self.WHITE_TIME_INPUT = pygame_gui.elements.UITextBox(
+        self.WHITE_TIME_INPUT = UITextBox(
             relative_rect=pygame.Rect((270, 40), (-1, -1)), manager=self.manager,
             container=self.SELECTED_CONFIGURATIONS,
-            html_text='10 mins'
+            html_text=f'10 mins'
         )
-        self.WHITE_TYPE_INPUT = pygame_gui.elements.UITextBox(
+        self.WHITE_TYPE_INPUT = UITextBox(
             relative_rect=pygame.Rect((270, 80), (-1, -1)), manager=self.manager,
             container=self.SELECTED_CONFIGURATIONS,
-            html_text='Human'
+            html_text=f'Human'
         )
-        self.BLACK_TIME_INPUT = pygame_gui.elements.UITextBox(
+        self.BLACK_TIME_INPUT = UITextBox(
             relative_rect=pygame.Rect((470, 40), (-1, -1)), manager=self.manager,
             container=self.SELECTED_CONFIGURATIONS,
-            html_text='10 mins'
+            html_text=f'10 mins'
         )
-        self.BLACK_TYPE_INPUT = pygame_gui.elements.UITextBox(
+        self.BLACK_TYPE_INPUT = UITextBox(
             relative_rect=pygame.Rect((470, 80), (-1, -1)), manager=self.manager,
             container=self.SELECTED_CONFIGURATIONS,
-            html_text='Computer'
+            html_text=f'Computer'
         )
-        self.MOVE_LIMIT_LABEL = pygame_gui.elements.UITextBox(
-            html_text="<body bgcolor='#000000'><font face='verdana' color='#FFFFFF' size=1><b><i>"
+        self.MOVE_LIMIT_LABEL = UITextBox(
+            html_text=f"<body bgcolor={UI_TEXT_BG_COLOR}><font face='verdana' color={UI_TEXT_COLOR} size=1><b><i>"
                       "Move limit per player:</i></b></font></body>", object_id="label",
             relative_rect=pygame.Rect((10, 80), (-1, -1)), manager=self.manager, container=self.PLAYER_OPTIONS_LAYOUT
         )
-        self.PLAYER1_LABEL = pygame_gui.elements.UITextBox(
-            html_text="<body bgcolor='#000000'><font face='verdana' color='#FFFFFF' size=1><b><i>"
+        self.PLAYER1_LABEL = UITextBox(
+            html_text=f"<body bgcolor={UI_TEXT_BG_COLOR}><font face='verdana' color={UI_TEXT_COLOR} size=1><b><i>"
                       "White</i></b></font></body>", object_id="label",
             relative_rect=pygame.Rect((215, 0), (-1, -1)), manager=self.manager, container=self.PLAYER_OPTIONS_LAYOUT
         )
-        self.PLAYER2_LABEL = pygame_gui.elements.UITextBox(
-            html_text="<body bgcolor='#000000'><font face='verdana' color='#FFFFFF' size=1><b><i>"
+        self.PLAYER2_LABEL = UITextBox(
+            html_text=f"<body bgcolor={UI_TEXT_BG_COLOR}><font face='verdana' color={UI_TEXT_COLOR} size=1><b><i>"
                       "Black</i></b></font></body>", object_id="label",
             relative_rect=pygame.Rect((275, 0), (-1, -1)), manager=self.manager, container=self.PLAYER_OPTIONS_LAYOUT
         )
-        self.PLAYER1_LABEL_2 = pygame_gui.elements.UITextBox(
-            html_text="<body bgcolor='#000000'><font face='verdana' color='#FFFFFF' size=1><b><i>"
+        self.PLAYER1_LABEL_2 = UITextBox(
+            html_text=f"<body bgcolor={UI_TEXT_BG_COLOR}><font face='verdana' color={UI_TEXT_COLOR} size=1><b><i>"
                       "White</i></b></font></body>", object_id="label",
             relative_rect=pygame.Rect((5, 0), (-1, -1)), manager=self.manager, container=self.GAME_OPTIONS_LAYOUT
         )
-        self.PLAYER2_LABEL_2 = pygame_gui.elements.UITextBox(
-            html_text="<body bgcolor='#000000'><font face='verdana' color='#FFFFFF' size=1><b><i>"
+        self.PLAYER2_LABEL_2 = UITextBox(
+            html_text=f"<body bgcolor={UI_TEXT_BG_COLOR}><font face='verdana' color={UI_TEXT_COLOR} size=1><b><i>"
                       "Black</i></b></font></body>", object_id="label",
             relative_rect=pygame.Rect((85, 0), (-1, -1)), manager=self.manager, container=self.GAME_OPTIONS_LAYOUT
         )
         # Buttons below here
-        self.START_BUTTON = pygame_gui.elements.UIButton(
+        self.START_BUTTON = UIButton(
             relative_rect=pygame.Rect(((self.rect.width - gap) // 2, self.rect.height - gap), (100, 50)),
             text='Start',
             manager=self.manager, container=self)
-        self.STANDARD_BUTTON = pygame_gui.elements.UIButton(relative_rect=pygame.Rect((80, 35), (120, 50)),
+        self.STANDARD_BUTTON = UIButton(relative_rect=pygame.Rect((80, 35), (120, 50)),
                                                             text='Standard', manager=self.manager,
                                                             container=self.INITIAL_BOARD_LAYOUT)
-        self.GER_DAISY_BUTTON = pygame_gui.elements.UIButton(relative_rect=pygame.Rect((250, 35), (120, 50)),
+        self.GER_DAISY_BUTTON = UIButton(relative_rect=pygame.Rect((250, 35), (120, 50)),
                                                              text='German Daisy', manager=self.manager,
                                                              container=self.INITIAL_BOARD_LAYOUT)
-        self.BEL_DAISY_BUTTON = pygame_gui.elements.UIButton(relative_rect=pygame.Rect((430, 35), (120, 50)),
+        self.BEL_DAISY_BUTTON = UIButton(relative_rect=pygame.Rect((430, 35), (120, 50)),
                                                              text='Belgian Daisy', manager=self.manager,
                                                              container=self.INITIAL_BOARD_LAYOUT)
-        self.WHITE_HUMAN_BUTTON = pygame_gui.elements.UIButton(relative_rect=pygame.Rect((5, 40), (74, 30)),
+        self.WHITE_HUMAN_BUTTON = UIButton(relative_rect=pygame.Rect((5, 40), (74, 30)),
                                                                text='Human', manager=self.manager,
                                                                container=self.GAME_OPTIONS_LAYOUT)
-        self.BLACK_HUMAN_BUTTON = pygame_gui.elements.UIButton(relative_rect=pygame.Rect((84, 40), (74, 30)),
+        self.BLACK_HUMAN_BUTTON = UIButton(relative_rect=pygame.Rect((84, 40), (74, 30)),
                                                                text='Human', manager=self.manager,
                                                                container=self.GAME_OPTIONS_LAYOUT)
-        self.WHITE_COMPUTER_BUTTON = pygame_gui.elements.UIButton(relative_rect=pygame.Rect((5, 70), (74, 30)),
+        self.WHITE_COMPUTER_BUTTON = UIButton(relative_rect=pygame.Rect((5, 70), (74, 30)),
                                                                   text='Computer', manager=self.manager,
                                                                   container=self.GAME_OPTIONS_LAYOUT)
-        self.BLACK_COMPUTER_BUTTON = pygame_gui.elements.UIButton(relative_rect=pygame.Rect((84, 70), (74, 30)),
+        self.BLACK_COMPUTER_BUTTON = UIButton(relative_rect=pygame.Rect((84, 70), (74, 30)),
                                                                   text='Computer', manager=self.manager,
                                                                   container=self.GAME_OPTIONS_LAYOUT)
         # Text input elements
-        self.TIME_LIMIT_INPUT_P1 = pygame_gui.elements.UITextEntryLine(relative_rect=pygame.Rect((220, 38), (50, 50)),
+        self.TIME_LIMIT_INPUT_P1 = UITextEntryLine(relative_rect=pygame.Rect((220, 38), (50, 50)),
                                                                        manager=self.manager,
                                                                        container=self.PLAYER_OPTIONS_LAYOUT)
-        self.TIME_LIMIT_INPUT_P2 = pygame_gui.elements.UITextEntryLine(relative_rect=pygame.Rect((280, 38), (50, 50)),
+        self.TIME_LIMIT_INPUT_P2 = UITextEntryLine(relative_rect=pygame.Rect((280, 38), (50, 50)),
                                                                        manager=self.manager,
                                                                        container=self.PLAYER_OPTIONS_LAYOUT)
-        self.MOVE_LIMIT_INPUT = pygame_gui.elements.UITextEntryLine(relative_rect=pygame.Rect((220, 83), (50, 50)),
+        self.MOVE_LIMIT_INPUT = UITextEntryLine(relative_rect=pygame.Rect((220, 83), (50, 50)),
                                                                     manager=self.manager,
                                                                     container=self.PLAYER_OPTIONS_LAYOUT)
 
@@ -197,7 +198,7 @@ class GameMenu:
         self.board = Board(self.window)
 
         self.run_display = True
-        self.display.fill(pygame.Color('#000000'))
+        self.display.fill(BLACK)
         self.config_menu = None
         self.white_human_click = False
         self.black_human_click = False
@@ -279,25 +280,25 @@ class GameMenu:
             WINDOW_WIDTH // 2 + PANEL_DISTANCE_FROM_CENTER - PANEL_WIDTH, TITLE_DISTANCE_TOP * 2 + self.button_h
         ]
 
-        self.black_player = pygame_gui.elements.UIPanel(
+        self.black_player = UIPanel(
             relative_rect=pygame.Rect(self.black_panel_position, (PANEL_WIDTH, PANEL_HEIGHT)),
             starting_layer_height=2,
             manager=self.manager
         )
-        self.white_player = pygame_gui.elements.UIPanel(
+        self.white_player = UIPanel(
             relative_rect=pygame.Rect(self.white_panel_position, (PANEL_WIDTH, PANEL_HEIGHT)),
             starting_layer_height=2,
             manager=self.manager
         )
 
-        self.black_player_title = pygame_gui.elements.ui_text_box.UITextBox(
-            html_text="<body bgcolor='#000000'><font face='verdana' color='#FFFFFF' size=3><b><i>Black Player</i></b></font></body>",
+        self.black_player_title = UITextBox(
+            html_text=f"<body bgcolor={UI_TEXT_BG_COLOR}><font face='verdana' color={UI_TEXT_COLOR} size=3><b><i>Black Player</i></b></font></body>",
             object_id="title",
             relative_rect=pygame.Rect(self.black_panel_position, (-1, -1)), manager=self.manager,
             layer_starting_height=2)
 
-        self.white_player_title = pygame_gui.elements.ui_text_box.UITextBox(
-            html_text="<body bgcolor='#000000'><font face='verdana' color='#FFFFFF' size=3><b><i>White Player</i></b></font></body>",
+        self.white_player_title = UITextBox(
+            html_text=f"<body bgcolor={UI_TEXT_BG_COLOR}><font face='verdana' color={UI_TEXT_COLOR} size=3><b><i>White Player</i></b></font></body>",
             object_id="title",
             relative_rect=pygame.Rect(self.white_panel_position, (-1, -1)), manager=self.manager,
             layer_starting_height=2)
@@ -308,7 +309,7 @@ class GameMenu:
 
     @staticmethod
     def button(x, y, w, h, text, manager):
-        return pygame_gui.elements.UIButton(relative_rect=pygame.Rect((x, y), (w, h)), text=text, manager=manager)
+        return UIButton(relative_rect=pygame.Rect((x, y), (w, h)), text=text, manager=manager)
 
     def draw_text(self, text, size, pose):
         font = pygame.font.SysFont('comicsansms', size)
@@ -321,41 +322,41 @@ class GameMenu:
         gap = 40
         pose_x = 10
         pose_y = 35
-        self.score = pygame_gui.elements.UITextBox(
-            html_text="<body bgcolor='#000000'><font face='verdana' color='#FFFFFF' size=1><b><i>"
+        self.score = UITextBox(
+            html_text=f"<body bgcolor={UI_TEXT_BG_COLOR}><font face='verdana' color={UI_TEXT_COLOR} size=1><b><i>"
                       "Score:</i></b></font></body>", object_id="score",
             relative_rect=pygame.Rect((pose_x, pose_y), (-1, -1)), manager=self.manager, container=container
         )
-        self.time_limit = pygame_gui.elements.UITextBox(
-            html_text="<body bgcolor='#000000'><font face='verdana' color='#FFFFFF' size=1><b><i>"
+        self.time_limit = UITextBox(
+            html_text=f"<body bgcolor={UI_TEXT_BG_COLOR}><font face='verdana' color={UI_TEXT_COLOR} size=1><b><i>"
                       "Time Limit:</i></b></font></body>", object_id="time_limit",
             relative_rect=pygame.Rect((pose_x, pose_y + gap), (-1, -1)), manager=self.manager, container=container
         )
-        self.time_hist = pygame_gui.elements.UITextBox(
-            html_text="<body bgcolor='#000000'><font face='verdana' color='#FFFFFF' size=1><b><i>"
+        self.time_hist = UITextBox(
+            html_text=f"<body bgcolor={UI_TEXT_BG_COLOR}><font face='verdana' color={UI_TEXT_COLOR} size=1><b><i>"
                       "Time History:</i></b></font></body>", object_id="time_hist",
             relative_rect=pygame.Rect((pose_x, pose_y + 2 * gap), (-1, -1)), manager=self.manager, container=container
         )
-        self.total_time = pygame_gui.elements.UITextBox(
-            html_text="<body bgcolor='#000000'><font face='verdana' color='#FFFFFF' size=1><b><i>"
+        self.total_time = UITextBox(
+            html_text=f"<body bgcolor={UI_TEXT_BG_COLOR}><font face='verdana' color={UI_TEXT_COLOR} size=1><b><i>"
                       "Total Time:</i></b></font></body>", object_id="total_time",
             relative_rect=pygame.Rect((pose_x, pose_y + 5 * gap), (-1, -1)), manager=self.manager, container=container
         )
-        self.move_hist = pygame_gui.elements.UITextBox(
-            html_text="<body bgcolor='#000000'><font face='verdana' color='#FFFFFF' size=1><b><i>"
+        self.move_hist = UITextBox(
+            html_text=f"<body bgcolor={UI_TEXT_BG_COLOR}><font face='verdana' color={UI_TEXT_COLOR} size=1><b><i>"
                       "Move History:</i></b></font></body>", object_id="move_hist",
             relative_rect=pygame.Rect((pose_x, pose_y + 6 * gap), (-1, -1)), manager=self.manager, container=container
         )
 
-        self.score_info = pygame_gui.elements.UIButton(
+        self.score_info = UIButton(
             relative_rect=pygame.Rect((pose_x + 3 * gap // 1, pose_y), (70, 30)),
             text='0', manager=self.manager, container=container)
         self.score_info.disable()
-        self.time_limit_info = pygame_gui.elements.UIButton(
+        self.time_limit_info = UIButton(
             relative_rect=pygame.Rect((pose_x + 3 * gap // 1, pose_y + gap), (70, 30)),
             text='0 secs', manager=self.manager, container=container)
         self.time_limit_info.disable()
-        self.total_time_info = pygame_gui.elements.UIButton(
+        self.total_time_info = UIButton(
             relative_rect=pygame.Rect((pose_x + 3 * gap // 1, pose_y + 5 * gap), (70, 30)),
             text='0 secs', manager=self.manager, container=container)
         self.total_time_info.disable()
