@@ -194,12 +194,15 @@ class GameMenu:
 
         # board initialization
         self.board = Board(self.window)
+
         self.run_display = True
         self.display.fill(pygame.Color('#000000'))
         self.pose_y = 60
         self.config_menu = None
         self.white_human_click = False
         self.black_human_click = False
+        self.open_config = False
+        self.start_game = False
         self.button_w = 80
         self.button_h = 50
         self.adjust = 30
@@ -211,10 +214,10 @@ class GameMenu:
         self.black_pose = [self._width // 2 - 500, self.pose_y * 3]
         self.white_pose = [self._width // 2 + 250, self.pose_y * 3]
         self.black_player = pygame_gui.elements.UIPanel(
-            relative_rect=pygame.Rect(self.black_pose, (self._width // 5, self._height // 3)), starting_layer_height=2,
+            relative_rect=pygame.Rect(self.black_pose, (self._width // 5, self._height // 1.7)), starting_layer_height=2,
             manager=self.manager)
         self.white_player = pygame_gui.elements.UIPanel(
-            relative_rect=pygame.Rect(self.white_pose, (self._width // 5, self._height // 3)), starting_layer_height=2,
+            relative_rect=pygame.Rect(self.white_pose, (self._width // 5, self._height // 1.7)), starting_layer_height=2,
             manager=self.manager)
         self.black_player_title = pygame_gui.elements.ui_text_box.UITextBox(
             html_text="<body bgcolor='#000000'><font face='verdana' color='#FFFFFF' size=3><b><i>Black Player</i></b></font></body>",
@@ -276,13 +279,43 @@ class GameMenu:
         self.total_time = pygame_gui.elements.UITextBox(
             html_text="<body bgcolor='#000000'><font face='verdana' color='#FFFFFF' size=1><b><i>"
                       "Total Time:</i></b></font></body>", object_id="total_time",
-            relative_rect=pygame.Rect((pose_x, pose_y + 3 * gap), (-1, -1)), manager=self.manager, container=container
+            relative_rect=pygame.Rect((pose_x, pose_y + 5 * gap), (-1, -1)), manager=self.manager, container=container
         )
         self.move_hist = pygame_gui.elements.UITextBox(
             html_text="<body bgcolor='#000000'><font face='verdana' color='#FFFFFF' size=1><b><i>"
                       "Move History:</i></b></font></body>", object_id="move_hist",
-            relative_rect=pygame.Rect((pose_x, pose_y + 4 * gap), (-1, -1)), manager=self.manager, container=container
+            relative_rect=pygame.Rect((pose_x, pose_y + 6 * gap), (-1, -1)), manager=self.manager, container=container
         )
+
+        self.score_info = pygame_gui.elements.UIButton(relative_rect=pygame.Rect((pose_x + 3*gap//1, pose_y), (70, 30)),
+                                                        text='0', manager=self.manager, container=container)
+        self.score_info.disable()
+        self.time_limit_info = pygame_gui.elements.UIButton(relative_rect=pygame.Rect((pose_x + 3*gap//1, pose_y + gap), (70, 30)),
+                                                        text='0 secs', manager=self.manager, container=container)
+        self.time_limit_info.disable()
+        self.total_time_info = pygame_gui.elements.UIButton(relative_rect=pygame.Rect((pose_x + 3*gap//1, pose_y + 5 * gap), (70, 30)),
+                                                        text='0 secs', manager=self.manager, container=container)
+        self.total_time_info.disable()
+        self.drop_down_time_hist = UISelectionList(pygame.Rect(pose_x, pose_y + 3 * gap, 120, 80),
+                        item_list=['1. 5 secs',
+                                   '2. 5 secs',
+                                   '3. 5 secs',
+                                   '4. 5 secs',
+                                   '5. 5 secs',
+                                   ],
+                        manager=self.manager,
+                        container=container,
+                        allow_multi_select=True)
+
+        self.drop_move_hist = UISelectionList(pygame.Rect(pose_x, pose_y + 7 * gap, 120, 80),
+                        item_list=['1. F5',
+                                   '2. A3',
+                                   '3. G4',
+                                   '4. C1',
+                                   ],
+                        manager=self.manager,
+                        container=container,
+                        allow_multi_select=True)
 
     def check_event(self):
         for event in pygame.event.get():
@@ -307,12 +340,16 @@ class GameMenu:
 
                 if event.user_type == pygame_gui.UI_BUTTON_PRESSED:
                     if event.ui_element == self.config_button:
+                        self.open_config = True
                         self.config_menu = ConfigMenu(pygame.Rect((10, 10), (800, 700)), self.manager, self.display,
                                                       self.window)
                         print('Config!')
                     if event.ui_element == self.start_button:
+                        self.open_config = False
+                        self.start_game = True
                         print('Start!')
                     if event.ui_element == self.stop_button:
+                        self.start_game = False
                         print('Start!')
                     if event.ui_element == self.pause_button:
                         print('Pause!')
@@ -386,7 +423,6 @@ class GameMenu:
         self.manager.root_container.show()
         game_board_img = pygame.image.load('drawables/game_board.png').convert_alpha()
         game_board_img = pygame.transform.scale(game_board_img, (BOARD_IMAGE_SIZE, BOARD_IMAGE_SIZE))
-        game_board_img_dest = (WIDTH / 2 - game_board_img.get_width() / 2, HEIGHT / 2 - game_board_img.get_height() / 2)
 
         clock = pygame.time.Clock()
         while self.game_playing:
@@ -395,7 +431,8 @@ class GameMenu:
             self.manager.update(time_delta)
             self.window.blit(self.display, (0, 0))
             self.manager.draw_ui(self.window)
-            self.board.update()
+            if not self.open_config and self.start_game:
+                self.board.update()
             pygame.display.update()
 
         pygame.quit()

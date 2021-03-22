@@ -20,7 +20,8 @@ class Board:
         self.teams = [None, pygame.sprite.Group(), pygame.sprite.Group()]
         self.init_hexagons(win)
         self.marbles = pygame.sprite.Group()
-
+        self.black_marble_list = list()
+        self.white_marble_list = list()
         win.fill(WHITE)
         self.initialize_marbles(self.teams, SETUP_CONSTANT)
 
@@ -39,10 +40,15 @@ class Board:
                     if value > 0:
                         position_2d = [row, col]
                         Marble(position_2d, value, teams[value], self.marbles)
-                        # print(position_2d, value)
+                        if value == 2:
+                            self.white_marble_list.append(CoordinateHelper.from2DArraytoCube(position_2d))
+                        if value == 1:
+                            self.black_marble_list.append(CoordinateHelper.from2DArraytoCube(position_2d))
+
 
                 except ValueError:
                     pass
+        print(self.black_marble_list)
 
     def update(self):
         self.draw_hexagons()
@@ -56,6 +62,7 @@ class Board:
     def on_click(self, click_position):
         x, y = click_position
         x_cent, y_cent = x - WIDTH / 2, y - HEIGHT / 2
+        print(x_cent, y_cent)
         q, r = CoordinateHelper.fromXYtoCube(x_cent, y_cent)
 
         print("Mouse button down", x, y)
