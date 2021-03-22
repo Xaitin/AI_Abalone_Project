@@ -5,7 +5,7 @@ from constants import *
 
 FPS = 60
 
-WIN = pygame.display.set_mode((WIDTH, HEIGHT))
+WIN = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
 pygame.display.set_caption("Abalone")
 
 
@@ -15,7 +15,7 @@ def main():
     board = Board(WIN)
     game_board_img = pygame.image.load('drawables/game_board.png').convert_alpha()
     game_board_img = pygame.transform.scale(game_board_img, (BOARD_IMAGE_SIZE, BOARD_IMAGE_SIZE))
-    game_board_img_dest = (WIDTH / 2 - game_board_img.get_width() / 2, HEIGHT / 2 - game_board_img.get_height() / 2)
+    game_board_img_dest = (WINDOW_WIDTH / 2 - game_board_img.get_width() / 2, WINDOW_HEIGHT / 2 - game_board_img.get_height() / 2)
 
     while run:
         clock.tick(FPS)

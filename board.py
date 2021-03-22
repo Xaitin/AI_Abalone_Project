@@ -1,6 +1,6 @@
 import pygame
 
-from constants import WHITE, BOARD_SIZE, INITIAL_GAME_BOARD_SETUPS, WIDTH, HEIGHT
+from constants import WHITE, BOARD_SIZE, INITIAL_GAME_BOARD_SETUPS, WINDOW_WIDTH, WINDOW_HEIGHT
 from coordinate_helper import CoordinateHelper
 from hexagon import Hexagon
 from marble import Marble
@@ -17,8 +17,9 @@ class Board:
         self.selected_marbles = []
         self.black_left = self.white_left = 14
         self.win = win
-        self.teams = [None, pygame.sprite.Group(), pygame.sprite.Group()]
         self.init_hexagons(win)
+
+        self.teams = [None, pygame.sprite.Group(), pygame.sprite.Group()]
         self.marbles = pygame.sprite.Group()
         self.black_marble_list = list()
         self.white_marble_list = list()
@@ -61,7 +62,7 @@ class Board:
 
     def on_click(self, click_position):
         x, y = click_position
-        x_cent, y_cent = x - WIDTH / 2, y - HEIGHT / 2
+        x_cent, y_cent = x - WINDOW_WIDTH / 2, y - WINDOW_HEIGHT / 2
         print(x_cent, y_cent)
         q, r = CoordinateHelper.fromXYtoCube(x_cent, y_cent)
 

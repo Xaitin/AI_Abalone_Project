@@ -1,8 +1,10 @@
 import pygame
 import pygame_gui
 from pygame_gui.elements import *
+
 from board import Board
 from constants import *
+
 
 class ConfigMenu(UIWindow):
     def __init__(self, rect, ui_manager, display, window):
@@ -187,17 +189,15 @@ class GameMenu:
     def __init__(self):
         pygame.init()
         self.start_running, self.game_playing = True, True
-        self._width, self._height = 1080, 700
-        self.display = pygame.Surface((self._width, self._height))
-        self.window = pygame.display.set_mode((self._width, self._height))
-        self.manager = pygame_gui.UIManager((self._width, self._height))
+        self.display = pygame.Surface((WINDOW_WIDTH, WINDOW_HEIGHT))
+        self.window = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
+        self.manager = pygame_gui.UIManager((WINDOW_WIDTH, WINDOW_HEIGHT))
 
         # board initialization
         self.board = Board(self.window)
 
         self.run_display = True
         self.display.fill(pygame.Color('#000000'))
-        self.pose_y = 60
         self.config_menu = None
         self.white_human_click = False
         self.black_human_click = False
@@ -207,44 +207,104 @@ class GameMenu:
         self.button_h = 50
         self.adjust = 30
         self.font_size = 30
-        self.draw_text("Abalone", self.font_size, (self._width // 2 + self.adjust * 1.5 // 1, self.pose_y + 30))
-        self.draw_text("Next Move Suggested", self.font_size // 2,
-                       (self._width // 2 + self.adjust * 2, self.pose_y + 80))
-        self.draw_text("Next Move", self.font_size // 2, (self._width // 2 + self.adjust * 1.5 // 1, self.pose_y + 580))
-        self.black_pose = [self._width // 2 - 500, self.pose_y * 3]
-        self.white_pose = [self._width // 2 + 250, self.pose_y * 3]
+
+        # Texts
+        self.draw_text("Abalone", self.font_size, (WINDOW_WIDTH // 2, TITLE_DISTANCE_TOP + self.button_h // 2))
+
+        # Buttons on the top
+        self.config_button = self.button(WINDOW_WIDTH // 2 - BUTTON_DISTANCE_3 - self.button_w, TITLE_DISTANCE_TOP,
+                                         self.button_w, self.button_h, "config",
+                                         self.manager)
+        self.start_button = self.button(WINDOW_WIDTH // 2 - BUTTON_DISTANCE_2 - self.button_w, TITLE_DISTANCE_TOP,
+                                        self.button_w, self.button_h, "start",
+                                        self.manager)
+        self.stop_button = self.button(WINDOW_WIDTH // 2 - BUTTON_DISTANCE_1 - self.button_w, TITLE_DISTANCE_TOP,
+                                       self.button_w, self.button_h, "stop",
+                                       self.manager)
+        self.pause_button = self.button(WINDOW_WIDTH // 2 + BUTTON_DISTANCE_1, TITLE_DISTANCE_TOP, self.button_w,
+                                        self.button_h, "pause",
+                                        self.manager)
+        self.undo_button = self.button(WINDOW_WIDTH // 2 + BUTTON_DISTANCE_2, TITLE_DISTANCE_TOP, self.button_w,
+                                       self.button_h,
+                                       "undo",
+                                       self.manager)
+        self.reset_button = self.button(WINDOW_WIDTH // 2 + BUTTON_DISTANCE_3, TITLE_DISTANCE_TOP, self.button_w,
+                                        self.button_h, "reset",
+                                        self.manager)
+
+        # region Input boxes
+        self.draw_text(
+            "Next Move Suggested",
+            self.font_size // 2,
+            (
+                WINDOW_WIDTH // 2 - INPUT_BOX_DISTANCE_FROM_CENTER,
+                int(1.1 * HEIGHT_HEADER_FOOTER + GAMEBOARD_SIZE)
+            )
+        )
+        self.draw_text(
+            "Next Move",
+            self.font_size // 2,
+            (
+                WINDOW_WIDTH // 2 + INPUT_BOX_DISTANCE_FROM_CENTER,
+                int(1.1 * HEIGHT_HEADER_FOOTER + GAMEBOARD_SIZE)
+            )
+        )
+
+        UITextEntryLine(
+            pygame.Rect(
+                (WINDOW_WIDTH // 2 - INPUT_BOX_DISTANCE_FROM_CENTER - INPUT_BOX_WIDTH // 2,
+                 1.3 * HEIGHT_HEADER_FOOTER + GAMEBOARD_SIZE),
+                (INPUT_BOX_WIDTH, -1)
+            ),
+            self.manager,
+            object_id='#suggested_move'
+        )
+        UITextEntryLine(
+            pygame.Rect(
+                (WINDOW_WIDTH // 2 + INPUT_BOX_DISTANCE_FROM_CENTER - INPUT_BOX_WIDTH // 2,
+                 1.3 * HEIGHT_HEADER_FOOTER + GAMEBOARD_SIZE),
+                (INPUT_BOX_WIDTH, -1)
+            ),
+            self.manager,
+            object_id='#next_move'
+        )
+
+        # endregi
+
+        # region Player Panels Initialization
+        self.black_panel_position = [
+            WINDOW_WIDTH // 2 - PANEL_DISTANCE_FROM_CENTER, TITLE_DISTANCE_TOP * 2 + self.button_h
+        ]
+        self.white_panel_position = [
+            WINDOW_WIDTH // 2 + PANEL_DISTANCE_FROM_CENTER - PANEL_WIDTH, TITLE_DISTANCE_TOP * 2 + self.button_h
+        ]
+
         self.black_player = pygame_gui.elements.UIPanel(
-            relative_rect=pygame.Rect(self.black_pose, (self._width // 5, self._height // 1.7)), starting_layer_height=2,
-            manager=self.manager)
+            relative_rect=pygame.Rect(self.black_panel_position, (PANEL_WIDTH, PANEL_HEIGHT)),
+            starting_layer_height=2,
+            manager=self.manager
+        )
         self.white_player = pygame_gui.elements.UIPanel(
-            relative_rect=pygame.Rect(self.white_pose, (self._width // 5, self._height // 1.7)), starting_layer_height=2,
-            manager=self.manager)
+            relative_rect=pygame.Rect(self.white_panel_position, (PANEL_WIDTH, PANEL_HEIGHT)),
+            starting_layer_height=2,
+            manager=self.manager
+        )
+
         self.black_player_title = pygame_gui.elements.ui_text_box.UITextBox(
             html_text="<body bgcolor='#000000'><font face='verdana' color='#FFFFFF' size=3><b><i>Black Player</i></b></font></body>",
             object_id="title",
-            relative_rect=pygame.Rect(self.black_pose, (-1, -1)), manager=self.manager, layer_starting_height=2)
+            relative_rect=pygame.Rect(self.black_panel_position, (-1, -1)), manager=self.manager,
+            layer_starting_height=2)
+
         self.white_player_title = pygame_gui.elements.ui_text_box.UITextBox(
             html_text="<body bgcolor='#000000'><font face='verdana' color='#FFFFFF' size=3><b><i>White Player</i></b></font></body>",
             object_id="title",
-            relative_rect=pygame.Rect(self.white_pose, (-1, -1)), manager=self.manager, layer_starting_height=2)
+            relative_rect=pygame.Rect(self.white_panel_position, (-1, -1)), manager=self.manager,
+            layer_starting_height=2)
+
         self.player_info(self.black_player)
         self.player_info(self.white_player)
-        self.config_button = self.button(self._width // 2 - 350, self.pose_y, self.button_w, self.button_h, "config",
-                                         self.manager)
-        self.start_button = self.button(self._width // 2 - 250, self.pose_y, self.button_w, self.button_h, "start",
-                                        self.manager)
-        self.stop_button = self.button(self._width // 2 - 150, self.pose_y, self.button_w, self.button_h, "stop",
-                                       self.manager)
-        self.pause_button = self.button(self._width // 2 + 150, self.pose_y, self.button_w, self.button_h, "pause",
-                                        self.manager)
-        self.undo_button = self.button(self._width // 2 + 250, self.pose_y, self.button_w, self.button_h, "undo",
-                                       self.manager)
-        self.reset_button = self.button(self._width // 2 + 350, self.pose_y, self.button_w, self.button_h, "reset",
-                                        self.manager)
-        UITextEntryLine(pygame.Rect((self._width // 2, self.pose_y + 100), (100, -1)), self.manager,
-                        object_id='#suggested_move')
-        UITextEntryLine(pygame.Rect((self._width // 2, self.pose_y + 600), (100, -1)), self.manager,
-                        object_id='#next_move')
+        # endregion Initialization
 
     @staticmethod
     def button(x, y, w, h, text, manager):
@@ -287,35 +347,38 @@ class GameMenu:
             relative_rect=pygame.Rect((pose_x, pose_y + 6 * gap), (-1, -1)), manager=self.manager, container=container
         )
 
-        self.score_info = pygame_gui.elements.UIButton(relative_rect=pygame.Rect((pose_x + 3*gap//1, pose_y), (70, 30)),
-                                                        text='0', manager=self.manager, container=container)
+        self.score_info = pygame_gui.elements.UIButton(
+            relative_rect=pygame.Rect((pose_x + 3 * gap // 1, pose_y), (70, 30)),
+            text='0', manager=self.manager, container=container)
         self.score_info.disable()
-        self.time_limit_info = pygame_gui.elements.UIButton(relative_rect=pygame.Rect((pose_x + 3*gap//1, pose_y + gap), (70, 30)),
-                                                        text='0 secs', manager=self.manager, container=container)
+        self.time_limit_info = pygame_gui.elements.UIButton(
+            relative_rect=pygame.Rect((pose_x + 3 * gap // 1, pose_y + gap), (70, 30)),
+            text='0 secs', manager=self.manager, container=container)
         self.time_limit_info.disable()
-        self.total_time_info = pygame_gui.elements.UIButton(relative_rect=pygame.Rect((pose_x + 3*gap//1, pose_y + 5 * gap), (70, 30)),
-                                                        text='0 secs', manager=self.manager, container=container)
+        self.total_time_info = pygame_gui.elements.UIButton(
+            relative_rect=pygame.Rect((pose_x + 3 * gap // 1, pose_y + 5 * gap), (70, 30)),
+            text='0 secs', manager=self.manager, container=container)
         self.total_time_info.disable()
         self.drop_down_time_hist = UISelectionList(pygame.Rect(pose_x, pose_y + 3 * gap, 120, 80),
-                        item_list=['1. 5 secs',
-                                   '2. 5 secs',
-                                   '3. 5 secs',
-                                   '4. 5 secs',
-                                   '5. 5 secs',
-                                   ],
-                        manager=self.manager,
-                        container=container,
-                        allow_multi_select=True)
+                                                   item_list=['1. 5 secs',
+                                                              '2. 5 secs',
+                                                              '3. 5 secs',
+                                                              '4. 5 secs',
+                                                              '5. 5 secs',
+                                                              ],
+                                                   manager=self.manager,
+                                                   container=container,
+                                                   allow_multi_select=True)
 
         self.drop_move_hist = UISelectionList(pygame.Rect(pose_x, pose_y + 7 * gap, 120, 80),
-                        item_list=['1. F5',
-                                   '2. A3',
-                                   '3. G4',
-                                   '4. C1',
-                                   ],
-                        manager=self.manager,
-                        container=container,
-                        allow_multi_select=True)
+                                              item_list=['1. F5',
+                                                         '2. A3',
+                                                         '3. G4',
+                                                         '4. C1',
+                                                         ],
+                                              manager=self.manager,
+                                              container=container,
+                                              allow_multi_select=True)
 
     def check_event(self):
         for event in pygame.event.get():
@@ -330,7 +393,6 @@ class GameMenu:
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
                     self.board.reset_selected_marbles()
-
 
             if event.type == pygame.USEREVENT:
                 if event.user_type == pygame_gui.UI_TEXT_ENTRY_FINISHED and event.ui_object_id == '#suggested_move':
@@ -369,24 +431,28 @@ class GameMenu:
                         if event.ui_element == self.config_menu.WHITE_HUMAN_BUTTON:
                             self.config_menu.WHITE_TYPE_INPUT.html_text = 'Human'
                             self.white_human_click = True
-                            self.click_func(self.white_human_click, self.config_menu.WHITE_HUMAN_BUTTON, self.config_menu.WHITE_COMPUTER_BUTTON)
+                            self.click_func(self.white_human_click, self.config_menu.WHITE_HUMAN_BUTTON,
+                                            self.config_menu.WHITE_COMPUTER_BUTTON)
                             print('Human')
                         elif event.ui_element == self.config_menu.WHITE_COMPUTER_BUTTON:
                             self.config_menu.WHITE_TYPE_INPUT.html_text = 'Computer'
                             self.white_human_click = False
-                            self.click_func(self.white_human_click, self.config_menu.WHITE_COMPUTER_BUTTON, self.config_menu.WHITE_HUMAN_BUTTON)
+                            self.click_func(self.white_human_click, self.config_menu.WHITE_COMPUTER_BUTTON,
+                                            self.config_menu.WHITE_HUMAN_BUTTON)
 
                             print('Computer')
                         elif event.ui_element == self.config_menu.BLACK_HUMAN_BUTTON:
                             self.config_menu.BLACK_TYPE_INPUT.html_text = 'Human'
                             self.black_human_click = True
-                            self.click_func(self.black_human_click, self.config_menu.BLACK_HUMAN_BUTTON, self.config_menu.BLACK_COMPUTER_BUTTON)
+                            self.click_func(self.black_human_click, self.config_menu.BLACK_HUMAN_BUTTON,
+                                            self.config_menu.BLACK_COMPUTER_BUTTON)
 
                             print('Human')
                         elif event.ui_element == self.config_menu.BLACK_COMPUTER_BUTTON:
                             self.config_menu.BLACK_TYPE_INPUT.html_text = 'Computer'
                             self.black_human_click = False
-                            self.click_func(self.black_human_click, self.config_menu.BLACK_COMPUTER_BUTTON, self.config_menu.BLACK_HUMAN_BUTTON)
+                            self.click_func(self.black_human_click, self.config_menu.BLACK_COMPUTER_BUTTON,
+                                            self.config_menu.BLACK_HUMAN_BUTTON)
 
                             print('Computer')
                         elif event.ui_element == self.config_menu.STANDARD_BUTTON:
@@ -417,7 +483,6 @@ class GameMenu:
         else:
             button2.enable()
             button1.disable()
-
 
     def display_menu(self):
         self.manager.root_container.show()

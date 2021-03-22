@@ -1,6 +1,6 @@
 import math
 
-from constants import COS30, SIN30, HEXAGON_SIDE_LENGTH, WIDTH, HEIGHT, BOARD_SIZE
+from constants import COS30, SIN30, HEXAGON_SIDE_LENGTH, WINDOW_WIDTH, WINDOW_HEIGHT, BOARD_SIZE
 
 
 class CoordinateHelper:
@@ -12,8 +12,8 @@ class CoordinateHelper:
 
     @staticmethod
     def fromCubetoXY(position):
-        _left = ((2 * COS30) * position[0] + COS30 * position[1]) * HEXAGON_SIDE_LENGTH + WIDTH / 2
-        _top = 3 * SIN30 * position[1] * HEXAGON_SIDE_LENGTH + HEIGHT / 2
+        _left = ((2 * COS30) * position[0] + COS30 * position[1]) * HEXAGON_SIDE_LENGTH + WINDOW_WIDTH / 2
+        _top = 3 * SIN30 * position[1] * HEXAGON_SIDE_LENGTH + WINDOW_HEIGHT / 2
         return _left, _top
 
     @staticmethod
