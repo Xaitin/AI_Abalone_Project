@@ -33,20 +33,20 @@ class StateSpaceGenerator:
             print(self.state_space)
 
 
-    # 2nd way to read data
-    def distinct_by_player(self, movements):
-        # format example: result = ([(-1, 2), (0, 1), (-1, 0), (-1, -3)], [(2, 2), (1, 2), (2, 1), (-3, -3), (-4, -3)])
-        # result[0]: black, result[1]: white
-        black_marble_movements = list()
-        white_marble_movements = list()
-        for movement in movements:
-            coord = movement[:-1]
-            player = movement[-1]
-            if player == 'b':
-                black_marble_movements.append(self.translate_coord(coord))
-            else:
-                white_marble_movements.append(self.translate_coord(coord))
-        return black_marble_movements, white_marble_movements
+    # # 2nd way to read data
+    # def distinct_by_player(self, movements):
+    #     # format example: result = ([(-1, 2), (0, 1), (-1, 0), (-1, -3)], [(2, 2), (1, 2), (2, 1), (-3, -3), (-4, -3)])
+    #     # result[0]: black, result[1]: white
+    #     black_marble_movements = list()
+    #     white_marble_movements = list()
+    #     for movement in movements:
+    #         coord = movement[:-1]
+    #         player = movement[-1]
+    #         if player == 'b':
+    #             black_marble_movements.append(self.translate_coord(coord))
+    #         else:
+    #             white_marble_movements.append(self.translate_coord(coord))
+    #     return black_marble_movements, white_marble_movements
 
     def generate(self):
         result_marble_positions = []
