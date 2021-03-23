@@ -225,6 +225,7 @@ class stateGenerator:
                     current_pieces[index_opponent] = behind_opponent + opponent
                     current_pieces[index_marble_one] = chr(ord(marble_one[0]) + 1) + str(int(marble_one[1]) + 1)
                     current_pieces[index_marble_two] = chr(ord(marble_two[0]) + 1) + str(int(marble_two[1]) + 1)
+                    self.double_move_states.append(current_pieces)
             # if theres a friendly marble in the way
             elif upwards_in_line + p in self.input_result:
                 pass
@@ -233,6 +234,8 @@ class stateGenerator:
                 current_pieces = self.input_result.copy()
                 current_pieces[index_marble_one] = chr(ord(marble_one[0]) + 1) + str(int(marble_one[1]) + 1)
                 current_pieces[index_marble_two] = chr(ord(marble_two[0]) + 1) + str(int(marble_two[1]) + 1)
+                self.double_move_states.append(current_pieces)
+
             downwards_in_line = neighbors[4]
             # if theres an opponent in the way
             if downwards_in_line + opponent in self.input_result:
@@ -246,6 +249,7 @@ class stateGenerator:
                     current_pieces[index_opponent] = behind_opponent + opponent
                     current_pieces[index_marble_one] = chr(ord(marble_one[0]) - 1) + str(int(marble_one[1]) - 1)
                     current_pieces[index_marble_two] = chr(ord(marble_two[0]) - 1) + str(int(marble_two[1]) - 1)
+                    self.double_move_states.append(current_pieces)
             # if theres a friendly marble in the way
             elif upwards_in_line + p in self.input_result:
                 pass
@@ -254,18 +258,109 @@ class stateGenerator:
                 current_pieces = self.input_result.copy()
                 current_pieces[index_marble_one] = chr(ord(marble_one[0]) - 1) + str(int(marble_one[1]) - 1)
                 current_pieces[index_marble_two] = chr(ord(marble_two[0]) - 1) + str(int(marble_two[1]) - 1)
+                self.double_move_states.append(current_pieces)
+
             right_side_step_one = neighbors[1] + neighbors[2]
             right_side_step_two = neighbors[2] + neighbors[3]
             left_side_step_one = neighbors[5] + neighbors[6]
             left_side_step_two = neighbors[6] + neighbors[7]
+
         # neighbors at indexes 1 and 5 are always in-line. Other neighbors are side-step
         elif move_type == 2:
             right_in_line = neighbors[1]
+            if right_in_line + opponent in self.input_result:
+                behind_opponent = right_in_line[0] + str(int(right_in_line[1]) + 1)
+                # if the opponent has 2 marbles in this line
+                if behind_opponent + opponent in self.input_result:
+                    pass
+                else:
+                    index_opponent = self.input_result.index(right_in_line + opponent)
+                    current_pieces = self.input_result.copy()
+                    current_pieces[index_opponent] = behind_opponent + opponent
+                    current_pieces[index_marble_one] = marble_one[0] + str(int(marble_one[1]) + 1)
+                    current_pieces[index_marble_two] = marble_two[0] + str(int(marble_two[1]) + 1)
+                    self.double_move_states.append(current_pieces)
+            # if theres a friendly marble in the way
+            elif right_in_line + p in self.input_result:
+                pass
+            # no marbles in the way
+            else:
+                current_pieces = self.input_result.copy()
+                current_pieces[index_marble_one] = marble_one[0] + str(int(marble_one[1]) + 1)
+                current_pieces[index_marble_two] = marble_two[0] + str(int(marble_two[1]) + 1)
+                self.double_move_states.append(current_pieces)
+
             left_in_line = neighbors[5]
+            if left_in_line + opponent in self.input_result:
+                behind_opponent = left_in_line[0] + str(int(left_in_line[1]) - 1)
+                # if the opponent has 2 marbles in this line
+                if behind_opponent + opponent in self.input_result:
+                    pass
+                else:
+                    index_opponent = self.input_result.index(left_in_line + opponent)
+                    current_pieces = self.input_result.copy()
+                    current_pieces[index_opponent] = behind_opponent + opponent
+                    current_pieces[index_marble_one] = marble_one[0] + str(int(marble_one[1]) - 1)
+                    current_pieces[index_marble_two] = marble_two[0] + str(int(marble_two[1]) - 1)
+                    self.double_move_states.append(current_pieces)
+            # if theres a friendly marble in the way
+            elif right_in_line + p in self.input_result:
+                pass
+            # no marbles in the way
+            else:
+                current_pieces = self.input_result.copy()
+                current_pieces[index_marble_one] = marble_one[0] + str(int(marble_one[1]) - 1)
+                current_pieces[index_marble_two] = marble_two[0] + str(int(marble_two[1]) - 1)
+                self.double_move_states.append(current_pieces)
         # neighbors at indexes 4 and 7 are always in-line. Other neighbors are side-step
         elif move_type == 3:
             upwards_in_line = neighbors[7]
+            # if theres an opponent in the way
+            if upwards_in_line + opponent in self.input_result:
+                behind_opponent = chr(ord(upwards_in_line[0]) + 1) + upwards_in_line[1]
+                # if the opponent has 2 marbles in this line
+                if behind_opponent + opponent in self.input_result:
+                    pass
+                else:
+                    index_opponent = self.input_result.index(upwards_in_line + opponent)
+                    current_pieces = self.input_result.copy()
+                    current_pieces[index_opponent] = behind_opponent + opponent
+                    current_pieces[index_marble_one] = chr(ord(marble_one[0]) + 1) + marble_one[1]
+                    current_pieces[index_marble_two] = chr(ord(marble_two[0]) + 1) + marble_two[1]
+                    self.double_move_states.append(current_pieces)
+            # if theres a friendly marble in the way
+            elif upwards_in_line + p in self.input_result:
+                pass
+            # no marbles in the way
+            else:
+                current_pieces = self.input_result.copy()
+                current_pieces[index_marble_one] = chr(ord(marble_one[0]) + 1) + marble_one[1]
+                current_pieces[index_marble_two] = chr(ord(marble_two[0]) + 1) + marble_two[1]
+                self.double_move_states.append(current_pieces)
+
             downwards_in_line = neighbors[4]
+            # if theres an opponent in the way
+            if downwards_in_line + opponent in self.input_result:
+                behind_opponent = chr(ord(downwards_in_line[0]) - 1) + downwards_in_line[1]
+                # if the opponent has 2 marbles in this line
+                if behind_opponent + opponent in self.input_result:
+                    pass
+                else:
+                    index_opponent = self.input_result.index(downwards_in_line + opponent)
+                    current_pieces = self.input_result.copy()
+                    current_pieces[index_opponent] = behind_opponent + opponent
+                    current_pieces[index_marble_one] = chr(ord(marble_one[0]) - 1) + marble_one[1]
+                    current_pieces[index_marble_two] = chr(ord(marble_two[0]) - 1) + marble_two[1]
+                    self.double_move_states.append(current_pieces)
+            # if theres a friendly marble in the way
+            elif upwards_in_line + p in self.input_result:
+                pass
+            # no marbles in the way
+            else:
+                current_pieces = self.input_result.copy()
+                current_pieces[index_marble_one] = chr(ord(marble_one[0]) - 1) + marble_one[1]
+                current_pieces[index_marble_two] = chr(ord(marble_two[0]) - 1) + marble_two[1]
+                self.double_move_states.append(current_pieces)
 
     def find_pairs(self, s):
         pairs = list()
