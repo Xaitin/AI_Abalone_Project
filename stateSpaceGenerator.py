@@ -1,7 +1,8 @@
 import string
+from state_space_generator import StateSpaceGenerator
 
 
-def find_neighbors(s, b):
+def find_neighbors(s):
     n1 = chr(ord(s[0]) + 1) + str(int(s[1]) + 1)
     n2 = s[0] + str(int(s[1]) + 1)
     n3 = chr(ord(s[0]) - 1) + s[1]
@@ -9,15 +10,6 @@ def find_neighbors(s, b):
     n5 = s[0] + str(int(s[1]) - 1)
     n6 = chr(ord(s[0]) + 1) + s[1]
     return [n1, n2, n3, n4, n5, n6]
-
-
-def find_grouped_neighbors(s):
-    char_coord_m1 = ord(s[0])
-    num_coord_m1 = int(s[1])
-    char_coord_m2 = ord(s[3])
-    num_coord_m2 = int(s[4])
-    char_coord_m3 = ord(s[6])
-    num_coord_m3 = int(s[7])
 
 
 def find_paired_neighbors(s):
@@ -165,7 +157,6 @@ class stateGenerator:
         self.board_result = list()
         self.single_move_states = list()
         self.double_move_states = list()
-        self.triple_move_states = list()
         self.valid_squares = {"A1", "A2", "A3", "A4", "A5",
                               "B1", "B2", "B3", "B4", "B5", "B6",
                               "C1", "C2", "C3", "C4", "C5", "C6", "C7",
@@ -182,8 +173,8 @@ class stateGenerator:
             self.player = lines[0]
             for line in lines:
                 if len(line) > 5:
-                    value = line.split(',')
-                    self.input_result = value
+                    string = line.split(',')
+                    self.input_result = string
 
     def find_double_moves(self):
         paired_selections = list()
@@ -199,6 +190,7 @@ class stateGenerator:
         for pair in paired_selections:
             formatted_pair = str(pair).translate(str.maketrans('', '', string.punctuation))
             neighbors = find_paired_neighbors(formatted_pair)
+            print(neighbors)
             m1 = formatted_pair[0] + formatted_pair[1]
             m2 = formatted_pair[3] + formatted_pair[4]
             self.attempt_paired_moves(m1, m2, neighbors)
@@ -207,58 +199,6 @@ class stateGenerator:
         for v in self.double_move_states:
             output += (str(v) + "\n")
         print(output)
-
-    def find_triple_moves(self):
-        grouped_selections = list()
-        for marble in self.input_result:
-            if marble[2] == self.player:
-                selections = self.find_groups(marble)
-                for selection in selections:
-                    combinations = [
-                        [marble + selection[0] + selection[1]],
-                        [marble + selection[1] + selection[2]],
-                        [selection[1] + marble + selection[0]],
-                        [selection[0] + marble + selection[1]],
-                        [selection[0] + selection[1] + marble],
-                        [selection[1] + selection[0] + marble]
-                    ]
-                    exists = True
-                    for combination in combinations:
-                        if combination in grouped_selections:
-                            exists = False
-                    if exists:
-                        grouped_selections.append(combinations[0])
-        for group in grouped_selections:
-            formatted_group = str(group).translate(str.maketrans('', '', string.punctuation))
-            neighbors = find_grouped_neighbors(formatted_group)
-            m1 = formatted_group[0] + formatted_group[1]
-            m2 = formatted_group[3] + formatted_group[4]
-            m3 = formatted_group[6] + formatted_group[7]
-            self.attempt_grouped_moves(m1, m2, m3, neighbors)
-        print("\nPrinting Triple Moves\n")
-        output = ""
-        for v in self.triple_move_states:
-            output += (str(v) + "\n")
-        print(output)
-
-    def find_groups(self, s):
-        pairs = list()
-        neighbors = find_neighbors(s, True)
-        for neighbor in neighbors:
-            if neighbor + self.player in self.input_result \
-                and neighbor + self.player not in pairs \
-                and neighbor in self.valid_squares:
-
-
-    def find_pairs(self, s):
-        pairs = list()
-        neighbors = find_neighbors(s, False)
-        for neighbor in neighbors:
-            if neighbor + self.player in self.input_result \
-                    and neighbor + self.player not in pairs \
-                    and neighbor in self.valid_squares:
-                pairs.append(neighbor + self.player)
-        return pairs
 
     def attempt_paired_moves(self, m1, m2, neighbors):
         p = self.player
@@ -284,18 +224,22 @@ class stateGenerator:
                     index_opponent = self.input_result.index(upwards_in_line + opponent)
                     current_pieces = self.input_result.copy()
                     current_pieces[index_opponent] = behind_opponent + opponent
-                    current_pieces[index_marble_one] = chr(ord(marble_one[0]) + 1) + str(int(marble_one[1]) + 1) + self.player
-                    current_pieces[index_marble_two] = chr(ord(marble_two[0]) + 1) + str(int(marble_two[1]) + 1) + self.player
-                    self.double_move_states.append(current_pieces)
+                    current_pieces[index_marble_one] = chr(ord(marble_one[0]) + 1) + str(
+                        int(marble_one[1]) + 1) + self.player
+                    current_pieces[index_marble_two] = chr(ord(marble_two[0]) + 1) + str(
+                        int(marble_two[1]) + 1) + self.player
+                    self.double_move_states.append(self.ten_catch(current_pieces))
             # if theres a friendly marble in the way
             elif upwards_in_line + p in self.input_result:
                 pass
             # no marbles in the way
             else:
                 current_pieces = self.input_result.copy()
-                current_pieces[index_marble_one] = chr(ord(marble_one[0]) + 1) + str(int(marble_one[1]) + 1) + self.player
-                current_pieces[index_marble_two] = chr(ord(marble_two[0]) + 1) + str(int(marble_two[1]) + 1) + self.player
-                self.double_move_states.append(current_pieces)
+                current_pieces[index_marble_one] = chr(ord(marble_one[0]) + 1) + str(
+                    int(marble_one[1]) + 1) + self.player
+                current_pieces[index_marble_two] = chr(ord(marble_two[0]) + 1) + str(
+                    int(marble_two[1]) + 1) + self.player
+                self.double_move_states.append(self.ten_catch(current_pieces))
 
             downwards_in_line = neighbors[4]
             # if theres an opponent in the way
@@ -308,18 +252,22 @@ class stateGenerator:
                     index_opponent = self.input_result.index(downwards_in_line + opponent)
                     current_pieces = self.input_result.copy()
                     current_pieces[index_opponent] = behind_opponent + opponent
-                    current_pieces[index_marble_one] = chr(ord(marble_one[0]) - 1) + str(int(marble_one[1]) - 1) + self.player
-                    current_pieces[index_marble_two] = chr(ord(marble_two[0]) - 1) + str(int(marble_two[1]) - 1) + self.player
-                    self.double_move_states.append(current_pieces)
+                    current_pieces[index_marble_one] = chr(ord(marble_one[0]) - 1) + str(
+                        int(marble_one[1]) - 1) + self.player
+                    current_pieces[index_marble_two] = chr(ord(marble_two[0]) - 1) + str(
+                        int(marble_two[1]) - 1) + self.player
+                    self.double_move_states.append(self.ten_catch(current_pieces))
             # if theres a friendly marble in the way
             elif upwards_in_line + p in self.input_result:
                 pass
             # no marbles in the way
             else:
                 current_pieces = self.input_result.copy()
-                current_pieces[index_marble_one] = chr(ord(marble_one[0]) - 1) + str(int(marble_one[1]) - 1) + self.player
-                current_pieces[index_marble_two] = chr(ord(marble_two[0]) - 1) + str(int(marble_two[1]) - 1) + self.player
-                self.double_move_states.append(current_pieces)
+                current_pieces[index_marble_one] = chr(ord(marble_one[0]) - 1) + str(
+                    int(marble_one[1]) - 1) + self.player
+                current_pieces[index_marble_two] = chr(ord(marble_two[0]) - 1) + str(
+                    int(marble_two[1]) - 1) + self.player
+                self.double_move_states.append(self.ten_catch(current_pieces))
             # cant side step to right.
             if neighbors[2] + 'b' in self.input_result or neighbors[2] + 'w' in self.input_result:
                 pass
@@ -331,7 +279,7 @@ class stateGenerator:
                     current_pieces = self.input_result.copy()
                     current_pieces[index_marble_one] = marble_one[0] + str(int(marble_one[1]) + 1) + self.player
                     current_pieces[index_marble_two] = marble_two[0] + str(int(marble_two[1]) + 1) + self.player
-                    self.double_move_states.append(current_pieces)
+                    self.double_move_states.append(self.ten_catch(current_pieces))
                 if neighbors[3] + 'b' in self.input_result or neighbors[3] + 'w' in self.input_result:
                     pass
                 else:
@@ -339,7 +287,7 @@ class stateGenerator:
                     current_pieces = self.input_result.copy()
                     current_pieces[index_marble_one] = chr(ord(marble_one[0]) - 1) + marble_one[1] + self.player
                     current_pieces[index_marble_two] = chr(ord(marble_two[0]) - 1) + marble_two[1] + self.player
-                    self.double_move_states.append(current_pieces)
+                    self.double_move_states.append(self.ten_catch(current_pieces))
             # cant side step to left.
             if neighbors[6] + 'b' in self.input_result or neighbors[6] + 'w' in self.input_result:
                 pass
@@ -359,7 +307,7 @@ class stateGenerator:
                     current_pieces = self.input_result.copy()
                     current_pieces[index_marble_one] = chr(ord(marble_one[0]) + 1) + marble_one[1] + self.player
                     current_pieces[index_marble_two] = chr(ord(marble_two[0]) + 1) + marble_two[1] + self.player
-                    self.double_move_states.append(current_pieces)
+                    self.double_move_states.append(self.ten_catch(current_pieces))
 
         # neighbors at indexes 1 and 5 are always in-line. Other neighbors are side-step
         elif move_type == 2:
@@ -375,7 +323,7 @@ class stateGenerator:
                     current_pieces[index_opponent] = behind_opponent + opponent
                     current_pieces[index_marble_one] = marble_one[0] + str(int(marble_one[1]) + 1) + self.player
                     current_pieces[index_marble_two] = marble_two[0] + str(int(marble_two[1]) + 1) + self.player
-                    self.double_move_states.append(current_pieces)
+                    self.double_move_states.append(self.ten_catch(current_pieces))
             # if theres a friendly marble in the way
             elif right_in_line + p in self.input_result:
                 pass
@@ -384,7 +332,7 @@ class stateGenerator:
                 current_pieces = self.input_result.copy()
                 current_pieces[index_marble_one] = marble_one[0] + str(int(marble_one[1]) + 1) + self.player
                 current_pieces[index_marble_two] = marble_two[0] + str(int(marble_two[1]) + 1) + self.player
-                self.double_move_states.append(current_pieces)
+                self.double_move_states.append(self.ten_catch(current_pieces))
 
             left_in_line = neighbors[5]
             if left_in_line + opponent in self.input_result:
@@ -398,7 +346,7 @@ class stateGenerator:
                     current_pieces[index_opponent] = behind_opponent + opponent
                     current_pieces[index_marble_one] = marble_one[0] + str(int(marble_one[1]) - 1) + self.player
                     current_pieces[index_marble_two] = marble_two[0] + str(int(marble_two[1]) - 1) + self.player
-                    self.double_move_states.append(current_pieces)
+                    self.double_move_states.append(self.ten_catch(current_pieces))
             # if theres a friendly marble in the way
             elif right_in_line + p in self.input_result:
                 pass
@@ -407,7 +355,7 @@ class stateGenerator:
                 current_pieces = self.input_result.copy()
                 current_pieces[index_marble_one] = marble_one[0] + str(int(marble_one[1]) - 1) + self.player
                 current_pieces[index_marble_two] = marble_two[0] + str(int(marble_two[1]) - 1) + self.player
-                self.double_move_states.append(current_pieces)
+                self.double_move_states.append(self.ten_catch(current_pieces))
             # cant side step up.
             if neighbors[7] + 'b' in self.input_result or neighbors[7] + 'w' in self.input_result:
                 pass
@@ -417,9 +365,11 @@ class stateGenerator:
                 else:
                     # perform side step one
                     current_pieces = self.input_result.copy()
-                    current_pieces[index_marble_one] = chr(ord(marble_one[0]) + 1) + str(int(marble_one[1]) + 1) + self.player
-                    current_pieces[index_marble_two] = chr(ord(marble_two[0]) + 1) + str(int(marble_two[1]) + 1) + self.player
-                    self.double_move_states.append(current_pieces)
+                    current_pieces[index_marble_one] = chr(ord(marble_one[0]) + 1) + str(
+                        int(marble_one[1]) + 1) + self.player
+                    current_pieces[index_marble_two] = chr(ord(marble_two[0]) + 1) + str(
+                        int(marble_two[1]) + 1) + self.player
+                    self.double_move_states.append(self.ten_catch(current_pieces))
                 if neighbors[6] + 'b' in self.input_result or neighbors[6] + 'w' in self.input_result:
                     pass
                 else:
@@ -427,7 +377,7 @@ class stateGenerator:
                     current_pieces = self.input_result.copy()
                     current_pieces[index_marble_one] = chr(ord(marble_one[0]) + 1) + marble_one[1] + self.player
                     current_pieces[index_marble_two] = chr(ord(marble_two[0]) + 1) + marble_two[1] + self.player
-                    self.double_move_states.append(current_pieces)
+                    self.double_move_states.append(self.ten_catch(current_pieces))
             # cant side step down.
             if neighbors[3] + 'b' in self.input_result or neighbors[3] + 'w' in self.input_result:
                 pass
@@ -437,9 +387,11 @@ class stateGenerator:
                 else:
                     # perform side step one
                     current_pieces = self.input_result.copy()
-                    current_pieces[index_marble_one] = chr(ord(marble_one[0]) - 1) + str(int(marble_one[1]) - 1) + self.player
-                    current_pieces[index_marble_two] = chr(ord(marble_two[0]) - 1) + str(int(marble_two[1]) - 1) + self.player
-                    self.double_move_states.append(current_pieces)
+                    current_pieces[index_marble_one] = chr(ord(marble_one[0]) - 1) + str(
+                        int(marble_one[1]) - 1) + self.player
+                    current_pieces[index_marble_two] = chr(ord(marble_two[0]) - 1) + str(
+                        int(marble_two[1]) - 1) + self.player
+                    self.double_move_states.append(self.ten_catch(current_pieces))
                 if neighbors[2] + 'b' in self.input_result or neighbors[2] + 'w' in self.input_result:
                     pass
                 else:
@@ -447,7 +399,7 @@ class stateGenerator:
                     current_pieces = self.input_result.copy()
                     current_pieces[index_marble_one] = chr(ord(marble_one[0]) - 1) + marble_one[1] + self.player
                     current_pieces[index_marble_two] = chr(ord(marble_two[0]) - 1) + marble_two[1] + self.player
-                    self.double_move_states.append(current_pieces)
+                    self.double_move_states.append(self.ten_catch(current_pieces))
         # neighbors at indexes 4 and 7 are always in-line. Other neighbors are side-step
         elif move_type == 3:
             upwards_in_line = neighbors[7]
@@ -472,7 +424,7 @@ class stateGenerator:
                 current_pieces = self.input_result.copy()
                 current_pieces[index_marble_one] = chr(ord(marble_one[0]) + 1) + marble_one[1] + self.player
                 current_pieces[index_marble_two] = chr(ord(marble_two[0]) + 1) + marble_two[1] + self.player
-                self.double_move_states.append(current_pieces)
+                self.double_move_states.append(self.ten_catch(current_pieces))
 
             downwards_in_line = neighbors[4]
             # if theres an opponent in the way
@@ -487,7 +439,7 @@ class stateGenerator:
                     current_pieces[index_opponent] = behind_opponent + opponent
                     current_pieces[index_marble_one] = chr(ord(marble_one[0]) - 1) + marble_one[1] + self.player
                     current_pieces[index_marble_two] = chr(ord(marble_two[0]) - 1) + marble_two[1] + self.player
-                    self.double_move_states.append(current_pieces)
+                    self.double_move_states.append(self.ten_catch(current_pieces))
             # if theres a friendly marble in the way
             elif upwards_in_line + p in self.input_result:
                 pass
@@ -496,7 +448,7 @@ class stateGenerator:
                 current_pieces = self.input_result.copy()
                 current_pieces[index_marble_one] = chr(ord(marble_one[0]) - 1) + marble_one[1] + self.player
                 current_pieces[index_marble_two] = chr(ord(marble_two[0]) - 1) + marble_two[1] + self.player
-                self.double_move_states.append(current_pieces)
+                self.double_move_states.append(self.ten_catch(current_pieces))
             # cant side step to right.
             if neighbors[1] + 'b' in self.input_result or neighbors[1] + 'w' in self.input_result:
                 pass
@@ -510,7 +462,7 @@ class stateGenerator:
                         int(marble_one[1]) + 1) + self.player
                     current_pieces[index_marble_two] = chr(ord(marble_two[0]) + 1) + str(
                         int(marble_two[1]) + 1) + self.player
-                    self.double_move_states.append(current_pieces)
+                    self.double_move_states.append(self.ten_catch(current_pieces))
                 if neighbors[2] + 'b' in self.input_result or neighbors[2] + 'w' in self.input_result:
                     pass
                 else:
@@ -520,7 +472,7 @@ class stateGenerator:
                         int(marble_one[1]) + 1) + self.player
                     current_pieces[index_marble_two] = marble_two[0] + str(
                         int(marble_two[1]) + 1) + self.player
-                    self.double_move_states.append(current_pieces)
+                    self.double_move_states.append(self.ten_catch(current_pieces))
             # cant side step to left.
             if neighbors[6] + 'b' in self.input_result or neighbors[6] + 'w' in self.input_result:
                 pass
@@ -542,10 +494,26 @@ class stateGenerator:
                     current_pieces[index_marble_two] = chr(ord(marble_two[0]) + 1) + marble_two[1] + self.player
                     self.double_move_states.append(current_pieces)
 
+    def ten_catch(self, current_pieces):
+        for piece in current_pieces:
+            if '10' in piece:
+                current_pieces.remove(piece)
+        return current_pieces
+
+    def find_pairs(self, s):
+        pairs = list()
+        neighbors = find_neighbors(s)
+        for neighbor in neighbors:
+            if neighbor + self.player in self.input_result \
+                    and neighbor + self.player not in pairs \
+                    and neighbor in self.valid_squares:
+                pairs.append(neighbor + self.player)
+        return pairs
+
     def find_singular_moves(self):
         for marble in self.input_result:
             if marble[2] == self.player:
-                neighbors = find_neighbors(marble, False)
+                neighbors = find_neighbors(marble)
                 for neighbor in neighbors:
                     if neighbor in self.valid_squares and neighbor + 'b' not in self.input_result \
                             and neighbor + 'w' not in self.input_result:
@@ -568,7 +536,20 @@ def main():
     read.read_input_data("Test2.input")
     read.find_singular_moves()
     read.find_double_moves()
-    read.find_triple_moves()
+    test_result = read.double_move_states + read.single_move_states
+    set_result = set(tuple(set(row)) for row in test_result)
+    # print(len(set(tuple(row) for row in test_result)))
+
+    check_answer = StateSpaceGenerator()
+    check_answer.read_board_data("Test2.board")
+    check_answer_set = set(tuple(set(row)) for row in check_answer.board_result)
+    check_difference = set_result.difference(check_answer_set)
+
+    print("-" * 20)
+    print(len(set_result))
+    print(len(check_difference))
+    for line in check_difference:
+        print(line)
 
 
 if __name__ == '__main__':

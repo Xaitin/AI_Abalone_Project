@@ -17,7 +17,9 @@ class StateSpaceGenerator:
             for line in lines:
                 movements = line.split(',')
                 # self.steps.append(self.movement_player_movements(movements))
-                self.board_result.append(self.distinct_by_player(movements))
+                self.board_result.append(movements)
+            for line in self.board_result:
+                print(line)
 
     def read_input_data(self, src):
         # read lines, read input file
@@ -61,11 +63,11 @@ class StateSpaceGenerator:
 
 def main():
     stateSpaceGenerator = StateSpaceGenerator()
-    stateSpaceGenerator.read_input_data("Test1.input")
-    result = stateSpaceGenerator.generate()
-    print("result", len(result))
-    for re in result:
-        print(re)
+    # stateSpaceGenerator.read_input_data("Test1.input")
+    # result = stateSpaceGenerator.generate()
+    # print("result", len(result))
+    # for re in result:
+    #     print(re)
 
     # read.read_board_data("Test1.board")
 
