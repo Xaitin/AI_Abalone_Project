@@ -1,5 +1,6 @@
 import string
 
+
 def find_neighbors(s):
     n1 = chr(ord(s[0]) + 1) + str(int(s[1]) + 1)
     n2 = s[0] + str(int(s[1]) + 1)
@@ -79,6 +80,7 @@ class stateGenerator:
                     if neighbor in self.valid_squares and neighbor + 'b' not in self.input_result \
                             and neighbor + 'w' not in self.input_result:
                         self.make_singular_move(neighbor, marble)
+        # Formatting output of singular moves.
         output = ""
         for value in self.output_moves:
             output += (str(value) + "\n")
