@@ -200,13 +200,64 @@ class stateGenerator:
         print(output)
 
     def attempt_paired_moves(self, m1, m2, neighbors):
-        marble_one = m1 + self.player
-        marble_two = m2 + self.player
+        p = self.player
+        marble_one = m1
+        marble_two = m2
+        index_marble_one = self.input_result.index(marble_one + p)
+        index_marble_two = self.input_result.index(marble_two + p)
+        if p == 'b':
+            opponent = 'w'
+        else:
+            opponent = 'b'
         move_type = neighbors[8]
         # neighbors at indexes 0 and 4 are always in-line. Other neighbors are side-step
         if move_type == 1:
             upwards_in_line = neighbors[0]
+            # if theres an opponent in the way
+            if upwards_in_line + opponent in self.input_result:
+                behind_opponent = chr(ord(upwards_in_line[0]) + 1) + str(int(upwards_in_line[1]) + 1)
+                # if the opponent has 2 marbles in this line
+                if behind_opponent + opponent in self.input_result:
+                    pass
+                else:
+                    index_opponent = self.input_result.index(upwards_in_line + opponent)
+                    current_pieces = self.input_result.copy()
+                    current_pieces[index_opponent] = behind_opponent + opponent
+                    current_pieces[index_marble_one] = chr(ord(marble_one[0]) + 1) + str(int(marble_one[1]) + 1)
+                    current_pieces[index_marble_two] = chr(ord(marble_two[0]) + 1) + str(int(marble_two[1]) + 1)
+            # if theres a friendly marble in the way
+            elif upwards_in_line + p in self.input_result:
+                pass
+            # no marbles in the way
+            else:
+                current_pieces = self.input_result.copy()
+                current_pieces[index_marble_one] = chr(ord(marble_one[0]) + 1) + str(int(marble_one[1]) + 1)
+                current_pieces[index_marble_two] = chr(ord(marble_two[0]) + 1) + str(int(marble_two[1]) + 1)
             downwards_in_line = neighbors[4]
+            # if theres an opponent in the way
+            if downwards_in_line + opponent in self.input_result:
+                behind_opponent = chr(ord(downwards_in_line[0]) - 1) + str(int(downwards_in_line[1]) - 1)
+                # if the opponent has 2 marbles in this line
+                if behind_opponent + opponent in self.input_result:
+                    pass
+                else:
+                    index_opponent = self.input_result.index(downwards_in_line + opponent)
+                    current_pieces = self.input_result.copy()
+                    current_pieces[index_opponent] = behind_opponent + opponent
+                    current_pieces[index_marble_one] = chr(ord(marble_one[0]) - 1) + str(int(marble_one[1]) - 1)
+                    current_pieces[index_marble_two] = chr(ord(marble_two[0]) - 1) + str(int(marble_two[1]) - 1)
+            # if theres a friendly marble in the way
+            elif upwards_in_line + p in self.input_result:
+                pass
+            # no marbles in the way
+            else:
+                current_pieces = self.input_result.copy()
+                current_pieces[index_marble_one] = chr(ord(marble_one[0]) - 1) + str(int(marble_one[1]) - 1)
+                current_pieces[index_marble_two] = chr(ord(marble_two[0]) - 1) + str(int(marble_two[1]) - 1)
+            right_side_step_one = neighbors[1] + neighbors[2]
+            right_side_step_two = neighbors[2] + neighbors[3]
+            left_side_step_one = neighbors[5] + neighbors[6]
+            left_side_step_two = neighbors[6] + neighbors[7]
         # neighbors at indexes 1 and 5 are always in-line. Other neighbors are side-step
         elif move_type == 2:
             right_in_line = neighbors[1]
