@@ -413,9 +413,7 @@ class GameMenu:
                         print('Start!')
                     if event.ui_element == self.stop_button:
                         self.start_game = False
-                        print('Start!')
-                    if event.ui_element == self.pause_button:
-                        print('Pause!')
+                        print('Stop!')
                     if event.ui_element == self.pause_button:
                         print('Pause!')
                     if event.ui_element == self.undo_button:
