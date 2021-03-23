@@ -1,14 +1,14 @@
-LETTER_SHIFT = 69
-NUMBER_SHIFT = 5
+from state_space import StateSpace
 
 
-class ReadFile:
+class StateSpaceGenerator:
     def __init__(self):
-        self.player = None
-        self.input_result = list()
-        self.movements = list()
+        # self.player = None
+        # self.input_result = list()
+        self.marble_positions = list()
         self.marble_movements = list()
         self.board_result = list()
+        self.state_space = None
 
     def read_board_data(self, src):
         # read lines, read board file
@@ -24,21 +24,14 @@ class ReadFile:
         # expected result: [('start player', 'b'), [('b', (0, 2)), ('b', (0, 1)), ('b', (1, 0)), ('b', (0, 0))]}
         with open(src, mode='r', encoding='utf-8') as file:
             lines = [line.strip() for line in file]
-            self.player = lines[0]
-            self.movements = lines[1].split(',')
-            self.input_result.append(("start player", self.player))
-            self.input_result.append(self.movement_player_movements(self.movements))
-            print(self.input_result)
+            player = lines[0]
+            marble_positions = lines[1].split(',')
+            # self.input_result.append(("player_of_the_turn", self.player))
+            # self.input_result.append(self.movement_player_movements(self.marble_positions))
+            # print(self.input_result)
+            self.state_space = StateSpace(marble_positions, player)
+            print(self.state_space)
 
-    # 1st way to read data
-    def movement_player_movements(self, movements):
-        translate_movements = list()
-        # format example: [('b', (0, 2)), ('b', (0, 1)), ('b', (1, 0)), ('b', (0, 0))]
-        for movement in movements:
-            coord = movement[:-1]
-            player = movement[-1]
-            translate_movements.append((player, self.translate_coord(coord)))
-        return translate_movements
 
     # 2nd way to read data
     def distinct_by_player(self, movements):
@@ -55,16 +48,25 @@ class ReadFile:
                 white_marble_movements.append(self.translate_coord(coord))
         return black_marble_movements, white_marble_movements
 
-    @staticmethod
-    def translate_coord(coord):
-        x = NUMBER_SHIFT - int(coord[1])
-        y = LETTER_SHIFT - ord(coord[0])
-        return x, y
+    def generate(self):
+        result_marble_positions = []
+        result_marble_positions += self.state_space.get_singular_move_resulting_marble_positions()
+
+
+
+        return result_marble_positions
+
+
 
 
 def main():
-    read = ReadFile()
-    read.read_input_data("Test1.input")
+    stateSpaceGenerator = StateSpaceGenerator()
+    stateSpaceGenerator.read_input_data("Test1.input")
+    result = stateSpaceGenerator.generate()
+    print("result", len(result))
+    for re in result:
+        print(re)
+
     # read.read_board_data("Test1.board")
 
 

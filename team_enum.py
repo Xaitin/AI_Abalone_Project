@@ -1,10 +1,12 @@
 from enum import Enum
+
 from constants import WHITE_MARBLE_PATH, BLACK_MARBLE_PATH
+
 
 class TeamEnum(Enum):
     WHITE = 1
     BLACK = 2
-    BLUE  = 3
+    BLUE = 3
 
     @staticmethod
     def get_image_path(val):
