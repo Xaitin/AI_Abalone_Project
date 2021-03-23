@@ -242,14 +242,13 @@ class stateGenerator:
             output += (str(v) + "\n")
         print(output)
 
-    def find_groups(self, s):
-        pairs = list()
-        neighbors = find_neighbors(s, True)
-        for neighbor in neighbors:
-            if neighbor + self.player in self.input_result \
-                and neighbor + self.player not in pairs \
-                and neighbor in self.valid_squares:
-
+    # def find_groups(self, s):
+    #     pairs = list()
+    #     neighbors = find_neighbors(s, True)
+    #     for neighbor in neighbors:
+    #         if neighbor + self.player in self.input_result \
+    #             and neighbor + self.player not in pairs \
+    #             and neighbor in self.valid_squares:
 
     def find_pairs(self, s):
         pairs = list()
@@ -360,7 +359,7 @@ class stateGenerator:
                     current_pieces = self.input_result.copy()
                     current_pieces[index_marble_one] = marble_one[0] + str(int(marble_one[1]) - 1) + self.player
                     current_pieces[index_marble_two] = marble_two[0] + str(int(marble_two[1]) - 1) + self.player
-                    self.double_move_states.append(current_pieces)
+                    self.double_move_states.append(self.ten_catch(current_pieces))
                 if neighbors[7] + 'b' in self.input_result or neighbors[7] + 'w' in self.input_result:
                     pass
                 else:
@@ -407,7 +406,7 @@ class stateGenerator:
                     current_pieces[index_opponent] = behind_opponent + opponent
                     current_pieces[index_marble_one] = marble_one[0] + str(int(marble_one[1]) - 1) + self.player
                     current_pieces[index_marble_two] = marble_two[0] + str(int(marble_two[1]) - 1) + self.player
-                    self.double_move_states.append(self.ten_catch(current_pieces))
+                    self.double_move_states.append(self.ten_catch(self.ten_catch(current_pieces)))
             # if theres a friendly marble in the way
             elif right_in_line + p in self.input_result:
                 pass
@@ -476,7 +475,7 @@ class stateGenerator:
                     current_pieces[index_opponent] = behind_opponent + opponent
                     current_pieces[index_marble_one] = chr(ord(marble_one[0]) + 1) + marble_one[1] + self.player
                     current_pieces[index_marble_two] = chr(ord(marble_two[0]) + 1) + marble_two[1] + self.player
-                    self.double_move_states.append(current_pieces)
+                    self.double_move_states.append(self.ten_catch(current_pieces))
             # if theres a friendly marble in the way
             elif upwards_in_line + p in self.input_result:
                 pass
@@ -563,7 +562,7 @@ class stateGenerator:
 
     def find_pairs(self, s):
         pairs = list()
-        neighbors = find_neighbors(s)
+        neighbors = find_neighbors(s, False)
         for neighbor in neighbors:
             if neighbor + self.player in self.input_result \
                     and neighbor + self.player not in pairs \
@@ -597,11 +596,12 @@ def main():
     read.read_input_data("Test2.input")
     read.find_singular_moves()
     read.find_double_moves()
-    read.find_triple_moves()
+    # read.find_triple_moves()
 
 
 
-    # test with set
+
+    # test with set----------------------------------------------------------
     test_result = read.double_move_states + read.single_move_states
     set_result = set(tuple(set(row)) for row in test_result)
     # print(len(set(tuple(row) for row in test_result)))
@@ -610,12 +610,17 @@ def main():
     check_answer.read_board_data("Test2.board")
     check_answer_set = set(tuple(set(row)) for row in check_answer.board_result)
     check_difference = set_result.difference(check_answer_set)
+    check_difference_compare = set_result.symmetric_difference(check_answer_set)
 
+    print("\n\n\n\n")
     print("-" * 20)
     print(len(set_result))
     print(len(check_difference))
-    for line in check_difference:
-        print(line)
+    print(len(check_difference_compare))
+
+    # result but not in the answers
+    for wrong in check_difference_compare.difference(check_difference):
+        print(wrong)
 
 
 if __name__ == '__main__':
