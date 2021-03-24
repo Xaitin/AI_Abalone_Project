@@ -3,22 +3,66 @@ from state_space_generator import StateSpaceGenerator
 
 
 def find_neighbors(s, b):
-    n1 = chr(ord(s[0]) + 1) + str(int(s[1]) + 1)
-    n2 = s[0] + str(int(s[1]) + 1)
-    n3 = chr(ord(s[0]) - 1) + s[1]
-    n4 = chr(ord(s[0]) - 1) + str(int(s[1]) - 1)
-    n5 = s[0] + str(int(s[1]) - 1)
-    n6 = chr(ord(s[0]) + 1) + s[1]
-    return [n1, n2, n3, n4, n5, n6]
+    if b:
+        n1 = chr(ord(s[0]) + 1) + str(int(s[1]) + 1)
+        n2 = s[0] + str(int(s[1]) + 1)
+        n3 = chr(ord(s[0]) - 1) + s[1]
+        n4 = chr(ord(s[0]) - 1) + str(int(s[1]) - 1)
+        n5 = s[0] + str(int(s[1]) - 1)
+        n6 = chr(ord(s[0]) + 1) + s[1]
+        bn1 = chr(ord(s[0]) + 2) + str(int(s[1]) + 2)
+        bn2 = s[0] + str(int(s[1]) + 2)
+        bn3 = chr(ord(s[0]) - 2) + s[1]
+        bn4 = chr(ord(s[0]) - 2) + str(int(s[1]) - 2)
+        bn5 = s[0] + str(int(s[1]) - 2)
+        bn6 = chr(ord(s[0]) + 2) + s[1]
+        return [
+            [n1, bn1],
+            [n2, bn2],
+            [n3, bn3],
+            [n4, bn4],
+            [n5, bn5],
+            [n6, bn6]
+        ]
+    else:
+        n1 = chr(ord(s[0]) + 1) + str(int(s[1]) + 1)
+        n2 = s[0] + str(int(s[1]) + 1)
+        n3 = chr(ord(s[0]) - 1) + s[1]
+        n4 = chr(ord(s[0]) - 1) + str(int(s[1]) - 1)
+        n5 = s[0] + str(int(s[1]) - 1)
+        n6 = chr(ord(s[0]) + 1) + s[1]
+        return [n1, n2, n3, n4, n5, n6]
 
 
-def find_grouped_neighbors(s):
-    char_coord_m1 = ord(s[0])
-    num_coord_m1 = int(s[1])
-    char_coord_m2 = ord(s[3])
-    num_coord_m2 = int(s[4])
-    char_coord_m3 = ord(s[6])
-    num_coord_m3 = int(s[7])
+def find_move_type(groups):
+    new_groups = list()
+    for s in groups:
+        char_coord_m1 = ord(s[0])
+        num_coord_m1 = int(s[1])
+        char_coord_m2 = ord(s[3])
+        num_coord_m2 = int(s[4])
+        if char_coord_m1 < char_coord_m2 and num_coord_m1 < num_coord_m2:
+            move_direction = 1
+        # example E5 and E6
+        elif char_coord_m1 == char_coord_m2 and num_coord_m1 < num_coord_m2:
+            move_direction = 2
+        # example E5 and D5
+        elif char_coord_m1 > char_coord_m2 and num_coord_m1 == num_coord_m2:
+            move_direction = 3
+        # example E5 and D4
+        elif char_coord_m1 > char_coord_m2 and num_coord_m1 > num_coord_m2:
+            move_direction = 1
+        # example E5 and E4
+        elif char_coord_m1 == char_coord_m2 and num_coord_m1 > num_coord_m2:
+            move_direction = 2
+        # example E5 and F5
+        elif char_coord_m1 < char_coord_m2 and num_coord_m1 == num_coord_m2:
+            move_direction = 3
+        else:
+            print("Something went wrong!")
+            return -1
+        new_groups.append(s + str(move_direction))
+    return new_groups
 
 
 def find_paired_neighbors(s):
@@ -159,6 +203,168 @@ def find_paired_neighbors(s):
     return [n1, n2, n3, n4, n5, n6, n7, n8, move_direction]
 
 
+def find_grouped_neighbors(group):
+    char_coord_m1 = ord(group[0])
+    num_coord_m1 = int(group[1])
+    char_coord_m2 = ord(group[6])
+    num_coord_m2 = int(group[7])
+    # sample D4 and F6
+    if char_coord_m1 < char_coord_m2 and num_coord_m1 < num_coord_m2:
+        # Searching with F6
+
+        # n1 = G7
+        n1 = chr(ord(group[6]) + 1) + str(int(group[7]) + 1)
+        # n2 = F7
+        n2 = group[6] + str(int(group[7]) + 1)
+        # n3 = E6
+        n3 = chr(ord(group[6]) - 1) + group[7]
+        # n4 = D5
+        n4 = chr(ord(group[6]) - 2) + str(int(group[7]) - 1)
+        # n5 = C4
+        n5 = chr(ord(group[6]) - 3) + str(int(group[7]) - 2)
+        # n6 = C3
+        n6 = chr(ord(group[6]) - 3) + str(int(group[7]) - 3)
+        # n7 = D3
+        n7 = chr(ord(group[6]) - 2) + str(int(group[7]) - 3)
+        # n8 = E4
+        n8 = chr(ord(group[6]) - 1) + str(int(group[7]) - 2)
+        # n9 = F5
+        n9 = group[6] + str(int(group[7]) - 1)
+        # n10 = G6
+        n10 = chr(ord(group[6]) + 1) + group[7]
+        move_type = 1
+    # example E4 and E6
+    elif char_coord_m1 == char_coord_m2 and num_coord_m1 < num_coord_m2:
+        # Searching with E6
+
+        # n1 = F7
+        n1 = chr(ord(group[6]) + 1) + str(int(group[7]) + 1)
+        # n2 = E7
+        n2 = group[6] + str(int(group[7]) + 1)
+        # n3 = D6
+        n3 = chr(ord(group[6]) - 1) + group[7]
+        # n4 = D5
+        n4 = chr(ord(group[6]) - 1) + str(int(group[7]) - 1)
+        # n5 = D4
+        n5 = chr(ord(group[6]) - 1) + str(int(group[7]) - 2)
+        # n6 = D3
+        n6 = chr(ord(group[6]) - 1) + str(int(group[7]) - 3)
+        # n7 = E3
+        n7 = group[6] + str(int(group[7]) - 3)
+        # n8 = F4
+        n8 = chr(ord(group[6]) + 1) + str(int(group[7]) - 2)
+        # n9 = F5
+        n9 = chr(ord(group[6]) + 1) + str(int(group[7]) - 1)
+        # n10 = F6
+        n10 = chr(ord(group[6]) + 1) + group[7]
+        move_type = 2
+        # example F5 and D5
+    elif char_coord_m1 > char_coord_m2 and num_coord_m1 == num_coord_m2:
+        # Searching with D5
+
+        # n1 = E6
+        n1 = chr(ord(group[6]) + 1) + str(int(group[7]) + 1)
+        # n2 = D6
+        n2 = group[6] + str(int(group[7]) + 1)
+        # n3 = C5
+        n3 = chr(ord(group[6]) - 1) + group[7]
+        # n4 = C4
+        n4 = chr(ord(group[6]) - 1) + str(int(group[7]) - 1)
+        # n5 = D4
+        n5 = group[6] + str(int(group[7]) - 1)
+        # n6 = E4
+        n6 = chr(ord(group[6]) + 1) + str(int(group[7]) - 1)
+        # n7 = F4
+        n7 = chr(ord(group[6]) + 2) + str(int(group[7]) - 1)
+        # n8 = G5
+        n8 = chr(ord(group[6]) + 3) + group[7]
+        # n9 = F6
+        n9 = chr(ord(group[6]) + 2) + str(int(group[7]) + 1)
+        # n10 = E6
+        n10 = chr(ord(group[6]) + 1) + str(int(group[7]) + 1)
+        move_type = 3
+        # example F6 and D4
+    elif char_coord_m1 > char_coord_m2 and num_coord_m1 > num_coord_m2:
+        # Searching with D4
+
+        # n1 = G7
+        n1 = chr(ord(group[6]) + 3) + str(int(group[7]) + 3)
+        # n2 = F7
+        n2 = chr(ord(group[6]) + 2) + str(int(group[7]) + 3)
+        # n3 = E6
+        n3 = chr(ord(group[6]) + 1) + str(int(group[7]) + 2)
+        # n4 = D5
+        n4 = group[6] + str(int(group[7]) + 1)
+        # n5 = C4
+        n5 = chr(ord(group[6]) - 1) + group[7]
+        # n6 = C3
+        n6 = chr(ord(group[6]) - 1) + str(int(group[7]) - 1)
+        # n7 = D3
+        n7 = group[6] + str(int(group[7]) - 1)
+        # n8 = E4
+        n8 = chr(ord(group[6]) + 1) + group[7]
+        # n9 = F5
+        n9 = chr(ord(group[6]) + 2) + str(int(group[7]) + 1)
+        # n10 = G6
+        n10 = chr(ord(group[6]) + 3) + str(int(group[7]) + 2)
+        move_type = 1
+        # example E6 and E4
+    elif char_coord_m1 == char_coord_m2 and num_coord_m1 > num_coord_m2:
+        # Searching with E4
+
+        # n1 = F7
+        n1 = chr(ord(group[6]) + 1) + str(int(group[7]) + 3)
+        # n2 = E7
+        n2 = group[6] + str(int(group[7]) + 3)
+        # n3 = D6
+        n3 = chr(ord(group[6]) - 1) + str(int(group[7]) + 2)
+        # n4 = D5
+        n4 = chr(ord(group[6]) - 1) + str(int(group[7]) + 1)
+        # n5 = D4
+        n5 = chr(ord(group[6]) - 1) + group[7]
+        # n6 = D3
+        n6 = chr(ord(group[6]) - 1) + str(int(group[7]) - 1)
+        # n7 = E3
+        n7 = group[6] + str(int(group[7]) - 1)
+        # n8 = F4
+        n8 = chr(ord(group[6]) + 1) + group[7]
+        # n9 = F5
+        n9 = chr(ord(group[6]) + 1) + str(int(group[7]) + 1)
+        # n10 = F6
+        n10 = chr(ord(group[6]) + 1) + str(int(group[7]) + 2)
+        move_type = 2
+        # example D5 and F5
+    elif char_coord_m1 < char_coord_m2 and num_coord_m1 == num_coord_m2:
+        # Searching with F5
+
+        # n1 = E6
+        n1 = chr(ord(group[6]) - 1) + str(int(group[7]) + 1)
+        # n2 = D6
+        n2 = chr(ord(group[6]) - 2) + str(int(group[7]) + 1)
+        # n3 = C5
+        n3 = chr(ord(group[6]) - 3) + group[7]
+        # n4 = C4
+        n4 = chr(ord(group[6]) - 3) + str(int(group[7]) - 1)
+        # n5 = D4
+        n5 = chr(ord(group[6]) - 2) + str(int(group[7]) - 1)
+        # n6 = E4
+        n6 = chr(ord(group[6]) - 1) + str(int(group[7]) - 1)
+        # n7 = F4
+        n7 = group[6] + str(int(group[7]) - 1)
+        # n8 = G5
+        n8 = chr(ord(group[6]) + 1) + group[7]
+        # n9 = F6
+        n9 = group[6] + str(int(group[7]) + 1)
+        # n10 = E6
+        n10 = chr(ord(group[6]) - 1) + str(int(group[7]) + 1)
+        move_type = 3
+    else:
+        print("Something went wrong!")
+        return -1
+
+    return [n1, n2, n3, n4, n5, n6, n7, n8, n9, n10, move_type]
+
+
 class stateGenerator:
     def __init__(self):
         self.player = None
@@ -216,40 +422,489 @@ class stateGenerator:
                 selections = self.find_groups(marble)
                 for selection in selections:
                     combinations = [
-                        [marble + selection[0] + selection[1]],
-                        [marble + selection[1] + selection[2]],
-                        [selection[1] + marble + selection[0]],
-                        [selection[0] + marble + selection[1]],
-                        [selection[0] + selection[1] + marble],
-                        [selection[1] + selection[0] + marble]
+                        [marble + (selection[0] + self.player) + (selection[1] + self.player)],
+                        [marble + (selection[1] + self.player) + (selection[0] + self.player)],
+                        [(selection[1] + self.player) + marble + (selection[0] + self.player)],
+                        [(selection[0] + self.player) + marble + (selection[1] + self.player)],
+                        [(selection[0] + self.player) + (selection[1] + self.player) + marble],
+                        [(selection[1] + self.player) + (selection[0] + self.player) + marble]
                     ]
                     exists = True
                     for combination in combinations:
-                        if combination in grouped_selections:
+                        if combination[0] in grouped_selections:
+                            exists = False
+                        m1 = combination[0][0] + combination[0][1]
+                        m2 = combination[0][3] + combination[0][4]
+                        m3 = combination[0][6] + combination[0][7]
+                        if m1 not in self.valid_squares or m2 not in self.valid_squares or m3 not in self.valid_squares:
                             exists = False
                     if exists:
-                        grouped_selections.append(combinations[0])
-        for group in grouped_selections:
-            formatted_group = str(group).translate(str.maketrans('', '', string.punctuation))
-            neighbors = find_grouped_neighbors(formatted_group)
-            m1 = formatted_group[0] + formatted_group[1]
-            m2 = formatted_group[3] + formatted_group[4]
-            m3 = formatted_group[6] + formatted_group[7]
-            # self.attempt_grouped_moves(m1, m2, m3, neighbors)
+                        grouped_selections.append(combinations[0][0])
+        self.attempt_grouped_moves(grouped_selections)
         print("\nPrinting Triple Moves\n")
         output = ""
         for v in self.triple_move_states:
             output += (str(v) + "\n")
         print(output)
 
+    def attempt_grouped_moves(self, groups):
+        for group in groups:
+            neighbors = find_grouped_neighbors(group)
+            move_type = neighbors[10]
+            p = self.player
+            marble_one = group[0] + group[1]
+            marble_two = group[3] + group[4]
+            marble_three = group[6] + group[7]
+            index_marble_one = self.input_result.index(marble_one + p)
+            index_marble_two = self.input_result.index(marble_two + p)
+            index_marble_three = self.input_result.index(marble_three + p)
+            if p == 'b':
+                opponent = 'w'
+            else:
+                opponent = 'b'
+            if move_type == 1:
+                upwards_in_line = neighbors[0]
+                # if theres an opponent in the way
+                if upwards_in_line + opponent in self.input_result:
+                    behind_opponent = chr(ord(upwards_in_line[0]) + 1) + str(int(upwards_in_line[1]) + 1)
+                    # if theres a friendly marble behind opponent
+                    if behind_opponent + self.player in self.input_result:
+                        pass
+                    # if theres an opponent behind opponent
+                    elif behind_opponent + opponent in self.input_result:
+                        behind_opponent_2 = chr(ord(upwards_in_line[0]) + 2) + str(int(upwards_in_line[1]) + 2)
+                        # if there is 3 opponents lined up
+                        if behind_opponent_2 + opponent in self.input_result:
+                            pass
+                        # only 2 opponent lined up, can push
+                        else:
+                            index_opponent = self.input_result.index(upwards_in_line + opponent)
+                            current_pieces = self.input_result.copy()
+                            current_pieces[index_opponent] = chr(ord(upwards_in_line[0]) + 2) + str(int(upwards_in_line[1]) + 2)
+                            current_pieces[index_marble_one] = chr(ord(marble_one[0]) + 1) + str(
+                                int(marble_one[1]) + 1) + self.player
+                            current_pieces[index_marble_two] = chr(ord(marble_two[0]) + 1) + str(
+                                int(marble_two[1]) + 1) + self.player
+                            current_pieces[index_marble_three] = chr(ord(marble_three[0]) + 1) + str(
+                                int(marble_three[1]) + 1) + self.player
+                            self.double_move_states.append(self.ten_catch(current_pieces))
+                    else:
+                        index_opponent = self.input_result.index(upwards_in_line + opponent)
+                        current_pieces = self.input_result.copy()
+                        current_pieces[index_opponent] = behind_opponent + opponent
+                        current_pieces[index_marble_one] = chr(ord(marble_one[0]) + 1) + str(
+                            int(marble_one[1]) + 1) + self.player
+                        current_pieces[index_marble_two] = chr(ord(marble_two[0]) + 1) + str(
+                            int(marble_two[1]) + 1) + self.player
+                        current_pieces[index_marble_three] = chr(ord(marble_three[0]) + 1) + str(
+                            int(marble_three[1]) + 1) + self.player
+                        self.double_move_states.append(self.ten_catch(current_pieces))
+                # if theres a friendly marble in the way
+                elif upwards_in_line + p in self.input_result:
+                    pass
+                # no marbles in the way
+                else:
+                    current_pieces = self.input_result.copy()
+                    current_pieces[index_marble_one] = chr(ord(marble_one[0]) + 1) + str(
+                        int(marble_one[1]) + 1) + self.player
+                    current_pieces[index_marble_two] = chr(ord(marble_two[0]) + 1) + str(
+                        int(marble_two[1]) + 1) + self.player
+                    current_pieces[index_marble_three] = chr(ord(marble_three[0]) + 1) + str(
+                        int(marble_three[1]) + 1) + self.player
+                    self.double_move_states.append(self.ten_catch(current_pieces))
+
+                downwards_in_line = neighbors[4]
+                # if theres an opponent in the way
+                if downwards_in_line + opponent in self.input_result:
+                    behind_opponent = chr(ord(downwards_in_line[0]) - 1) + str(int(downwards_in_line[1]) - 1)
+                    # if theres a friendly marble behind opponent
+                    if behind_opponent + self.player in self.input_result:
+                        pass
+                    # if theres an opponent behind opponent
+                    elif behind_opponent + opponent in self.input_result:
+                        behind_opponent_2 = chr(ord(downwards_in_line[0]) - 2) + str(int(downwards_in_line[1]) - 2)
+                        # if there is 3 opponents lined up
+                        if behind_opponent_2 + opponent in self.input_result:
+                            pass
+                        # only 2 opponent lined up, can push
+                        else:
+                            index_opponent = self.input_result.index(downwards_in_line + opponent)
+                            current_pieces = self.input_result.copy()
+                            current_pieces[index_opponent] = chr(ord(downwards_in_line[0]) - 2) + str(
+                                int(downwards_in_line[1]) - 2)
+                            current_pieces[index_marble_one] = chr(ord(marble_one[0]) - 1) + str(
+                                int(marble_one[1]) - 1) + self.player
+                            current_pieces[index_marble_two] = chr(ord(marble_two[0]) - 1) + str(
+                                int(marble_two[1]) - 1) + self.player
+                            current_pieces[index_marble_three] = chr(ord(marble_three[0]) - 1) + str(
+                                int(marble_three[1]) - 1) + self.player
+                            self.double_move_states.append(self.ten_catch(current_pieces))
+                    else:
+                        index_opponent = self.input_result.index(upwards_in_line + opponent)
+                        current_pieces = self.input_result.copy()
+                        current_pieces[index_opponent] = behind_opponent + opponent
+                        current_pieces[index_marble_one] = chr(ord(marble_one[0]) - 1) + str(
+                            int(marble_one[1]) - 1) + self.player
+                        current_pieces[index_marble_two] = chr(ord(marble_two[0]) - 1) + str(
+                            int(marble_two[1]) - 1) + self.player
+                        current_pieces[index_marble_three] = chr(ord(marble_three[0]) - 1) + str(
+                            int(marble_three[1]) - 1) + self.player
+                        self.double_move_states.append(self.ten_catch(current_pieces))
+                    # if theres a friendly marble in the way
+                elif upwards_in_line + p in self.input_result:
+                    pass
+                    # no marbles in the way
+                else:
+                    current_pieces = self.input_result.copy()
+                    current_pieces[index_marble_one] = chr(ord(marble_one[0]) - 1) + str(
+                        int(marble_one[1]) - 1) + self.player
+                    current_pieces[index_marble_two] = chr(ord(marble_two[0]) - 1) + str(
+                        int(marble_two[1]) - 1) + self.player
+                    current_pieces[index_marble_three] = chr(ord(marble_three[0]) - 1) + str(
+                        int(marble_three[1]) - 1) + self.player
+                    self.double_move_states.append(self.ten_catch(current_pieces))
+                # cant side step to right.
+                if neighbors[2] + 'b' in self.input_result or neighbors[2] + 'w' in self.input_result \
+                        and neighbors[3] + 'b' in self.input_result or neighbors[3] + 'w' in self.input_result:
+                    pass
+                else:
+                    if neighbors[1] + 'b' in self.input_result or neighbors[1] + 'w' in self.input_result:
+                        pass
+                    else:
+                        # perform side step one
+                        current_pieces = self.input_result.copy()
+                        current_pieces[index_marble_one] = marble_one[0] + str(int(marble_one[1]) + 1) + self.player
+                        current_pieces[index_marble_two] = marble_two[0] + str(int(marble_two[1]) + 1) + self.player
+                        current_pieces[index_marble_three] = marble_three[0] + str(int(marble_three[1]) + 1) + self.player
+                        self.double_move_states.append(self.ten_catch(current_pieces))
+                    if neighbors[4] + 'b' in self.input_result or neighbors[4] + 'w' in self.input_result:
+                        pass
+                    else:
+                        # perform side step two
+                        current_pieces = self.input_result.copy()
+                        current_pieces[index_marble_one] = chr(ord(marble_one[0]) - 1) + marble_one[1] + self.player
+                        current_pieces[index_marble_two] = chr(ord(marble_two[0]) - 1) + marble_two[1] + self.player
+                        current_pieces[index_marble_three] = chr(ord(marble_three[0]) - 1) + marble_three[1] + self.player
+                        self.double_move_states.append(self.ten_catch(current_pieces))
+                # cant side step to left.
+                if neighbors[7] + 'b' in self.input_result or neighbors[7] + 'w' in self.input_result \
+                        and neighbors[8] + 'b' in self.input_result or neighbors[8] + 'w' in self.input_result:
+                    pass
+                else:
+                    if neighbors[6] + 'b' in self.input_result or neighbors[6] + 'w' in self.input_result:
+                        pass
+                    else:
+                        # perform side step one
+                        current_pieces = self.input_result.copy()
+                        current_pieces[index_marble_one] = marble_one[0] + str(int(marble_one[1]) - 1) + self.player
+                        current_pieces[index_marble_two] = marble_two[0] + str(int(marble_two[1]) - 1) + self.player
+                        current_pieces[index_marble_three] = marble_three[0] + str(int(marble_three[1]) - 1) + self.player
+                        self.double_move_states.append(current_pieces)
+                    if neighbors[9] + 'b' in self.input_result or neighbors[9] + 'w' in self.input_result:
+                        pass
+                    else:
+                        # perform side step two
+                        current_pieces = self.input_result.copy()
+                        current_pieces[index_marble_one] = chr(ord(marble_one[0]) + 1) + marble_one[1] + self.player
+                        current_pieces[index_marble_two] = chr(ord(marble_two[0]) + 1) + marble_two[1] + self.player
+                        current_pieces[index_marble_three] = chr(ord(marble_three[0]) + 1) + marble_three[1] + self.player
+                        self.double_move_states.append(self.ten_catch(current_pieces))
+            elif move_type == 2:
+                upwards_in_line = neighbors[1]
+                # if theres an opponent in the way
+                if upwards_in_line + opponent in self.input_result:
+                    behind_opponent = upwards_in_line[0] + str(int(upwards_in_line[1]) + 1)
+                    # if theres a friendly marble behind opponent
+                    if behind_opponent + self.player in self.input_result:
+                        pass
+                    # if theres an opponent behind opponent
+                    elif behind_opponent + opponent in self.input_result:
+                        behind_opponent_2 = upwards_in_line[0] + str(int(upwards_in_line[1]) + 2)
+                        # if there is 3 opponents lined up
+                        if behind_opponent_2 + opponent in self.input_result:
+                            pass
+                        # only 2 opponent lined up, can push
+                        else:
+                            index_opponent = self.input_result.index(upwards_in_line + opponent)
+                            current_pieces = self.input_result.copy()
+                            current_pieces[index_opponent] = upwards_in_line[0] + str(int(upwards_in_line[1]) + 2)
+                            current_pieces[index_marble_one] = marble_one[0] + str(
+                                int(marble_one[1]) + 1) + self.player
+                            current_pieces[index_marble_two] = marble_two[0] + str(
+                                int(marble_two[1]) + 1) + self.player
+                            current_pieces[index_marble_three] = marble_three[0] + str(
+                                int(marble_three[1]) + 1) + self.player
+                            self.double_move_states.append(self.ten_catch(current_pieces))
+                    else:
+                        index_opponent = self.input_result.index(upwards_in_line + opponent)
+                        current_pieces = self.input_result.copy()
+                        current_pieces[index_opponent] = behind_opponent + opponent
+                        current_pieces[index_marble_one] = marble_one[0] + str(
+                            int(marble_one[1]) + 1) + self.player
+                        current_pieces[index_marble_two] = marble_two[0] + str(
+                            int(marble_two[1]) + 1) + self.player
+                        current_pieces[index_marble_three] = marble_three[0] + str(
+                            int(marble_three[1]) + 1) + self.player
+                        self.double_move_states.append(self.ten_catch(current_pieces))
+                # if theres a friendly marble in the way
+                elif upwards_in_line + p in self.input_result:
+                    pass
+                # no marbles in the way
+                else:
+                    current_pieces = self.input_result.copy()
+                    current_pieces[index_marble_one] = marble_one[0] + str(
+                        int(marble_one[1]) + 1) + self.player
+                    current_pieces[index_marble_two] = marble_two[0] + str(
+                        int(marble_two[1]) + 1) + self.player
+                    current_pieces[index_marble_three] = marble_three[0] + str(
+                        int(marble_three[1]) + 1) + self.player
+                    self.double_move_states.append(self.ten_catch(current_pieces))
+
+                downwards_in_line = neighbors[6]
+                # if theres an opponent in the way
+                if downwards_in_line + opponent in self.input_result:
+                    behind_opponent = downwards_in_line[0] + str(int(downwards_in_line[1]) - 1)
+                    # if theres a friendly marble behind opponent
+                    if behind_opponent + self.player in self.input_result:
+                        pass
+                    # if theres an opponent behind opponent
+                    elif behind_opponent + opponent in self.input_result:
+                        behind_opponent_2 = downwards_in_line[0] + str(int(downwards_in_line[1]) - 2)
+                        # if there is 3 opponents lined up
+                        if behind_opponent_2 + opponent in self.input_result:
+                            pass
+                        # only 2 opponent lined up, can push
+                        else:
+                            index_opponent = self.input_result.index(downwards_in_line + opponent)
+                            current_pieces = self.input_result.copy()
+                            current_pieces[index_opponent] = downwards_in_line[0] + str(
+                                int(downwards_in_line[1]) - 2)
+                            current_pieces[index_marble_one] = marble_one[0] + str(
+                                int(marble_one[1]) - 1) + self.player
+                            current_pieces[index_marble_two] = marble_two[0] + str(
+                                int(marble_two[1]) - 1) + self.player
+                            current_pieces[index_marble_three] = marble_three[0] + str(
+                                int(marble_three[1]) - 1) + self.player
+                            self.double_move_states.append(self.ten_catch(current_pieces))
+                    else:
+                        index_opponent = self.input_result.index(upwards_in_line + opponent)
+                        current_pieces = self.input_result.copy()
+                        current_pieces[index_opponent] = behind_opponent + opponent
+                        current_pieces[index_marble_one] = marble_one[0] + str(
+                            int(marble_one[1]) - 1) + self.player
+                        current_pieces[index_marble_two] = marble_two[0] + str(
+                            int(marble_two[1]) - 1) + self.player
+                        current_pieces[index_marble_three] = marble_three[0] + str(
+                            int(marble_three[1]) - 1) + self.player
+                        self.double_move_states.append(self.ten_catch(current_pieces))
+                    # if theres a friendly marble in the way
+                elif upwards_in_line + p in self.input_result:
+                    pass
+                    # no marbles in the way
+                else:
+                    current_pieces = self.input_result.copy()
+                    current_pieces[index_marble_one] = marble_one[0] + str(
+                        int(marble_one[1]) - 1) + self.player
+                    current_pieces[index_marble_two] = marble_two[0] + str(
+                        int(marble_two[1]) - 1) + self.player
+                    current_pieces[index_marble_three] = marble_three[0] + str(
+                        int(marble_three[1]) - 1) + self.player
+                    self.double_move_states.append(self.ten_catch(current_pieces))
+                # cant side step up.
+                if neighbors[8] + 'b' in self.input_result or neighbors[8] + 'w' in self.input_result \
+                        and neighbors[9] + 'b' in self.input_result or neighbors[9] + 'w' in self.input_result:
+                    pass
+                else:
+                    if neighbors[0] + 'b' in self.input_result or neighbors[0] + 'w' in self.input_result:
+                        pass
+                    else:
+                        # perform side step one
+                        current_pieces = self.input_result.copy()
+                        current_pieces[index_marble_one] = chr(ord(marble_one[0]) + 1) + str(int(marble_one[1]) + 1) + self.player
+                        current_pieces[index_marble_two] = chr(ord(marble_two[0]) + 1) + str(int(marble_two[1]) + 1) + self.player
+                        current_pieces[index_marble_three] = chr(ord(marble_three[0]) + 1) + str(int(marble_three[1]) + 1) + self.player
+                        self.double_move_states.append(self.ten_catch(current_pieces))
+                    if neighbors[7] + 'b' in self.input_result or neighbors[7] + 'w' in self.input_result:
+                        pass
+                    else:
+                        # perform side step two
+                        current_pieces = self.input_result.copy()
+                        current_pieces[index_marble_one] = chr(ord(marble_one[0]) + 1) + marble_one[1] + self.player
+                        current_pieces[index_marble_two] = chr(ord(marble_two[0]) + 1) + marble_two[1] + self.player
+                        current_pieces[index_marble_three] = chr(ord(marble_three[0]) + 1) + marble_three[1] + self.player
+                        self.double_move_states.append(self.ten_catch(current_pieces))
+                # cant side step down.
+                if neighbors[3] + 'b' in self.input_result or neighbors[3] + 'w' in self.input_result \
+                        and neighbors[4] + 'b' in self.input_result or neighbors[4] + 'w' in self.input_result:
+                    pass
+                else:
+                    if neighbors[2] + 'b' in self.input_result or neighbors[2] + 'w' in self.input_result:
+                        pass
+                    else:
+                        # perform side step one
+                        current_pieces = self.input_result.copy()
+                        current_pieces[index_marble_one] = chr(ord(marble_one[0]) - 1) + marble_one[1] + self.player
+                        current_pieces[index_marble_two] = chr(ord(marble_two[0]) - 1) + marble_two[1] + self.player
+                        current_pieces[index_marble_three] = chr(ord(marble_three[0]) - 1) + marble_three[1] + self.player
+                        self.double_move_states.append(current_pieces)
+                    if neighbors[5] + 'b' in self.input_result or neighbors[5] + 'w' in self.input_result:
+                        pass
+                    else:
+                        # perform side step two
+                        current_pieces = self.input_result.copy()
+                        current_pieces[index_marble_one] = chr(ord(marble_one[0]) - 1) + str(
+                            int(marble_one[1]) - 1) + self.player
+                        current_pieces[index_marble_two] = chr(ord(marble_two[0]) - 1) + str(
+                            int(marble_two[1]) - 1) + self.player
+                        current_pieces[index_marble_three] = chr(ord(marble_three[0]) - 1) + str(
+                            int(marble_three[1]) - 1) + self.player
+                        self.double_move_states.append(self.ten_catch(current_pieces))
+            elif move_type == 3:
+                upwards_in_line = neighbors[9]
+                # if theres an opponent in the way
+                if upwards_in_line + opponent in self.input_result:
+                    behind_opponent = chr(ord(upwards_in_line[0]) + 1) + upwards_in_line[1]
+                    # if theres a friendly marble behind opponent
+                    if behind_opponent + self.player in self.input_result:
+                        pass
+                    # if theres an opponent behind opponent
+                    elif behind_opponent + opponent in self.input_result:
+                        behind_opponent_2 = chr(ord(upwards_in_line[0]) + 2) + upwards_in_line[1]
+                        # if there is 3 opponents lined up
+                        if behind_opponent_2 + opponent in self.input_result:
+                            pass
+                        # only 2 opponent lined up, can push
+                        else:
+                            index_opponent = self.input_result.index(upwards_in_line + opponent)
+                            current_pieces = self.input_result.copy()
+                            current_pieces[index_opponent] = chr(ord(upwards_in_line[0]) + 2) + upwards_in_line[1]
+                            current_pieces[index_marble_one] = chr(ord(marble_one[0]) + 1) + marble_one[1] + self.player
+                            current_pieces[index_marble_two] = chr(ord(marble_two[0]) + 1) + marble_two[1] + self.player
+                            current_pieces[index_marble_three] = chr(ord(marble_three[0]) + 1) + marble_three[1] + self.player
+                            self.double_move_states.append(self.ten_catch(current_pieces))
+                    else:
+                        index_opponent = self.input_result.index(upwards_in_line + opponent)
+                        current_pieces = self.input_result.copy()
+                        current_pieces[index_opponent] = behind_opponent + opponent
+                        current_pieces[index_marble_one] = chr(ord(marble_one[0]) + 1) + marble_one[1] + self.player
+                        current_pieces[index_marble_two] = chr(ord(marble_two[0]) + 1) + marble_two[1] + self.player
+                        current_pieces[index_marble_three] = chr(ord(marble_three[0]) + 1) + marble_three[1] + self.player
+                        self.double_move_states.append(self.ten_catch(current_pieces))
+                # if theres a friendly marble in the way
+                elif upwards_in_line + p in self.input_result:
+                    pass
+                # no marbles in the way
+                else:
+                    current_pieces = self.input_result.copy()
+                    current_pieces[index_marble_one] = chr(ord(marble_one[0]) + 1) + marble_one[1] + self.player
+                    current_pieces[index_marble_two] = chr(ord(marble_two[0]) + 1) + marble_two[1] + self.player
+                    current_pieces[index_marble_three] = chr(ord(marble_three[0]) + 1) + marble_three[1] + self.player
+                    self.double_move_states.append(self.ten_catch(current_pieces))
+
+                downwards_in_line = neighbors[4]
+                # if theres an opponent in the way
+                if downwards_in_line + opponent in self.input_result:
+                    behind_opponent = chr(ord(downwards_in_line[0]) - 1) + downwards_in_line[1]
+                    # if theres a friendly marble behind opponent
+                    if behind_opponent + self.player in self.input_result:
+                        pass
+                    # if theres an opponent behind opponent
+                    elif behind_opponent + opponent in self.input_result:
+                        behind_opponent_2 = chr(ord(downwards_in_line[0]) - 2) + downwards_in_line[1]
+                        # if there is 3 opponents lined up
+                        if behind_opponent_2 + opponent in self.input_result:
+                            pass
+                        # only 2 opponent lined up, can push
+                        else:
+                            index_opponent = self.input_result.index(downwards_in_line + opponent)
+                            current_pieces = self.input_result.copy()
+                            current_pieces[index_opponent] = chr(ord(downwards_in_line[0]) - 2) + downwards_in_line[1]
+                            current_pieces[index_marble_one] = chr(ord(marble_one[0]) - 1) + marble_one[1] + self.player
+                            current_pieces[index_marble_two] = chr(ord(marble_two[0]) - 1) + marble_two[1] + self.player
+                            current_pieces[index_marble_three] = chr(ord(marble_three[0]) - 1) + marble_three[1] + self.player
+                            self.double_move_states.append(self.ten_catch(current_pieces))
+                    else:
+                        index_opponent = self.input_result.index(upwards_in_line + opponent)
+                        current_pieces = self.input_result.copy()
+                        current_pieces[index_opponent] = behind_opponent + opponent
+                        current_pieces[index_marble_one] = chr(ord(marble_one[0]) - 1) + marble_one[1] + self.player
+                        current_pieces[index_marble_two] = chr(ord(marble_two[0]) - 1) + marble_two[1] + self.player
+                        current_pieces[index_marble_three] = chr(ord(marble_three[0]) - 1) + marble_three[1] + self.player
+                        self.double_move_states.append(self.ten_catch(current_pieces))
+                    # if theres a friendly marble in the way
+                elif upwards_in_line + p in self.input_result:
+                    pass
+                    # no marbles in the way
+                else:
+                    current_pieces = self.input_result.copy()
+                    current_pieces[index_marble_one] = chr(ord(marble_one[0]) - 1) + marble_one[1] + self.player
+                    current_pieces[index_marble_two] = chr(ord(marble_two[0]) - 1) + marble_two[1] + self.player
+                    current_pieces[index_marble_three] = chr(ord(marble_three[0]) - 1) + str(
+                        int(marble_three[1]) - 1) + self.player
+                    self.double_move_states.append(self.ten_catch(current_pieces))
+                # cant side step to right.
+                if neighbors[2] + 'b' in self.input_result or neighbors[2] + 'w' in self.input_result \
+                        and neighbors[3] + 'b' in self.input_result or neighbors[3] + 'w' in self.input_result:
+                    pass
+                else:
+                    if neighbors[1] + 'b' in self.input_result or neighbors[1] + 'w' in self.input_result:
+                        pass
+                    else:
+                        # perform side step one
+                        current_pieces = self.input_result.copy()
+                        current_pieces[index_marble_one] = marble_one[0] + str(int(marble_one[1]) + 1) + self.player
+                        current_pieces[index_marble_two] = marble_two[0] + str(int(marble_two[1]) + 1) + self.player
+                        current_pieces[index_marble_three] = marble_three[0] + str(
+                            int(marble_three[1]) + 1) + self.player
+                        self.double_move_states.append(self.ten_catch(current_pieces))
+                    if neighbors[4] + 'b' in self.input_result or neighbors[4] + 'w' in self.input_result:
+                        pass
+                    else:
+                        # perform side step two
+                        current_pieces = self.input_result.copy()
+                        current_pieces[index_marble_one] = chr(ord(marble_one[0]) - 1) + marble_one[1] + self.player
+                        current_pieces[index_marble_two] = chr(ord(marble_two[0]) - 1) + marble_two[1] + self.player
+                        current_pieces[index_marble_three] = chr(ord(marble_three[0]) - 1) + marble_three[
+                            1] + self.player
+                        self.double_move_states.append(self.ten_catch(current_pieces))
+                # cant side step to left.
+                if neighbors[7] + 'b' in self.input_result or neighbors[7] + 'w' in self.input_result \
+                        and neighbors[8] + 'b' in self.input_result or neighbors[8] + 'w' in self.input_result:
+                    pass
+                else:
+                    if neighbors[6] + 'b' in self.input_result or neighbors[6] + 'w' in self.input_result:
+                        pass
+                    else:
+                        # perform side step one
+                        current_pieces = self.input_result.copy()
+                        current_pieces[index_marble_one] = marble_one[0] + str(int(marble_one[1]) - 1) + self.player
+                        current_pieces[index_marble_two] = marble_two[0] + str(int(marble_two[1]) - 1) + self.player
+                        current_pieces[index_marble_three] = marble_three[0] + str(
+                            int(marble_three[1]) - 1) + self.player
+                        self.double_move_states.append(current_pieces)
+                    if neighbors[9] + 'b' in self.input_result or neighbors[9] + 'w' in self.input_result:
+                        pass
+                    else:
+                        # perform side step two
+                        current_pieces = self.input_result.copy()
+                        current_pieces[index_marble_one] = chr(ord(marble_one[0]) + 1) + marble_one[1] + self.player
+                        current_pieces[index_marble_two] = chr(ord(marble_two[0]) + 1) + marble_two[1] + self.player
+                        current_pieces[index_marble_three] = chr(ord(marble_three[0]) + 1) + marble_three[
+                            1] + self.player
+                        self.double_move_states.append(self.ten_catch(current_pieces))
+
     def find_groups(self, s):
         pairs = list()
         neighbors = find_neighbors(s, True)
         for neighbor in neighbors:
-            if neighbor + self.player in self.input_result \
-                and neighbor + self.player not in pairs \
-                and neighbor in self.valid_squares:
-
+            all_neighbors_friendly = False
+            for n in neighbor:
+                if n in self.valid_squares \
+                        and n + self.player in self.input_result:
+                    all_neighbors_friendly = True
+            if all_neighbors_friendly:
+                pairs.append(neighbor)
+        return pairs
 
     def find_pairs(self, s):
         pairs = list()
@@ -561,16 +1216,6 @@ class stateGenerator:
                 current_pieces.remove(piece)
         return current_pieces
 
-    def find_pairs(self, s):
-        pairs = list()
-        neighbors = find_neighbors(s)
-        for neighbor in neighbors:
-            if neighbor + self.player in self.input_result \
-                    and neighbor + self.player not in pairs \
-                    and neighbor in self.valid_squares:
-                pairs.append(neighbor + self.player)
-        return pairs
-
     def find_singular_moves(self):
         for marble in self.input_result:
             if marble[2] == self.player:
@@ -598,8 +1243,6 @@ def main():
     read.find_singular_moves()
     read.find_double_moves()
     read.find_triple_moves()
-
-
 
     # test with set
     test_result = read.double_move_states + read.single_move_states
