@@ -34,40 +34,61 @@ class StateSpaceGenerator:
             self.state_space = StateSpace(marble_positions, player)
             print(self.state_space)
 
-
-    # # 2nd way to read data
-    # def distinct_by_player(self, movements):
-    #     # format example: result = ([(-1, 2), (0, 1), (-1, 0), (-1, -3)], [(2, 2), (1, 2), (2, 1), (-3, -3), (-4, -3)])
-    #     # result[0]: black, result[1]: white
-    #     black_marble_movements = list()
-    #     white_marble_movements = list()
-    #     for movement in movements:
-    #         coord = movement[:-1]
-    #         player = movement[-1]
-    #         if player == 'b':
-    #             black_marble_movements.append(self.translate_coord(coord))
-    #         else:
-    #             white_marble_movements.append(self.translate_coord(coord))
-    #     return black_marble_movements, white_marble_movements
+    def write_result_data(self, src, result):
+        with open(src, mode='w') as file:
+            for line in result:
+                _str = ""
+                for marble in line:
+                    _str += marble + ","
+                file.write(_str[:-1] + "\n")
 
     def generate(self):
-        result_marble_positions = []
-        result_marble_positions += self.state_space.get_singular_move_resulting_marble_positions()
+        singular_moves = self.state_space.get_singular_move_resulting_marble_positions()
+        double_moves = self.state_space.get_double_marble_move_resulting_marble_positions()
+        triple_moves = self.state_space.get_triple_marble_move_resulting_marble_positions()
+        print("singular:", len(singular_moves), "double:", len(double_moves), "triple:", len(triple_moves))
 
-
-
-        return result_marble_positions
-
-
+        return singular_moves + double_moves + triple_moves
 
 
 def main():
-    stateSpaceGenerator = StateSpaceGenerator()
-    # stateSpaceGenerator.read_input_data("Test1.input")
-    # result = stateSpaceGenerator.generate()
+    file_name = "Test1"
+    state_space_generator = StateSpaceGenerator()
+    state_space_generator.read_input_data(file_name + ".input")
+    result = state_space_generator.generate()
+
+    state_space_generator.write_result_data(src=file_name + "_gen" + ".board", result=result)
+    #
     # print("result", len(result))
     # for re in result:
-    #     print(re)
+    #     # print(re)
+    #     _str = ""
+    #     for marble in re:
+    #         _str += marble + " "
+    #     # print(_str)
+    #
+    # # test with sort----------------------------------------------------------
+    # # test_result = read.double_move_states + read.single_move_states
+    # # set_result = [sorted(row) for row in test_result]
+    # check_answer = StateSpaceGenerator()
+    # check_answer.read_board_data(file_name + ".board")
+    #
+    # # print(len(set(tuple(row) for row in result)))
+    # print()
+    #
+    # count = 0
+    # for line in result:
+    #     if line not in check_answer.board_result:
+    #         count += 1
+    #         print(line)
+    # print("how many are wrong?", count)
+    #
+    # count = 0
+    # for line in check_answer.board_result:
+    #     if line not in result:
+    #         count += 1
+    #         print(line)
+    # print("how many are missing?", count)
 
     # read.read_board_data("Test1.board")
 

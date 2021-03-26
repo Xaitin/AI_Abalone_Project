@@ -18,9 +18,10 @@ class CoordinateHelper:
         return _left, _top
 
     @staticmethod
-    def from2DArraytoCube(position_2d):
+    def from2DArraytoCube(position_2d, with_gutter=True):
         # print("2DArray", position_2d)
-        return position_2d[1] - BOARD_SIZE, position_2d[0] - BOARD_SIZE
+        if with_gutter:
+            return position_2d[1] - BOARD_SIZE - 1, position_2d[0] - BOARD_SIZE - 1
 
     @staticmethod
     def fromCubeto2DArray(cube_position, with_gutter=False):

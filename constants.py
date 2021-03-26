@@ -29,6 +29,11 @@ SIN60 = COS30
 LETTER_SHIFT = ord('E')
 NUMBER_SHIFT = 5
 
+""" Directions """
+DIRECTION_VECTORS_CUBE = [(1, -1), (1, 0), (0, 1), (-1, 1), (-1, 0), (0, -1)]
+DIRECTION_VECTORS_2D = [(-1, 1), (0, 1), (1, 0), (1, -1), (0, -1), (-1, 0)]
+
+
 """ Colors """
 RED = (255, 0, 0)
 WHITE = (255, 255, 255)
@@ -48,6 +53,9 @@ WHITE_MARBLE_PATH = "drawables/white_marble.png"
 BLACK_MARBLE_PATH = "drawables/black_marble.png"
 
 """ Game Board States """
+EMPTY_SPOT_VALUE = -1
+OUTSIDE_OF_THE_BOARD_VALUE = -2
+
 INITIAL_GAME_BOARD_STATE_DEFAULT = [
     [-2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2],
     [-2, -2, -2, -2, -2, 2, 2, 2, 2, 2, -2],

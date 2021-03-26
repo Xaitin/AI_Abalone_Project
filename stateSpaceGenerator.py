@@ -249,7 +249,7 @@ class stateGenerator:
             output += (str(v) + "\n")
         if TEST_MODE:
             print(output)
-
+    #
     # def find_groups(self, s):
     #     pairs = list()
     #     neighbors = find_neighbors(s, True)
