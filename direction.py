@@ -22,14 +22,21 @@ class DirectionEnum(enum.Enum):
         }
         return direction_vector_mapper.get(direction_enum)
 
+
     @staticmethod
     def get_from_tuple(vector):
         direction_mapper = {
-            (1, -1): DirectionEnum.NE,
-            (1, 0): DirectionEnum.E,
-            (0, 1): DirectionEnum.SE,
-            (-1, 1): DirectionEnum.SW,
-            (-1, 0): DirectionEnum.W,
-            (0, -1): DirectionEnum.NW
         }
         return direction_mapper.get(vector)
+
+    @staticmethod
+    def get_from_2d(vector_2d):
+        direction_vector_2d_mapper = {
+            (1, -1):DirectionEnum.SW,
+            (-1, 1):DirectionEnum.NE,
+            (1, 0): DirectionEnum.SE,
+            (0, 1): DirectionEnum.E,
+            (-1, 0): DirectionEnum.NW,
+            (0, -1): DirectionEnum.W
+        }
+        return direction_vector_2d_mapper.get(vector_2d)

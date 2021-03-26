@@ -1,3 +1,4 @@
+from coordinate_helper import CoordinateHelper
 from direction import DirectionEnum
 from move_type import MoveType
 
@@ -16,3 +17,11 @@ class Move:
 
     def get_move_type(self):
         return self.move_type
+
+    def __str__(self):
+        _str_move_type = 'i' if self.move_type == MoveType.InLine else 's'
+        first_spot_str = CoordinateHelper.from_2d_to_cube_str(self.spots[0])
+        second_spot_str = CoordinateHelper.from_2d_to_cube_str(self.spots[-1])
+        _str_direction = DirectionEnum.get_from_2d(self.direction).name
+
+        return f"{_str_move_type}-{first_spot_str}-{second_spot_str}-{_str_direction}"

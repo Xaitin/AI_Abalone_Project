@@ -49,3 +49,8 @@ class CoordinateHelper:
         x = chr(LETTER_SHIFT - cube[1])
         y = NUMBER_SHIFT + cube[0]
         return x + str(y)
+
+    @staticmethod
+    def from_2d_to_cube_str(position_2d, with_gutter=True):
+        if with_gutter:
+            return CoordinateHelper.from_cube_to_cube_str(CoordinateHelper.from2DArraytoCube(position_2d))
