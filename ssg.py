@@ -60,7 +60,8 @@ class StateSpaceGenerator:
 def main():
 
     # Enter input file name here
-    file_name = "GivenTest1"
+    # file_name = "GivenTest1"
+    file_name = input("Please enter the name of the input file without the extension (e.g. Test1): ")
     state_space_generator = StateSpaceGenerator()
     state_space_generator.read_input_data(file_name + ".input")
     result = state_space_generator.generate()
