@@ -13,6 +13,7 @@ from team_enum import TeamEnum
 
 class StateSpace:
     def __init__(self, marble_positions, player=None):
+        self.moves_list = []
         self.marble_positions = [Position(TeamEnum.BLACK if position[0] == 'b' else TeamEnum.WHITE, position[1]) for
                                  position in
                                  self.read_position_strings(marble_positions)]
@@ -33,6 +34,7 @@ class StateSpace:
                 if spot_val == EMPTY_SPOT_VALUE:
                     move, new_state, new_marble_positions = None, None, None
                     move = Move(move_type=MoveType.InLine, spots=[position_2d], direction=dir)
+                    self.moves_list.append(move.__str__())
                     new_state = copy.deepcopy(self.generate_new_state_after_move(move))
                     new_marble_positions = copy.deepcopy(self.to_marble_position_list(new_state))
                     resulting_marble_positions.append(new_marble_positions)
@@ -70,7 +72,7 @@ class StateSpace:
                         resulting_marble_positions.append(self.to_marble_position_list(in_line_result_state))
                     if side_step_result_states is not None:
                         resulting_marble_positions += [self.to_marble_position_list(state) for state in
-                                                      side_step_result_states]
+                                                       side_step_result_states]
 
         return resulting_marble_positions
 
@@ -103,7 +105,7 @@ class StateSpace:
                         direction_vector=dir))
                     if side_step_result_states is not None:
                         resulting_marble_positions += [self.to_marble_position_list(state) for state in
-                                                      side_step_result_states]
+                                                       side_step_result_states]
 
         return resulting_marble_positions
 
@@ -128,6 +130,7 @@ class StateSpace:
         elif next_spot_val == EMPTY_GAME_BOARD_ARRAY:
             move = Move(move_type=MoveType.InLine, spots=[first_marble_pos, second_marble_pos],
                         direction=direction_vector)
+            self.moves_list.append(move.__str__())
             return copy.deepcopy(self.generate_new_state_after_move(move))
 
         elif next_spot_val == OUTSIDE_OF_THE_BOARD_VALUE:
@@ -148,6 +151,7 @@ class StateSpace:
                 # We can push the enemy marble a spot
                 move = Move(move_type=MoveType.InLine, spots=[first_marble_pos, second_marble_pos, next_spot],
                             direction=direction_vector)
+                self.moves_list.append(move.__str__())
                 return copy.deepcopy(self.generate_new_state_after_move(move))
 
             elif next_next_spot_val == OUTSIDE_OF_THE_BOARD_VALUE:
@@ -155,6 +159,7 @@ class StateSpace:
                 # We're not putting the enemy marble's spot in the move as it's going to be kicked out of the board.
                 move = Move(move_type=MoveType.InLine, spots=[first_marble_pos, second_marble_pos],
                             direction=direction_vector)
+                self.moves_list.append(move.__str__())
                 return copy.deepcopy(self.generate_new_state_after_move(move))
 
             else:
@@ -182,6 +187,7 @@ class StateSpace:
         elif next_spot_val == EMPTY_GAME_BOARD_ARRAY:
             move = Move(move_type=MoveType.InLine, spots=[first_marble_pos, second_marble_pos, third_marble_pos],
                         direction=direction_vector)
+            self.moves_list.append(move.__str__())
             return copy.deepcopy(self.generate_new_state_after_move(move))
 
         elif next_spot_val == OUTSIDE_OF_THE_BOARD_VALUE:
@@ -203,6 +209,7 @@ class StateSpace:
                 move = Move(move_type=MoveType.InLine,
                             spots=[first_marble_pos, second_marble_pos, third_marble_pos, next_spot],
                             direction=direction_vector)
+                self.moves_list.append(move.__str__())
                 return copy.deepcopy(self.generate_new_state_after_move(move))
 
             elif next_next_spot_val == OUTSIDE_OF_THE_BOARD_VALUE:
@@ -210,6 +217,7 @@ class StateSpace:
                 # We're not putting the enemy marble's spot in the move as it's going to be kicked out of the board.
                 move = Move(move_type=MoveType.InLine, spots=[first_marble_pos, second_marble_pos, third_marble_pos],
                             direction=direction_vector)
+                self.moves_list.append(move.__str__())
                 return copy.deepcopy(self.generate_new_state_after_move(move))
 
             else:
@@ -228,6 +236,7 @@ class StateSpace:
                                 spots=[first_marble_pos, second_marble_pos, third_marble_pos, next_spot,
                                        next_next_spot],
                                 direction=direction_vector)
+                    self.moves_list.append(move.__str__())
                     return copy.deepcopy(self.generate_new_state_after_move(move))
 
                 elif next_next_next_spot_val == OUTSIDE_OF_THE_BOARD_VALUE:
@@ -236,6 +245,7 @@ class StateSpace:
                     move = Move(move_type=MoveType.InLine,
                                 spots=[first_marble_pos, second_marble_pos, third_marble_pos, next_spot],
                                 direction=direction_vector)
+                    self.moves_list.append(move.__str__())
                     return copy.deepcopy(self.generate_new_state_after_move(move))
 
                 else:
@@ -258,6 +268,7 @@ class StateSpace:
 
             if all_empty:
                 move = Move(move_type=MoveType.SideStep, spots=marble_positions, direction=dir)
+                self.moves_list.append(move.__str__())
                 new_result_states.append(copy.deepcopy(self.generate_new_state_after_move(move)))
 
         return new_result_states
@@ -369,3 +380,7 @@ class StateSpace:
     def __str__(self):
         return f"\nPlayer of the turn : {self.player_of_turn}\n" \
                f"Marble Positions: {self.marble_positions}\n"
+
+    def get_move_list(self):
+        # print(self.moves_list)
+        return self.moves_list

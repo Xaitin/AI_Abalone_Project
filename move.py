@@ -24,4 +24,7 @@ class Move:
         second_spot_str = CoordinateHelper.from_2d_to_cube_str(self.spots[-1])
         _str_direction = DirectionEnum.get_from_2d(self.direction).name
 
-        return f"{_str_move_type}-{first_spot_str}-{second_spot_str}-{_str_direction}"
+        if _str_move_type == 'i':
+            return f"{_str_move_type}-{first_spot_str}-{_str_direction}"
+        else:
+            return f"{_str_move_type}-{first_spot_str}-{second_spot_str}-{_str_direction}"

@@ -42,6 +42,12 @@ class StateSpaceGenerator:
                     _str += marble + ","
                 file.write(_str[:-1] + "\n")
 
+    def write_move_result_data(self, src, result):
+        with open(src, mode='w') as file:
+            for line in result:
+                # _str = "" + line
+                file.write(line + "\n")
+
     def generate(self):
         singular_moves = self.state_space.get_singular_move_resulting_marble_positions()
         double_moves = self.state_space.get_double_marble_move_resulting_marble_positions()
@@ -52,12 +58,15 @@ class StateSpaceGenerator:
 
 
 def main():
-    file_name = "Test1"
+
+    # Enter input file name here
+    file_name = "GivenTest1"
     state_space_generator = StateSpaceGenerator()
     state_space_generator.read_input_data(file_name + ".input")
     result = state_space_generator.generate()
 
-    state_space_generator.write_result_data(src=file_name + "_gen" + ".board", result=result)
+    state_space_generator.write_result_data(src=file_name + ".board", result=result)
+    state_space_generator.write_move_result_data(src=file_name + ".move", result=state_space_generator.state_space.get_move_list())
     #
     # print("result", len(result))
     # for re in result:
@@ -90,7 +99,7 @@ def main():
     #         print(line)
     # print("how many are missing?", count)
 
-    # read.read_board_data("Test1.board")
+    # read.read_board_data("GivenTest1.board")
 
 
 if __name__ == '__main__':
