@@ -416,7 +416,7 @@ class stateGenerator:
             print("\nPrinting Double Moves\n")
         output = ""
         for v in self.double_move_states:
-            output += (str(v) + "\n")
+            output += (str(v)[1:-1] + "\n")
         if TEST_MODE:
             print(output)
 
@@ -449,8 +449,9 @@ class stateGenerator:
         print("\nPrinting Triple Moves\n")
         output = ""
         for v in self.triple_move_states:
-            output += (str(v) + "\n")
-        print(output)
+            output += (str(v)[1:-1] + "\n")
+        if TEST_MODE:
+            print(output)
 
     def attempt_grouped_moves(self, groups):
         for group in groups:
@@ -1319,8 +1320,9 @@ class stateGenerator:
         # Formatting output of singular moves.
         output = ""
         for value in self.single_move_states:
-            output += (str(value) + "\n")
-        # print(output)
+            output += (str(value)[1:-1] + "\n")
+        if TEST_MODE:
+            print(output)
 
     def make_singular_move(self, target, moving_marble):
         index = self.input_result.index(moving_marble)
