@@ -11,6 +11,11 @@ class StateSpaceGenerator:
         self.state_space = None
 
     def read_board_data(self, src):
+        """
+        Reads Test.board for testing purposes.
+        :param src: Test.board file name
+        :return: none
+        """
         # read lines, read board file
         with open(src, mode='r', encoding='utf-8') as file:
             lines = [line.strip() for line in file]
@@ -22,6 +27,11 @@ class StateSpaceGenerator:
                 print(line)
 
     def read_input_data(self, src):
+        """
+        Reads the Test.input file for the marbles' current positions (state_space).
+        :param src: Test.input file name
+        :return: none
+        """
         # read lines, read input file
         # expected result: [('start player', 'b'), [('b', (0, 2)), ('b', (0, 1)), ('b', (1, 0)), ('b', (0, 0))]}
         with open(src, mode='r', encoding='utf-8') as file:
@@ -35,6 +45,12 @@ class StateSpaceGenerator:
             print(self.state_space)
 
     def write_result_data(self, src, result):
+        """
+        Formats the resulting board state output and writes to file.
+        :param src:  file name
+        :param result: board_state list
+        :return: none
+        """
         with open(src, mode='w') as file:
             for line in result:
                 _str = ""
@@ -43,12 +59,22 @@ class StateSpaceGenerator:
                 file.write(_str[:-1] + "\n")
 
     def write_move_result_data(self, src, result):
+        """
+        Formats the moves taken and writes to file.
+        :param src: file name
+        :param result: move_list list
+        :return: none
+        """
         with open(src, mode='w') as file:
             for line in result:
                 # _str = "" + line
                 file.write(line + "\n")
 
-    def generate(self):
+    def generate_resulting_board_states(self):
+        """
+        Generates all the single, double and triple marble movements and gives their resulting board states.
+        :return: combined list of all resulting board states
+        """
         singular_moves = self.state_space.get_singular_move_resulting_marble_positions()
         double_moves = self.state_space.get_double_marble_move_resulting_marble_positions()
         triple_moves = self.state_space.get_triple_marble_move_resulting_marble_positions()
@@ -58,17 +84,19 @@ class StateSpaceGenerator:
 
 
 def main():
-
-    # Enter input file name here
-    # file_name = "GivenTest1"
+    # Asks for Test.input file name without extension here.
     file_name = input("Please enter the name of the input file without the extension (e.g. Test1): ")
+
+    # Instantiates a StateSpaceGenerator and generates resulting board state based on given Test.input file.
     state_space_generator = StateSpaceGenerator()
     state_space_generator.read_input_data(file_name + ".input")
-    result = state_space_generator.generate()
+    result = state_space_generator.generate_resulting_board_states()
 
+    # Writes Test.board and Test.move output files.
     state_space_generator.write_result_data(src=file_name + ".board", result=result)
-    state_space_generator.write_move_result_data(src=file_name + ".move", result=state_space_generator.state_space.get_move_list())
-    #
+    state_space_generator.write_move_result_data(src=file_name + ".move",
+                                                 result=state_space_generator.state_space.get_move_list())
+
     # print("result", len(result))
     # for re in result:
     #     # print(re)

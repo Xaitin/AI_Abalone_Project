@@ -1,5 +1,5 @@
 import string
-from ssg import StateSpaceGenerator
+from state_space_generator import StateSpaceGenerator
 
 TEST_MODE = False
 
