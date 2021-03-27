@@ -56,6 +56,7 @@ BLACK_MARBLE_PATH = "drawables/black_marble.png"
 EMPTY_SPOT_VALUE = -1
 OUTSIDE_OF_THE_BOARD_VALUE = -2
 
+"""Invalid Position -2, Valid Empty position: -1, white marbles: 2, black marbles: 1"""
 INITIAL_GAME_BOARD_STATE_DEFAULT = [
     [-2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2],
     [-2, -2, -2, -2, -2, 2, 2, 2, 2, 2, -2],
