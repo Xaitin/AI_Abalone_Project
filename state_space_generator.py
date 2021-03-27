@@ -126,8 +126,7 @@ def main():
     while success:
         try:
             # Asks for Test.input file name without extension here.
-            file_name = input("Please enter the name of the input file without the extension (e.g. "
-                              "SSG_Test_Files/GivenTest1): ")
+            file_name = input("Please enter the name of the input file without the extension (e.g. Test1): ")
             state_space_generator.read_input_data(file_name + ".input")
             success = False
         except FileNotFoundError as e:
