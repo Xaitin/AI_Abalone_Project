@@ -97,6 +97,10 @@ def main():
     state_space_generator.write_move_result_data(src=file_name + ".move",
                                                  result=state_space_generator.state_space.get_move_list())
 
+    """
+    Code for checking with StaticTest.board file. Do not change the name of the files.
+    Compares StaticTest.board matches with created GivenTest.board.
+    """
     # print("result", len(result))
     # for re in result:
     #     # print(re)
@@ -109,7 +113,7 @@ def main():
     # # test_result = read.double_move_states + read.single_move_states
     # # set_result = [sorted(row) for row in test_result]
     # check_answer = StateSpaceGenerator()
-    # check_answer.read_board_data(file_name + ".board")
+    # check_answer.read_board_data(file_name.replace("Given", "Static") + ".board")
     #
     # # print(len(set(tuple(row) for row in result)))
     # print()
@@ -128,7 +132,7 @@ def main():
     #         print(line)
     # print("how many are missing?", count)
 
-    # read.read_board_data("GivenTest1.board")
+    # read.read_board_data("StaticTest1.board")
 
 
 if __name__ == '__main__':
