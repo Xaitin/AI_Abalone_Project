@@ -21,8 +21,8 @@ class ConfigMenu(UIWindow):
         gap = 160
 
         self.INITIAL_BOARD_LAYOUT = UIPanel(relative_rect=pygame.Rect((pose_x, pose_y), (600, 100)),
-                                                                starting_layer_height=2, manager=self.manager,
-                                                                container=self)
+                                            starting_layer_height=2, manager=self.manager,
+                                            container=self)
         self.PLAYER_OPTIONS_LAYOUT = UIPanel(
             relative_rect=pygame.Rect((pose_x, pose_y + gap), (345, 125)),
             starting_layer_height=2, manager=self.manager, container=self)
@@ -153,36 +153,36 @@ class ConfigMenu(UIWindow):
             text='Start',
             manager=self.manager, container=self)
         self.STANDARD_BUTTON = UIButton(relative_rect=pygame.Rect((80, 35), (120, 50)),
-                                                            text='Standard', manager=self.manager,
-                                                            container=self.INITIAL_BOARD_LAYOUT)
+                                        text='Standard', manager=self.manager,
+                                        container=self.INITIAL_BOARD_LAYOUT)
         self.GER_DAISY_BUTTON = UIButton(relative_rect=pygame.Rect((250, 35), (120, 50)),
-                                                             text='German Daisy', manager=self.manager,
-                                                             container=self.INITIAL_BOARD_LAYOUT)
+                                         text='German Daisy', manager=self.manager,
+                                         container=self.INITIAL_BOARD_LAYOUT)
         self.BEL_DAISY_BUTTON = UIButton(relative_rect=pygame.Rect((430, 35), (120, 50)),
-                                                             text='Belgian Daisy', manager=self.manager,
-                                                             container=self.INITIAL_BOARD_LAYOUT)
+                                         text='Belgian Daisy', manager=self.manager,
+                                         container=self.INITIAL_BOARD_LAYOUT)
         self.WHITE_HUMAN_BUTTON = UIButton(relative_rect=pygame.Rect((5, 40), (74, 30)),
-                                                               text='Human', manager=self.manager,
-                                                               container=self.GAME_OPTIONS_LAYOUT)
+                                           text='Human', manager=self.manager,
+                                           container=self.GAME_OPTIONS_LAYOUT)
         self.BLACK_HUMAN_BUTTON = UIButton(relative_rect=pygame.Rect((84, 40), (74, 30)),
-                                                               text='Human', manager=self.manager,
-                                                               container=self.GAME_OPTIONS_LAYOUT)
+                                           text='Human', manager=self.manager,
+                                           container=self.GAME_OPTIONS_LAYOUT)
         self.WHITE_COMPUTER_BUTTON = UIButton(relative_rect=pygame.Rect((5, 70), (74, 30)),
-                                                                  text='Computer', manager=self.manager,
-                                                                  container=self.GAME_OPTIONS_LAYOUT)
+                                              text='Computer', manager=self.manager,
+                                              container=self.GAME_OPTIONS_LAYOUT)
         self.BLACK_COMPUTER_BUTTON = UIButton(relative_rect=pygame.Rect((84, 70), (74, 30)),
-                                                                  text='Computer', manager=self.manager,
-                                                                  container=self.GAME_OPTIONS_LAYOUT)
+                                              text='Computer', manager=self.manager,
+                                              container=self.GAME_OPTIONS_LAYOUT)
         # Text input elements
         self.TIME_LIMIT_INPUT_P1 = UITextEntryLine(relative_rect=pygame.Rect((220, 38), (50, 50)),
-                                                                       manager=self.manager,
-                                                                       container=self.PLAYER_OPTIONS_LAYOUT)
+                                                   manager=self.manager,
+                                                   container=self.PLAYER_OPTIONS_LAYOUT)
         self.TIME_LIMIT_INPUT_P2 = UITextEntryLine(relative_rect=pygame.Rect((280, 38), (50, 50)),
-                                                                       manager=self.manager,
-                                                                       container=self.PLAYER_OPTIONS_LAYOUT)
+                                                   manager=self.manager,
+                                                   container=self.PLAYER_OPTIONS_LAYOUT)
         self.MOVE_LIMIT_INPUT = UITextEntryLine(relative_rect=pygame.Rect((220, 83), (50, 50)),
-                                                                    manager=self.manager,
-                                                                    container=self.PLAYER_OPTIONS_LAYOUT)
+                                                manager=self.manager,
+                                                container=self.PLAYER_OPTIONS_LAYOUT)
 
 
 class GameMenu:
@@ -486,7 +486,7 @@ class GameMenu:
     def display_menu(self):
         self.manager.root_container.show()
         game_board_img = pygame.image.load('drawables/game_board.png').convert_alpha()
-        game_board_img = pygame.transform.scale(game_board_img, (BOARD_IMAGE_SIZE, BOARD_IMAGE_SIZE))
+        # game_board_img = pygame.transform.scale(game_board_img, (BOARD_IMAGE_SIZE, BOARD_IMAGE_SIZE))
 
         clock = pygame.time.Clock()
         while self.game_playing:
