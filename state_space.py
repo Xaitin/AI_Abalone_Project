@@ -2,7 +2,8 @@ import copy
 import itertools
 from operator import add
 
-from constants import EMPTY_GAME_BOARD_ARRAY, EMPTY_SPOT_VALUE, OUTSIDE_OF_THE_BOARD_VALUE, DIRECTION_VECTORS_2D
+from constants import EMPTY_GAME_BOARD_ARRAY, EMPTY_SPOT_VALUE, OUTSIDE_OF_THE_BOARD_VALUE, DIRECTION_VECTORS_2D, \
+    BOARD_ARRAY_SIZE, DEFAULT_MARBLE_POSITION
 from coordinate_helper import CoordinateHelper
 from direction_helper import DirectionHelper
 from move import Move
@@ -12,13 +13,120 @@ from team_enum import TeamEnum
 
 
 class StateSpace:
-    def __init__(self, marble_positions, player=None):
+    def __init__(self, marble_positions=DEFAULT_MARBLE_POSITION, player='b'):
         self.moves_list = []
         self.marble_positions = [Position(TeamEnum.BLACK if position[0] == 'b' else TeamEnum.WHITE, position[1]) for
                                  position in
                                  self.read_position_strings(marble_positions)]
         self.player_of_turn = TeamEnum.BLACK if player == 'b' else TeamEnum.WHITE
         self.marble_positions_2d = self.to_2d_array(self.marble_positions)
+        print("marble_positions_2d", self.marble_positions_2d)
+        self.two_to_one_sumito = 0
+        self.three_to_one_sumito = 0
+        self.three_to_two_sumito = 0
+        self.pairs = 0
+        self.triplets = 0
+        self.player_value = None
+
+
+
+    def reset_count(self):
+        self.two_to_one_sumito = 0
+        self.three_to_one_sumito = 0
+        self.three_to_two_sumito = 0
+        self.pairs = 0
+        self.triplets = 0
+
+    def set_marble_positions_2d(self, marble_positions_2d):
+        self.marble_positions_2d = marble_positions_2d
+
+    def set_player_value(self, player_value):
+        self.player_value = player_value
+
+    def get_ally_position(self, state):
+        ally_pieces_locations = []
+        for j in range(BOARD_ARRAY_SIZE):
+            for i in range(BOARD_ARRAY_SIZE):
+                if state[i][j] == self.player_value:
+                    ally_pieces_locations.append((i, j))
+
+        return ally_pieces_locations
+
+    def get_singular_move_resulting_marble_positions_tommy(self):
+        resulting_marble_positions = []
+        self.ally_positions = self.get_ally_position(self.marble_positions_2d)
+        for position_2d in self.ally_positions:
+            surroundings = copy.deepcopy(self.get_surrounding_dir_positions(position_2d=position_2d))
+            for dir, spot in surroundings:
+                spot_val = self.marble_positions_2d[spot[0]][spot[1]]
+                if spot_val == EMPTY_SPOT_VALUE:
+                    move, new_state, new_marble_positions = None, None, None
+                    move = Move(move_type=MoveType.InLine, spots=[position_2d], direction=dir)
+                    self.moves_list.append(move.__str__())
+                    # new_state = after move, new self.marble_positions_2d
+                    new_state = copy.deepcopy(self.generate_new_state_after_move(move))
+                    resulting_marble_positions.append(new_state)
+                else:
+                    pass
+        return resulting_marble_positions
+
+    def get_double_marble_move_resulting_marble_positions_tommy(self):
+        resulting_marble_positions = []
+        self.ally_positions = self.get_ally_position(self.marble_positions_2d)
+        for position_2d in self.ally_positions:
+            first_marble_pos_2d = position_2d
+            surroundings = copy.deepcopy(self.get_surrounding_dir_positions(first_marble_pos_2d))
+
+            for dir, second_marble_pos_2d in surroundings:
+                second_x, second_y = second_marble_pos_2d
+
+                # Pair matched between first_marble <-> pos
+                if self.marble_positions_2d[second_x][second_y] == self.player_value:
+                    in_line_result_state, side_step_result_states = None, None
+                    self.pairs += 1
+                    in_line_result_state = copy.deepcopy(
+                        self.generate_double_in_line_moves_result_states(first_marble_pos_2d,
+                                                                         second_marble_pos_2d,
+                                                                         dir))
+                    if in_line_result_state is not None:
+                        resulting_marble_positions.append(in_line_result_state)
+                    side_step_result_states = copy.deepcopy(self.generate_side_step_moves_result_states(
+                        marble_positions=[first_marble_pos_2d, second_marble_pos_2d],
+                        direction_vector=dir))
+                    if side_step_result_states is not None:
+                        resulting_marble_positions += side_step_result_states
+        return resulting_marble_positions
+
+    def get_triple_marble_move_resulting_marble_positions_tommy(self):
+        resulting_marble_positions = []
+        self.ally_positions = self.get_ally_position(self.marble_positions_2d)
+        for position in self.ally_positions:
+            first_marble_pos_2d = position
+            surroundings = copy.deepcopy(self.get_surrounding_dir_positions(first_marble_pos_2d))
+            for dir, second_marble_pos_2d in surroundings:
+                second_x, second_y = second_marble_pos_2d
+                third_marble_pos_2d = third_x, third_y = tuple(map(add, second_marble_pos_2d, dir))
+                # Pair matched between first_marble <-> pos
+                if self.marble_positions_2d[second_x][second_y] == self.player_value \
+                        and self.marble_positions_2d[third_x][third_y] == self.player_value:
+                    in_line_result_state, side_step_result_states = None, None
+                    in_line_result_state = copy.deepcopy(
+                        self.generate_triple_in_line_moves_result_states(first_marble_pos_2d, second_marble_pos_2d,
+                                                                         third_marble_pos_2d, dir))
+                    if in_line_result_state is not None:
+                        resulting_marble_positions.append(in_line_result_state)
+                    side_step_result_states = copy.deepcopy(self.generate_side_step_moves_result_states(
+                        marble_positions=[first_marble_pos_2d, second_marble_pos_2d, third_marble_pos_2d],
+                        direction_vector=dir))
+                    if side_step_result_states is not None:
+                        resulting_marble_positions += side_step_result_states
+        return resulting_marble_positions
+
+    def generate_all_possible_move_2d(self):
+        result = self.get_singular_move_resulting_marble_positions_tommy()
+        result += self.get_double_marble_move_resulting_marble_positions_tommy()
+        result += self.get_triple_marble_move_resulting_marble_positions_tommy()
+        return result
 
     def get_singular_move_resulting_marble_positions(self):
         resulting_marble_positions = []
@@ -35,6 +143,7 @@ class StateSpace:
                     move, new_state, new_marble_positions = None, None, None
                     move = Move(move_type=MoveType.InLine, spots=[position_2d], direction=dir)
                     self.moves_list.append(move.__str__())
+                    # new_state = after move, new self.marble_positions_2d
                     new_state = copy.deepcopy(self.generate_new_state_after_move(move))
                     new_marble_positions = copy.deepcopy(self.to_marble_position_list(new_state))
                     resulting_marble_positions.append(new_marble_positions)
@@ -53,6 +162,7 @@ class StateSpace:
 
             first_marble_pos = first_marble.position
             first_marble_pos_2d = CoordinateHelper.fromCubeto2DArray(first_marble_pos, with_gutter=True)
+            print("fromCubeto2DArray", first_marble_pos_2d)
             surroundings = copy.deepcopy(self.get_surrounding_dir_positions(first_marble_pos_2d))
 
             for dir, second_marble_pos_2d in surroundings:
@@ -68,6 +178,7 @@ class StateSpace:
                     side_step_result_states = copy.deepcopy(self.generate_side_step_moves_result_states(
                         marble_positions=[first_marble_pos_2d, second_marble_pos_2d],
                         direction_vector=dir))
+                    print("side_step_result_states", side_step_result_states)
                     if in_line_result_state is not None:
                         resulting_marble_positions.append(self.to_marble_position_list(in_line_result_state))
                     if side_step_result_states is not None:
@@ -149,6 +260,8 @@ class StateSpace:
 
             elif next_next_spot_val == EMPTY_SPOT_VALUE:
                 # We can push the enemy marble a spot
+                self.two_to_one_sumito += 1
+
                 move = Move(move_type=MoveType.InLine, spots=[first_marble_pos, second_marble_pos, next_spot],
                             direction=direction_vector)
                 self.moves_list.append(move.__str__())
@@ -156,6 +269,7 @@ class StateSpace:
 
             elif next_next_spot_val == OUTSIDE_OF_THE_BOARD_VALUE:
                 # We're kicking you out, you enemy
+                self.two_to_one_sumito += 1
                 # We're not putting the enemy marble's spot in the move as it's going to be kicked out of the board.
                 move = Move(move_type=MoveType.InLine, spots=[first_marble_pos, second_marble_pos],
                             direction=direction_vector)
@@ -206,6 +320,8 @@ class StateSpace:
 
             elif next_next_spot_val == EMPTY_SPOT_VALUE:
                 # We can push the enemy marble a spot
+                self.three_to_one_sumito += 1
+
                 move = Move(move_type=MoveType.InLine,
                             spots=[first_marble_pos, second_marble_pos, third_marble_pos, next_spot],
                             direction=direction_vector)
@@ -214,6 +330,8 @@ class StateSpace:
 
             elif next_next_spot_val == OUTSIDE_OF_THE_BOARD_VALUE:
                 # We're kicking you out, you enemy
+                self.three_to_one_sumito += 1
+
                 # We're not putting the enemy marble's spot in the move as it's going to be kicked out of the board.
                 move = Move(move_type=MoveType.InLine, spots=[first_marble_pos, second_marble_pos, third_marble_pos],
                             direction=direction_vector)
@@ -232,6 +350,8 @@ class StateSpace:
 
                 elif next_next_next_spot_val == EMPTY_SPOT_VALUE:
                     # We can push the enemy marbles a spot
+                    self.three_to_two_sumito += 1
+
                     move = Move(move_type=MoveType.InLine,
                                 spots=[first_marble_pos, second_marble_pos, third_marble_pos, next_spot,
                                        next_next_spot],
@@ -241,6 +361,8 @@ class StateSpace:
 
                 elif next_next_next_spot_val == OUTSIDE_OF_THE_BOARD_VALUE:
                     # Out of two enemy marbles, the last one will be fall out of the board.
+                    self.three_to_two_sumito += 1
+
                     # We're not putting the last enemy marble's spot in the move as it's going to be kicked out of the board.
                     move = Move(move_type=MoveType.InLine,
                                 spots=[first_marble_pos, second_marble_pos, third_marble_pos, next_spot],
@@ -303,7 +425,7 @@ class StateSpace:
     def is_friendly_marble_spots(self, position_cube):
         position_2d = CoordinateHelper.fromCubeto2DArray(position_cube, with_gutter=True)
 
-        if self.marble_positions_2d[position_2d[0]][position_2d[1]] == self.player_of_turn.value():
+        if self.marble_positions_2d[position_2d[0]][position_2d[1]] == self.player_of_turn.value:
             return True
         else:
             return False
