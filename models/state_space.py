@@ -162,8 +162,7 @@ class StateSpace:
                 else:
                     pass
 
-        resulting_marble_positions.sort()
-        return list(k for k, _ in itertools.groupby(resulting_marble_positions))
+        return resulting_marble_positions
 
     def get_double_marble_move_resulting_marble_positions(self):
         resulting_marble_positions = []
