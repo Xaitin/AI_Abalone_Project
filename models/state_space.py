@@ -501,11 +501,11 @@ class StateSpace:
                 value = marble_positions_2d[i][j]
                 if value != EMPTY_SPOT_VALUE and value != OUTSIDE_OF_THE_BOARD_VALUE:
                     if value == TeamEnum.BLACK.value:
-                        cube_vector = CoordinateHelper.from2DArraytoCube((i - 1, j - 1))
+                        cube_vector = CoordinateHelper.from2DArraytoCube((i, j))
                         cube_str = CoordinateHelper.from_cube_to_cube_str(cube_vector)
                         black_marble_position_list.append(cube_str + 'b')
                     elif value == TeamEnum.WHITE.value:
-                        cube_vector = CoordinateHelper.from2DArraytoCube((i - 1, j - 1))
+                        cube_vector = CoordinateHelper.from2DArraytoCube((i, j))
                         cube_str = CoordinateHelper.from_cube_to_cube_str(cube_vector)
                         white_marble_position_list.append(cube_str + 'w')
 
