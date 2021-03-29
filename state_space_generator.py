@@ -128,8 +128,8 @@ def main():
     while success:
         try:
             # Asks for Test.input file name without extension here.
-            file_name = input("Please enter the name of the input file without the extension (e.g. "
-                              "(Test1): ")
+
+            file_name = input("Please enter the name of the input file without the extension (e.g. Test1): ")
             state_space_generator.read_input_data(file_name + ".input")
             success = False
         except FileNotFoundError as e:
@@ -141,7 +141,7 @@ def main():
     state_space_generator.write_move_result_data(src=file_name + ".move",
                                                  result=state_space_generator.state_space.get_move_list())
 
-    # state_space_generator.check_board_answer(result, file_name)
+    state_space_generator.check_board_answer(result, file_name)
 
 
 if __name__ == '__main__':
