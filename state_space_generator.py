@@ -141,7 +141,7 @@ def main():
     state_space_generator.write_move_result_data(src=file_name + ".move",
                                                  result=state_space_generator.state_space.get_move_list())
 
-    state_space_generator.check_board_answer(result, file_name)
+    # state_space_generator.check_board_answer(result, file_name)
 
 
 if __name__ == '__main__':

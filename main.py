@@ -16,7 +16,7 @@ class ConfigMenu(UIWindow):
         self.manager = ui_manager
         self.display = display
         self.window = window
-        pose_x = 130
+        pose_x = 90
         pose_y = 70
         gap = 160
 
@@ -404,7 +404,7 @@ class GameMenu:
                 if event.user_type == pygame_gui.UI_BUTTON_PRESSED:
                     if event.ui_element == self.config_button:
                         self.open_config = True
-                        self.config_menu = ConfigMenu(pygame.Rect((10, 10), (800, 700)), self.manager, self.display,
+                        self.config_menu = ConfigMenu(pygame.Rect((150, 5), (800, 700)), self.manager, self.display,
                                                       self.window)
                         print('Config!')
                     if event.ui_element == self.start_button:
@@ -424,7 +424,7 @@ class GameMenu:
                     if self.config_menu != None:
                         if event.ui_element == self.config_menu.START_BUTTON:
                             self.config_menu.WHITE_TYPE_INPUT.html_text = 'Start'
-                            print('Start')
+                            print('Start - Config')
                             # move_limit = int(self.MOVE_LIMIT_INPUT.get_text())
                             # Configure sending start data to gameBoard here
                         if event.ui_element == self.config_menu.WHITE_HUMAN_BUTTON:
