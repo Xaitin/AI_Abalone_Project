@@ -124,7 +124,7 @@ def main():
             success = False
         except FileNotFoundError as e:
             print(f"{e}")
-    result = state_space_generator.state_space.generate_resulting_board_states()
+    result = state_space_generator.state_space.generate_all_resulting_board_states()
 
     # Writes Test.board and Test.move output files.
     state_space_generator.write_result_data(src=file_name + ".board", result=result)
