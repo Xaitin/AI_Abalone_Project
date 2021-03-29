@@ -70,17 +70,7 @@ class StateSpaceGenerator:
                 # _str = "" + line
                 file.write(line + "\n")
 
-    def generate_resulting_board_states(self):
-        """
-        Generates all the single, double and triple marble movements and gives their resulting board states.
-        :return: combined list of all resulting board states
-        """
-        singular_moves = self.state_space.get_singular_move_resulting_marble_positions()
-        double_moves = self.state_space.get_double_marble_move_resulting_marble_positions()
-        triple_moves = self.state_space.get_triple_marble_move_resulting_marble_positions()
-        print("singular:", len(singular_moves), "double:", len(double_moves), "triple:", len(triple_moves))
 
-        return singular_moves + double_moves + triple_moves
 
     @staticmethod
     def check_board_answer(result, file_name):
@@ -134,7 +124,7 @@ def main():
             success = False
         except FileNotFoundError as e:
             print(f"{e}")
-    result = state_space_generator.generate_resulting_board_states()
+    result = state_space_generator.state_space.generate_resulting_board_states()
 
     # Writes Test.board and Test.move output files.
     state_space_generator.write_result_data(src=file_name + ".board", result=result)

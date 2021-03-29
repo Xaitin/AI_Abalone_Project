@@ -4,12 +4,12 @@ from operator import add
 
 from constants import EMPTY_GAME_BOARD_ARRAY, EMPTY_SPOT_VALUE, OUTSIDE_OF_THE_BOARD_VALUE, DIRECTION_VECTORS_2D, \
     BOARD_ARRAY_SIZE, DEFAULT_MARBLE_POSITION
+from enums.move_type import MoveType
+from enums.team_enum import TeamEnum
 from helper.coordinate_helper import CoordinateHelper
 from helper.direction_helper import DirectionHelper
-from move import Move
-from enums.move_type import MoveType
-from position import Position
-from enums.team_enum import TeamEnum
+from models.move import Move
+from models.position import Position
 
 
 class StateSpace:
@@ -127,6 +127,18 @@ class StateSpace:
         result += self.get_double_marble_move_resulting_marble_positions_tommy()
         result += self.get_triple_marble_move_resulting_marble_positions_tommy()
         return result
+
+    def generate_all_resulting_board_states(self):
+        """
+        Generates all the single, double and triple marble movements and gives their resulting board states.
+        :return: combined list of all resulting board states
+        """
+        singular_moves = self.get_singular_move_resulting_marble_positions()
+        double_moves = self.get_double_marble_move_resulting_marble_positions()
+        triple_moves = self.get_triple_marble_move_resulting_marble_positions()
+        print("singular:", len(singular_moves), "double:", len(double_moves), "triple:", len(triple_moves))
+
+        return singular_moves + double_moves + triple_moves
 
     def get_singular_move_resulting_marble_positions(self):
         resulting_marble_positions = []

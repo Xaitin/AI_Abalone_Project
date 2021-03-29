@@ -2,8 +2,8 @@ import pygame
 
 from constants import WHITE, BOARD_SIZE, INITIAL_GAME_BOARD_SETUPS, WINDOW_WIDTH, WINDOW_HEIGHT
 from helper.coordinate_helper import CoordinateHelper
-from hexagon import Hexagon
-from marble import Marble
+from models.hexagon import Hexagon
+from models.marble import Marble
 
 SETUP_CONSTANT = 0
 
