@@ -6,6 +6,7 @@ class GamePlayingAgent:
 
     def __init__(self, input_list):
         self._input_list = input_list
+        self._agent_color = input_list[0]
         self._state_space_gen = ssg()
         self.next_move_board_states = None
         self.next_moves = None
@@ -19,7 +20,6 @@ class GamePlayingAgent:
         self.next_moves_values = self.assign_values(self.next_moves, self.next_move_board_states)
         # next moves and next move board states are now the best next moves below this
         self.next_moves, self.next_move_board_states = self.find_best_next_moves()
-
         # Assuming next_moves and next_move_board_states are in the right order
         """Assigns values to the next moves"""
     def assign_values(self, next_moves, next_move_states):
