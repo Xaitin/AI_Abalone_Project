@@ -21,8 +21,7 @@ class Evaluation:
             self.enemy_player = TeamEnum.BLACK
         self.state_space = StateSpace()
         self.state_space.set_player_value(TeamEnum.BLACK.value)
-        print(len(self.state_space.generate_all_possible_move_2d()))
-        self.state_space.set_marble_positions_2d(state)
+        self.state_space.set_marble_positions_2d(self.state)
         self.state_space.set_player_value(self.ally)
         self.ally_pieces_locations = copy.copy(self.state_space.get_ally_position(self.state))
         self.state_space.set_player_value(self.enemy)
@@ -131,8 +130,7 @@ class Evaluation:
         count_pairs -= self.state_space.pairs
         count_triplets -= self.state_space.triplets
         summation = self.last_coefficients[0] * count_sumito * 5 + self.last_coefficients[1] * count_pairs + \
-                    self.last_coefficients[
-                        2] * count_triplets * 3
+                    self.last_coefficients[2] * count_triplets * 3
         return summation
 
     def strengthen_group(self):
@@ -175,10 +173,8 @@ if __name__ == '__main__':
     test_list += INITIAL_GAME_BOARD_SETUPS
     test_list.append(state_white_win_one)
 
-    # for test_index in test_list:
-    #     tommy_AI_Evaluation_white = Evaluation(TeamEnum.WHITE, test_index)
-    #     print(f" white:  {tommy_AI_Evaluation_white.get_evaluation_score()}")
-    #     tommy_AI_Evaluation_black = Evaluation(TeamEnum.BLACK, test_index)
-    #     print(f" black:  {tommy_AI_Evaluation_black.get_evaluation_score()}")
-
-    Evaluation(TeamEnum.WHITE, initial_state)
+    for test_index in test_list:
+        tommy_AI_Evaluation_white = Evaluation(TeamEnum.WHITE, test_index)
+        print(f" white:  {tommy_AI_Evaluation_white.get_evaluation_score()}")
+        tommy_AI_Evaluation_black = Evaluation(TeamEnum.BLACK, test_index)
+        print(f" black:  {tommy_AI_Evaluation_black.get_evaluation_score()}")

@@ -20,7 +20,6 @@ class StateSpace:
                                  self.read_position_strings(marble_positions)]
         self.player_of_turn = TeamEnum.BLACK if player == 'b' else TeamEnum.WHITE
         self.marble_positions_2d = self.to_2d_array(self.marble_positions)
-        print("marble_positions_2d", self.marble_positions_2d)
         self.two_to_one_sumito = 0
         self.three_to_one_sumito = 0
         self.three_to_two_sumito = 0
@@ -82,8 +81,8 @@ class StateSpace:
 
                 # Pair matched between first_marble <-> pos
                 if self.marble_positions_2d[second_x][second_y] == self.player_value:
-                    in_line_result_state, side_step_result_states = None, None
                     self.pairs += 1
+                    in_line_result_state, side_step_result_states = None, None
                     in_line_result_state = copy.deepcopy(
                         self.generate_double_in_line_moves_result_states(first_marble_pos_2d,
                                                                          second_marble_pos_2d,
@@ -109,6 +108,7 @@ class StateSpace:
                 # Pair matched between first_marble <-> pos
                 if self.marble_positions_2d[second_x][second_y] == self.player_value \
                         and self.marble_positions_2d[third_x][third_y] == self.player_value:
+                    self.triplets += 1
                     in_line_result_state, side_step_result_states = None, None
                     in_line_result_state = copy.deepcopy(
                         self.generate_triple_in_line_moves_result_states(first_marble_pos_2d, second_marble_pos_2d,
