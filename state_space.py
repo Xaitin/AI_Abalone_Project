@@ -127,7 +127,7 @@ class StateSpace:
             # This becomes triple-marble movement
             pass
 
-        elif next_spot_val == EMPTY_GAME_BOARD_ARRAY:
+        elif next_spot_val == EMPTY_SPOT_VALUE:
             move = Move(move_type=MoveType.InLine, spots=[first_marble_pos, second_marble_pos],
                         direction=direction_vector)
             self.moves_list.append(move.__str__())
@@ -184,7 +184,7 @@ class StateSpace:
             # No move possible for 4 marbles.
             pass
 
-        elif next_spot_val == EMPTY_GAME_BOARD_ARRAY:
+        elif next_spot_val == EMPTY_SPOT_VALUE:
             move = Move(move_type=MoveType.InLine, spots=[first_marble_pos, second_marble_pos, third_marble_pos],
                         direction=direction_vector)
             self.moves_list.append(move.__str__())
