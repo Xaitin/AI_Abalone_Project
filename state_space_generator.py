@@ -44,6 +44,11 @@ class StateSpaceGenerator:
             self.state_space = StateSpace(marble_positions, player)
             print(self.state_space)
 
+    def read_input_list(self, input_list):
+        player = input_list[0]
+        marble_position = input_list[1].split(',')
+        self.state_space = StateSpace(marble_position, player)
+
     def write_result_data(self, src, result):
         """
         Formats the resulting board state output and writes to file.
