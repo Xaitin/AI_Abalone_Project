@@ -3,7 +3,7 @@ from pygame.sprite import Sprite
 
 from constants import BLUE, RED, HEXAGON_SIDE_LENGTH, COS60, SIN60, HEXAGON_OUTLINE_COLOR, SELECTED_HEXAGON_COLOR, \
     BOARD_COLOR
-from coordinate_helper import CoordinateHelper
+from helper.coordinate_helper import CoordinateHelper
 
 class Hexagon(Sprite):
     def __init__(self, board, x, y, z, win):

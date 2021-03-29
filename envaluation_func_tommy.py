@@ -1,7 +1,7 @@
 import copy
-from state_space import StateSpace
+from models.state_space import StateSpace
 from constants import *
-from team_enum import *
+from enums.team_enum import *
 
 
 class Evaluation:

@@ -1,6 +1,5 @@
 import enum
 
-from coordinate_helper import CoordinateHelper
 
 class DirectionEnum(enum.Enum):
     NE = 1

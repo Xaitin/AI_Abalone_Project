@@ -1,9 +1,9 @@
 import pygame
 import pygame_gui
-from pygame_gui.elements import UIWindow, UIPanel, UITextBox, UITextBox, UIButton, UISelectionList, UITextEntryLine
+from pygame_gui.elements import UIWindow, UIPanel, UIButton, UISelectionList, UITextEntryLine
 from pygame_gui.elements.ui_text_box import UITextBox
 
-from board import Board
+from models.board import Board
 from constants import *
 
 

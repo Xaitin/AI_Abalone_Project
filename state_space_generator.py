@@ -1,4 +1,4 @@
-from state_space import StateSpace
+from models.state_space import StateSpace
 
 
 class StateSpaceGenerator:

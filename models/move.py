@@ -1,6 +1,6 @@
-from coordinate_helper import CoordinateHelper
-from direction import DirectionEnum
-from move_type import MoveType
+from helper.coordinate_helper import CoordinateHelper
+from enums.direction import DirectionEnum
+from enums.move_type import MoveType
 
 
 class Move:

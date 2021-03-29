@@ -4,12 +4,12 @@ from operator import add
 
 from constants import EMPTY_GAME_BOARD_ARRAY, EMPTY_SPOT_VALUE, OUTSIDE_OF_THE_BOARD_VALUE, DIRECTION_VECTORS_2D, \
     BOARD_ARRAY_SIZE, DEFAULT_MARBLE_POSITION
-from coordinate_helper import CoordinateHelper
-from direction_helper import DirectionHelper
+from helper.coordinate_helper import CoordinateHelper
+from helper.direction_helper import DirectionHelper
 from move import Move
-from move_type import MoveType
+from enums.move_type import MoveType
 from position import Position
-from team_enum import TeamEnum
+from enums.team_enum import TeamEnum
 
 
 class StateSpace:

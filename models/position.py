@@ -1,5 +1,5 @@
-from coordinate_helper import CoordinateHelper
-from team_enum import TeamEnum
+from helper.coordinate_helper import CoordinateHelper
+from enums.team_enum import TeamEnum
 
 
 class Position:
