@@ -1,6 +1,6 @@
 import pygame
 import pygame_gui
-from pygame_gui.elements import UIWindow, UIPanel, UIButton, UISelectionList, UITextEntryLine
+from pygame_gui.elements import UIWindow, UIPanel, UIButton, UISelectionList, UITextEntryLine, UIDropDownMenu
 from pygame_gui.elements.ui_text_box import UITextBox
 
 from models.board import Board
@@ -24,7 +24,7 @@ class ConfigMenu(UIWindow):
                                             starting_layer_height=2, manager=self.manager,
                                             container=self)
         self.PLAYER_OPTIONS_LAYOUT = UIPanel(
-            relative_rect=pygame.Rect((pose_x, pose_y + gap), (345, 125)),
+            relative_rect=pygame.Rect((pose_x, pose_y + gap), (210, 110)),
             starting_layer_height=2, manager=self.manager, container=self)
         self.GAME_OPTIONS_LAYOUT = UIPanel(
             relative_rect=pygame.Rect((pose_x + 2.5 * gap // 1, pose_y + gap), (168, 125)),
@@ -56,7 +56,7 @@ class ConfigMenu(UIWindow):
         self.TIME_LIMIT_PLAYER_LABEL = UITextBox(
             html_text=f"<body bgcolor={UI_TEXT_BG_COLOR}><font face='verdana' color={UI_TEXT_COLOR} size=1><b><i>"
                       "Time Limit per player:</i></b></font></body>", object_id="label",
-            relative_rect=pygame.Rect((10, 35), (-1, -1)), manager=self.manager, container=self.PLAYER_OPTIONS_LAYOUT
+            relative_rect=pygame.Rect((10, 15), (-1, -1)), manager=self.manager, container=self.PLAYER_OPTIONS_LAYOUT
         )
         self.INITIAL_PLACEMENT_LABEL = UITextBox(
             html_text=f"<body bgcolor={UI_TEXT_BG_COLOR}><font face='verdana' color={UI_TEXT_COLOR} size=1><b><i>"
@@ -78,9 +78,9 @@ class ConfigMenu(UIWindow):
                       "Blacks Settings:</i></b></font></body>", object_id="label",
             relative_rect=pygame.Rect((400, 8), (-1, -1)), manager=self.manager, container=self.SELECTED_CONFIGURATIONS
         )
-        self.SELECTED_INITIAL = UITextBox(
-            relative_rect=pygame.Rect((8, 60), (-1, -1)), manager=self.manager, container=self.SELECTED_CONFIGURATIONS,
-            html_text=f'Standard'
+        self.SELECTED_INITIAL = UIButton(
+            relative_rect=pygame.Rect((8, 60), (120, 35)), manager=self.manager, container=self.SELECTED_CONFIGURATIONS,
+            text=f'Standard'
         )
         self.WHITE_TIME_LABEL = UITextBox(
             relative_rect=pygame.Rect((200, 40), (-1, -1)), manager=self.manager,
@@ -102,41 +102,37 @@ class ConfigMenu(UIWindow):
             container=self.SELECTED_CONFIGURATIONS,
             html_text=f'Type:'
         )
-        self.WHITE_TIME_INPUT = UITextBox(
-            relative_rect=pygame.Rect((270, 40), (-1, -1)), manager=self.manager,
+        self.WHITE_TIME_INPUT = UIButton(
+            relative_rect=pygame.Rect((270, 40), (80, 35)), manager=self.manager,
             container=self.SELECTED_CONFIGURATIONS,
-            html_text=f'10 mins'
+            text=f'5 secs'
         )
-        self.WHITE_TYPE_INPUT = UITextBox(
-            relative_rect=pygame.Rect((270, 80), (-1, -1)), manager=self.manager,
+        self.WHITE_TYPE_INPUT = UIButton(
+            relative_rect=pygame.Rect((270, 80), (80, 35)), manager=self.manager,
             container=self.SELECTED_CONFIGURATIONS,
-            html_text=f'Human'
+            text=f'Human'
         )
-        self.BLACK_TIME_INPUT = UITextBox(
-            relative_rect=pygame.Rect((470, 40), (-1, -1)), manager=self.manager,
+        self.BLACK_TIME_INPUT = UIButton(
+            relative_rect=pygame.Rect((470, 40), (80, 35)), manager=self.manager,
             container=self.SELECTED_CONFIGURATIONS,
-            html_text=f'10 mins'
+            text=f'5 secs'
         )
-        self.BLACK_TYPE_INPUT = UITextBox(
-            relative_rect=pygame.Rect((470, 80), (-1, -1)), manager=self.manager,
+        self.BLACK_TYPE_INPUT = UIButton(
+            relative_rect=pygame.Rect((470, 80), (80, 35)), manager=self.manager,
             container=self.SELECTED_CONFIGURATIONS,
-            html_text=f'Computer'
+            text=f'Computer'
         )
+        self.SELECTED_INITIAL.disable()
+        self.WHITE_TIME_INPUT.disable()
+        self.WHITE_TYPE_INPUT.disable()
+        self.BLACK_TIME_INPUT.disable()
+        self.BLACK_TYPE_INPUT.disable()
         self.MOVE_LIMIT_LABEL = UITextBox(
             html_text=f"<body bgcolor={UI_TEXT_BG_COLOR}><font face='verdana' color={UI_TEXT_COLOR} size=1><b><i>"
                       "Move limit per player:</i></b></font></body>", object_id="label",
-            relative_rect=pygame.Rect((10, 80), (-1, -1)), manager=self.manager, container=self.PLAYER_OPTIONS_LAYOUT
+            relative_rect=pygame.Rect((10, 60), (-1, -1)), manager=self.manager, container=self.PLAYER_OPTIONS_LAYOUT
         )
-        self.PLAYER1_LABEL = UITextBox(
-            html_text=f"<body bgcolor={UI_TEXT_BG_COLOR}><font face='verdana' color={UI_TEXT_COLOR} size=1><b><i>"
-                      "White</i></b></font></body>", object_id="label",
-            relative_rect=pygame.Rect((215, 0), (-1, -1)), manager=self.manager, container=self.PLAYER_OPTIONS_LAYOUT
-        )
-        self.PLAYER2_LABEL = UITextBox(
-            html_text=f"<body bgcolor={UI_TEXT_BG_COLOR}><font face='verdana' color={UI_TEXT_COLOR} size=1><b><i>"
-                      "Black</i></b></font></body>", object_id="label",
-            relative_rect=pygame.Rect((275, 0), (-1, -1)), manager=self.manager, container=self.PLAYER_OPTIONS_LAYOUT
-        )
+
         self.PLAYER1_LABEL_2 = UITextBox(
             html_text=f"<body bgcolor={UI_TEXT_BG_COLOR}><font face='verdana' color={UI_TEXT_COLOR} size=1><b><i>"
                       "White</i></b></font></body>", object_id="label",
@@ -173,16 +169,59 @@ class ConfigMenu(UIWindow):
         self.BLACK_COMPUTER_BUTTON = UIButton(relative_rect=pygame.Rect((84, 70), (74, 30)),
                                               text='Computer', manager=self.manager,
                                               container=self.GAME_OPTIONS_LAYOUT)
-        # Text input elements
-        self.TIME_LIMIT_INPUT_P1 = UITextEntryLine(relative_rect=pygame.Rect((220, 38), (50, 50)),
-                                                   manager=self.manager,
-                                                   container=self.PLAYER_OPTIONS_LAYOUT)
-        self.TIME_LIMIT_INPUT_P2 = UITextEntryLine(relative_rect=pygame.Rect((280, 38), (50, 50)),
-                                                   manager=self.manager,
-                                                   container=self.PLAYER_OPTIONS_LAYOUT)
-        self.MOVE_LIMIT_INPUT = UITextEntryLine(relative_rect=pygame.Rect((220, 83), (50, 50)),
-                                                manager=self.manager,
-                                                container=self.PLAYER_OPTIONS_LAYOUT)
+        # # Text input elements
+        # self.TIME_LIMIT_INPUT_P1 = UITextEntryLine(relative_rect=pygame.Rect((220, 38), (50, 50)),
+        #                                            manager=self.manager,
+        #                                            container=self.PLAYER_OPTIONS_LAYOUT)
+        # self.TIME_LIMIT_INPUT_P2 = UITextEntryLine(relative_rect=pygame.Rect((280, 38), (50, 50)),
+        #                                            manager=self.manager,
+        #                                            container=self.PLAYER_OPTIONS_LAYOUT)
+        # self.MOVE_LIMIT_INPUT = UITextEntryLine(relative_rect=pygame.Rect((220, 83), (50, 50)),
+        #                                         manager=self.manager,
+        #                                         container=self.PLAYER_OPTIONS_LAYOUT)
+        drop_down_h = 260
+        gap = 40
+        black_white_h = 260 - gap
+        time_list = list()
+        move_list = list()
+        for i in range(1, 11):
+            time_list.append(f"{i * 5} secs")
+            move_list.append(f"{i * 5} moves")
+
+        self.PLAYER1_LABEL = UITextBox(
+            html_text=f"<body bgcolor={UI_TEXT_BG_COLOR}><font face='verdana' color={UI_TEXT_COLOR} size=1><b><i>"
+                      "White</i></b></font></body>", object_id="label",
+            relative_rect=pygame.Rect((330, black_white_h), (-1, -1)), manager=self.manager, container=self
+        )
+        self.PLAYER2_LABEL = UITextBox(
+            html_text=f"<body bgcolor={UI_TEXT_BG_COLOR}><font face='verdana' color={UI_TEXT_COLOR} size=1><b><i>"
+                      "Black</i></b></font></body>", object_id="label",
+            relative_rect=pygame.Rect((330 + 70, black_white_h), (-1, -1)), manager=self.manager, container=self
+        )
+        current_time_string = '5 secs'
+        self.time_drop_down_menu_white = UIDropDownMenu(time_list,
+                                                        current_time_string,
+                                                        pygame.Rect((300, drop_down_h), (90, 40)),
+                                                        manager=self.manager,
+                                                        container=self)
+        self.time_drop_down_menu_black = UIDropDownMenu(time_list,
+                                                        current_time_string,
+                                                        pygame.Rect((380, drop_down_h), (90, 40)),
+                                                        manager=self.manager,
+                                                        container=self)
+        current_move_string = '5 moves'
+        self.move_drop_down_menu_white = UIDropDownMenu(move_list,
+                                                        current_move_string,
+                                                        pygame.Rect((300, drop_down_h + gap), (90, 40)),
+                                                        manager=self.manager,
+                                                        container=self)
+        self.move_drop_down_menu_black = UIDropDownMenu(move_list,
+                                                        current_move_string,
+                                                        pygame.Rect((380, drop_down_h + gap), (90, 40)),
+                                                        manager=self.manager,
+                                                        container=self)
+
+        self.WHITE_TIME_INPUT.rebuild_from_changed_theme_data()
 
 
 class GameMenu:
@@ -196,7 +235,7 @@ class GameMenu:
 
         # board initialization
         self.board = Board(self.window)
-
+        self.initial_board = 0
         self.run_display = True
         self.display.fill(BLACK)
         self.config_menu = None
@@ -208,6 +247,10 @@ class GameMenu:
         self.button_h = 50
         self.adjust = 30
         self.font_size = 30
+        self.setting_result = dict()
+        self.setting_result["selected_layout"] = "Standard"
+        self.setting_result["white_type"] = "Human"
+        self.setting_result["black_type"] = "Computer"
 
         # Texts
         self.draw_text("Abalone", self.font_size, (WINDOW_WIDTH // 2, TITLE_DISTANCE_TOP + self.button_h // 2))
@@ -233,44 +276,29 @@ class GameMenu:
                                         self.button_h, "reset",
                                         self.manager)
 
-        # region Input boxes
-        self.draw_text(
-            "Next Move Suggested",
-            self.font_size // 2,
-            (
-                WINDOW_WIDTH // 2 - INPUT_BOX_DISTANCE_FROM_CENTER,
-                int(1.1 * HEIGHT_HEADER_FOOTER + GAMEBOARD_SIZE)
-            )
-        )
-        self.draw_text(
-            "Next Move",
-            self.font_size // 2,
-            (
-                WINDOW_WIDTH // 2 + INPUT_BOX_DISTANCE_FROM_CENTER,
-                int(1.1 * HEIGHT_HEADER_FOOTER + GAMEBOARD_SIZE)
-            )
-        )
-
-        UITextEntryLine(
-            pygame.Rect(
-                (WINDOW_WIDTH // 2 - INPUT_BOX_DISTANCE_FROM_CENTER - INPUT_BOX_WIDTH // 2,
-                 1.3 * HEIGHT_HEADER_FOOTER + GAMEBOARD_SIZE),
-                (INPUT_BOX_WIDTH, -1)
-            ),
-            self.manager,
-            object_id='#suggested_move'
-        )
-        UITextEntryLine(
-            pygame.Rect(
-                (WINDOW_WIDTH // 2 + INPUT_BOX_DISTANCE_FROM_CENTER - INPUT_BOX_WIDTH // 2,
-                 1.3 * HEIGHT_HEADER_FOOTER + GAMEBOARD_SIZE),
-                (INPUT_BOX_WIDTH, -1)
-            ),
-            self.manager,
-            object_id='#next_move'
-        )
-
-        # endregi
+        temp = 60
+        button_w_dir = self.button_w // 2
+        button_h_dir = self.button_h // 1.2
+        index = 2.8
+        sub_h = WINDOW_HEIGHT - 100
+        self.NW_button = self.button(WINDOW_WIDTH // index + temp - self.button_w, sub_h,
+                                     button_w_dir, button_h_dir, "NW",
+                                     self.manager)
+        self.NE_button = self.button(WINDOW_WIDTH // index + temp * 2 - self.button_w, sub_h,
+                                     button_w_dir, button_h_dir, "NE",
+                                     self.manager)
+        self.W_button = self.button(WINDOW_WIDTH // index + temp * 3 - self.button_w, sub_h,
+                                    button_w_dir, button_h_dir, "W",
+                                    self.manager)
+        self.E_button = self.button(WINDOW_WIDTH // index + temp * 4 - self.button_w, sub_h,
+                                    button_w_dir, button_h_dir, "E",
+                                    self.manager)
+        self.SW_button = self.button(WINDOW_WIDTH // index + temp * 5 - self.button_w, sub_h,
+                                     button_w_dir, button_h_dir, "SW",
+                                     self.manager)
+        self.SE_button = self.button(WINDOW_WIDTH // index + temp * 6 - self.button_w, sub_h,
+                                     button_w_dir, button_h_dir, "SE",
+                                     self.manager)
 
         # region Player Panels Initialization
         self.black_panel_position = [
@@ -361,22 +389,13 @@ class GameMenu:
             text='0 secs', manager=self.manager, container=container)
         self.total_time_info.disable()
         self.drop_down_time_hist = UISelectionList(pygame.Rect(pose_x, pose_y + 3 * gap, 120, 80),
-                                                   item_list=['1. 5 secs',
-                                                              '2. 5 secs',
-                                                              '3. 5 secs',
-                                                              '4. 5 secs',
-                                                              '5. 5 secs',
-                                                              ],
+                                                   item_list=[],
                                                    manager=self.manager,
                                                    container=container,
                                                    allow_multi_select=True)
 
         self.drop_move_hist = UISelectionList(pygame.Rect(pose_x, pose_y + 7 * gap, 120, 80),
-                                              item_list=['1. F5',
-                                                         '2. A3',
-                                                         '3. G4',
-                                                         '4. C1',
-                                                         ],
+                                              item_list=[],
                                               manager=self.manager,
                                               container=container,
                                               allow_multi_select=True)
@@ -424,24 +443,31 @@ class GameMenu:
                     if self.config_menu != None:
                         if event.ui_element == self.config_menu.START_BUTTON:
                             self.config_menu.WHITE_TYPE_INPUT.html_text = 'Start'
-                            print('Start - Config')
+                            self.setting_result[
+                                "white_time"] = self.config_menu.time_drop_down_menu_white.selected_option
+                            self.setting_result[
+                                "black_time"] = self.config_menu.time_drop_down_menu_black.selected_option
+                            self.setting_result_func(self.config_menu)
                             # move_limit = int(self.MOVE_LIMIT_INPUT.get_text())
                             # Configure sending start data to gameBoard here
                         if event.ui_element == self.config_menu.WHITE_HUMAN_BUTTON:
                             self.config_menu.WHITE_TYPE_INPUT.html_text = 'Human'
                             self.white_human_click = True
+                            self.setting_result["white_type"] = 'Human'
                             self.click_func(self.white_human_click, self.config_menu.WHITE_HUMAN_BUTTON,
                                             self.config_menu.WHITE_COMPUTER_BUTTON)
                             print('Human')
                         elif event.ui_element == self.config_menu.WHITE_COMPUTER_BUTTON:
                             self.config_menu.WHITE_TYPE_INPUT.html_text = 'Computer'
                             self.white_human_click = False
+                            self.setting_result["white_type"] = 'Computer'
                             self.click_func(self.white_human_click, self.config_menu.WHITE_COMPUTER_BUTTON,
                                             self.config_menu.WHITE_HUMAN_BUTTON)
 
                             print('Computer')
                         elif event.ui_element == self.config_menu.BLACK_HUMAN_BUTTON:
                             self.config_menu.BLACK_TYPE_INPUT.html_text = 'Human'
+                            self.setting_result["black_type"] = 'Human'
                             self.black_human_click = True
                             self.click_func(self.black_human_click, self.config_menu.BLACK_HUMAN_BUTTON,
                                             self.config_menu.BLACK_COMPUTER_BUTTON)
@@ -449,6 +475,7 @@ class GameMenu:
                             print('Human')
                         elif event.ui_element == self.config_menu.BLACK_COMPUTER_BUTTON:
                             self.config_menu.BLACK_TYPE_INPUT.html_text = 'Computer'
+                            self.setting_result["black_type"] = 'Computer'
                             self.black_human_click = False
                             self.click_func(self.black_human_click, self.config_menu.BLACK_COMPUTER_BUTTON,
                                             self.config_menu.BLACK_HUMAN_BUTTON)
@@ -456,22 +483,25 @@ class GameMenu:
                             print('Computer')
                         elif event.ui_element == self.config_menu.STANDARD_BUTTON:
                             self.config_menu.SELECTED_INITIAL.html_text = 'Standard'
+                            self.setting_result["selected_layout"] = "Standard"
+                            self.initial_board = 0
+                            self.third_click_func(self.initial_board, self.config_menu.STANDARD_BUTTON,
+                                                  self.config_menu.GER_DAISY_BUTTON, self.config_menu.BEL_DAISY_BUTTON)
                             print('Standard')
                         elif event.ui_element == self.config_menu.GER_DAISY_BUTTON:
                             self.config_menu.SELECTED_INITIAL.html_text = 'German Daisy'
+                            self.setting_result["selected_layout"] = "German Daisy"
+                            self.initial_board = 1
+                            self.third_click_func(self.initial_board, self.config_menu.STANDARD_BUTTON,
+                                                  self.config_menu.GER_DAISY_BUTTON, self.config_menu.BEL_DAISY_BUTTON)
                             print('German Daisy')
                         elif event.ui_element == self.config_menu.BEL_DAISY_BUTTON:
                             self.config_menu.SELECTED_INITIAL.html_text = 'Belgian Daisy'
+                            self.setting_result["selected_layout"] = "Belgian Daisy"
+                            self.initial_board = 2
+                            self.third_click_func(self.initial_board, self.config_menu.STANDARD_BUTTON,
+                                                  self.config_menu.GER_DAISY_BUTTON, self.config_menu.BEL_DAISY_BUTTON)
                             print('Belgian Daisy')
-                    if event.user_type == pygame_gui.UI_TEXT_ENTRY_CHANGED:
-                        if event.ui_element == self.config_menu.TIME_LIMIT_INPUT_P1:
-                            pass
-                            # take p1 input
-                        elif event.ui_element == self.config_menu.TIME_LIMIT_INPUT_P2:
-                            pass
-                            # take p2 input
-                        elif event.ui_element == self.config_menu.MOVE_LIMIT_INPUT:
-                            pass
             self.manager.process_events(event)
 
     @staticmethod
@@ -482,6 +512,33 @@ class GameMenu:
         else:
             button2.enable()
             button1.disable()
+
+    @staticmethod
+    def third_click_func(click_index, button1, button2, button3):
+        if click_index == 0:
+            button1.disable()
+            button2.enable()
+            button3.enable()
+        elif click_index == 1:
+            button1.enable()
+            button2.disable()
+            button3.enable()
+        else:
+            button1.enable()
+            button2.enable()
+            button3.disable()
+
+    def setting_result_func(self, config):
+        config.SELECTED_INITIAL.enable()
+        config.WHITE_TIME_INPUT.enable()
+        config.WHITE_TYPE_INPUT.enable()
+        config.BLACK_TIME_INPUT.enable()
+        config.BLACK_TYPE_INPUT.enable()
+        config.SELECTED_INITIAL.set_text(self.setting_result["selected_layout"])
+        config.WHITE_TIME_INPUT.set_text(self.setting_result["white_time"])
+        config.WHITE_TYPE_INPUT.set_text(self.setting_result["white_type"])
+        config.BLACK_TIME_INPUT.set_text(self.setting_result["black_time"])
+        config.BLACK_TYPE_INPUT.set_text(self.setting_result["black_type"])
 
     def display_menu(self):
         self.manager.root_container.show()
