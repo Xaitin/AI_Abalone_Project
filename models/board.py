@@ -45,8 +45,6 @@ class Board:
                             self.white_marble_list.append(CoordinateHelper.from2DArraytoCube(position_2d))
                         if value == 1:
                             self.black_marble_list.append(CoordinateHelper.from2DArraytoCube(position_2d))
-
-
                 except ValueError:
                     pass
         print(self.black_marble_list)

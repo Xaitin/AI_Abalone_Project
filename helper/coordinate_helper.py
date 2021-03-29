@@ -20,8 +20,10 @@ class CoordinateHelper:
     @staticmethod
     def from2DArraytoCube(position_2d, with_gutter=True):
         # print("2DArray", position_2d)
+        # The "-1" that was originally here for each variable is now used when this function is used in state_space.
+        # It was removed because it shifted the marble positions on the game board.
         if with_gutter:
-            return position_2d[1] - BOARD_SIZE, position_2d[0] - BOARD_SIZE
+            return position_2d[1] - BOARD_SIZE - 1, position_2d[0] - BOARD_SIZE - 1
 
     @staticmethod
     def fromCubeto2DArray(cube_position, with_gutter=False):
@@ -34,7 +36,6 @@ class CoordinateHelper:
         cubePos = CoordinateHelper.from2DArraytoCube(position_2d)
         # print("Cube Pos", cubePos)
         return CoordinateHelper.fromCubetoXY(cubePos)
-
 
     @staticmethod
     def from_cube_str_to_cube(coord):
@@ -54,3 +55,4 @@ class CoordinateHelper:
     def from_2d_to_cube_str(position_2d, with_gutter=True):
         if with_gutter:
             return CoordinateHelper.from_cube_to_cube_str(CoordinateHelper.from2DArraytoCube(position_2d))
+        return CoordinateHelper.from_cube_to_cube_str(CoordinateHelper.from2DArraytoCube(position_2d))
