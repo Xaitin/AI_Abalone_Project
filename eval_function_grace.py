@@ -4,7 +4,7 @@ from itertools import combinations
 from constants import LETTER_SHIFT, NUMBER_SHIFT
 
 
-class EvalFunction:
+class EvaluationFunction:
 
     def __init__(self, board, player):
         self._board_state = board
@@ -13,7 +13,7 @@ class EvalFunction:
         self._center = (5, 5)
         self._player = player
 
-    def eval_board(self):
+    def evaluate_move(self):
         center_proximity = 0
         cohesion = 0
         marbles_on_board = 0
@@ -25,18 +25,18 @@ class EvalFunction:
             else:
                 self._white_marbles.append(m)
 
-        center_proximity = abs(self.center_proximity(self._player) -
-                               self.center_proximity('w' if self._player == 'b' else 'b'))
+        center_proximity = (self.center_proximity(self._player) -
+                            self.center_proximity('w' if self._player == 'b' else 'b'))
 
         # If all the marbles are overall further away from the board,
         # we check cohesion to see if it's not overall a terrible state
-        if center_proximity > 2:
+        if abs(center_proximity) > 2:
             cohesion = self.cohesion(self._player) - self.cohesion('w' if self._player == 'b' else 'b')
         # Else if the marbles are over all closer, then we can check how many marbles we have on the board.
         # This is multiplied with 100 to give a more favorable score since this is an attacking position.
-        else:
-            marbles_on_board = (self.marbles_on_board(self._player) -
-                                self.marbles_on_board('w' if self._player == 'b' else 'b')) * 100
+        if abs(center_proximity) < 2:
+            marbles_on_board = (self.marbles_on_board('w' if self._player == 'b' else 'b') * 100 -
+                                self.marbles_on_board(self._player) * 100)
 
         return center_proximity + cohesion + marbles_on_board
 
