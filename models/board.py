@@ -12,7 +12,7 @@ SETUP_CONSTANT = 0
 
 
 class Board:
-    def __init__(self, win):
+    def __init__(self, win, setup=0):
         # 2D array
         self.hexagons = {}
         self.selected_hexagon = None
@@ -26,7 +26,7 @@ class Board:
         self.black_marble_list = list()
         self.white_marble_list = list()
         win.fill(WHITE)
-        self.initialize_marbles(self.teams, SETUP_CONSTANT)
+        self.initialize_marbles(self.teams, setup)
 
     def generate_move(self, direction: DirectionEnum):
         if len(self.selected_marbles) == 1:

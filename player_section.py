@@ -68,3 +68,5 @@ class PlayerSection:
                                               container=self.player,
                                               allow_multi_select=True)
 
+        self.your_turn = UILabel(relative_rect=pygame.Rect((pose_x + 2.5 * gap, pose_y - 0.8*gap), (120, 30)),
+            text='', manager=self.manager, container=self.player)
