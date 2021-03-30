@@ -1,12 +1,17 @@
 import copy
 from models.state_space import StateSpace
+from models.position import Position
 from constants import *
 from enums.team_enum import *
 
-
 class Evaluation:
-    def __init__(self, player: TeamEnum, state):
-        self.state = state
+    def __init__(self, player, marble_positions):
+        self.state_space = StateSpace()
+        self.marble_positions = [Position(TeamEnum.BLACK if position[0] == 'b' else TeamEnum.WHITE, position[1]) for
+                                 position in self.state_space.read_position_strings(marble_positions)]
+        print(self.marble_positions)
+        self.state = self.state_space.to_2d_array(self.marble_positions)
+
         self.ally = None
         self.enemy = None
         self.enemy_player = None
@@ -19,9 +24,8 @@ class Evaluation:
             self.ally = TeamEnum.WHITE.value
             self.enemy = TeamEnum.BLACK.value
             self.enemy_player = TeamEnum.BLACK
-        self.state_space = StateSpace()
         self.state_space.set_player_value(TeamEnum.BLACK.value)
-        self.state_space.set_marble_positions_2d(self.state)
+        self.state_space.set_marble_positions_2d(self.state_space.to_2d_array(self.marble_positions))
         self.state_space.set_player_value(self.ally)
         self.ally_pieces_locations = copy.copy(self.state_space.get_ally_position(self.state))
         self.state_space.set_player_value(self.enemy)
@@ -153,28 +157,36 @@ class Evaluation:
 if __name__ == '__main__':
     # state1 = INITIAL_GAME_BOARD_SETUPS[2]
 
-    initial_state = INITIAL_GAME_BOARD_SETUPS[0]
+    # initial_state = INITIAL_GAME_BOARD_SETUPS[0]
+    #
+    # state_white_win_one = [
+    #     [-2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2],
+    #     [-2, -2, -2, -2, -2, 2, 2, 2, 2, 2, -2],
+    #     [-2, -2, -2, -2, 2, 2, 2, 2, 2, -1, -2],
+    #     [-2, -2, -2, -1, -1, 2, 2, 2, -1, -1, -2],
+    #     [-2, -2, -1, -1, -1, -1, -1, -1, -1, -1, -2],
+    #     [-2, -1, -1, -1, -1, -1, -1, -1, -1, -1, -2],
+    #     [-2, -1, -1, -1, 1, 1, -1, -1, -1, -2, -2],
+    #     [-2, -1, -1, 1, -1, -1, -1, -1, -2, -2, -2],
+    #     [-2, 1, 1, 1, 1, 1, 1, -2, -2, -2, -2],
+    #     [-2, 1, 1, 1, 1, 1, -2, -2, -2, -2, -2],
+    #     [-2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2]
+    # ]
+    #
+    # test_list = list()
+    # test_list += INITIAL_GAME_BOARD_SETUPS
+    # test_list.append(state_white_win_one)
+    #
+    # for test_index in test_list:
+    #     tommy_AI_Evaluation_white = Evaluation(TeamEnum.WHITE, test_index)
+    #     print(f" white:  {tommy_AI_Evaluation_white.get_evaluation_score()}")
+    #     tommy_AI_Evaluation_black = Evaluation(TeamEnum.BLACK, test_index)
+    #     print(f" black:  {tommy_AI_Evaluation_black.get_evaluation_score()}")
 
-    state_white_win_one = [
-        [-2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2],
-        [-2, -2, -2, -2, -2, 2, 2, 2, 2, 2, -2],
-        [-2, -2, -2, -2, 2, 2, 2, 2, 2, -1, -2],
-        [-2, -2, -2, -1, -1, 2, 2, 2, -1, -1, -2],
-        [-2, -2, -1, -1, -1, -1, -1, -1, -1, -1, -2],
-        [-2, -1, -1, -1, -1, -1, -1, -1, -1, -1, -2],
-        [-2, -1, -1, -1, 1, 1, -1, -1, -1, -2, -2],
-        [-2, -1, -1, 1, -1, -1, -1, -1, -2, -2, -2],
-        [-2, 1, 1, 1, 1, 1, 1, -2, -2, -2, -2],
-        [-2, 1, 1, 1, 1, 1, -2, -2, -2, -2, -2],
-        [-2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2]
-    ]
 
-    test_list = list()
-    test_list += INITIAL_GAME_BOARD_SETUPS
-    test_list.append(state_white_win_one)
 
-    for test_index in test_list:
-        tommy_AI_Evaluation_white = Evaluation(TeamEnum.WHITE, test_index)
-        print(f" white:  {tommy_AI_Evaluation_white.get_evaluation_score()}")
-        tommy_AI_Evaluation_black = Evaluation(TeamEnum.BLACK, test_index)
-        print(f" black:  {tommy_AI_Evaluation_black.get_evaluation_score()}")
+    # DEFAULT_MARBLE_POSITION = ['C5b', 'D5b', 'E4b', 'E5b', 'E6b', 'F5b', 'F6b', 'F7b', 'F8b', 'G6b', 'H6b', 'C3w', 'C4w', 'D3w', 'D4w', 'D6w', 'E7w', 'F4w', 'G5w', 'G7w', 'G8w', 'G9w', 'H7w', 'H8w', 'H9w']
+    tommy_AI_Evaluation_white = Evaluation(TeamEnum.WHITE, DEFAULT_MARBLE_POSITION)
+    print(f" white:  {tommy_AI_Evaluation_white.get_evaluation_score()}")
+    tommy_AI_Evaluation_black = Evaluation(TeamEnum.BLACK, DEFAULT_MARBLE_POSITION)
+    print(f" black:  {tommy_AI_Evaluation_black.get_evaluation_score()}")
