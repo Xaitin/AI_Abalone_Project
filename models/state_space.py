@@ -27,8 +27,6 @@ class StateSpace:
         self.triplets = 0
         self.player_value = None
 
-
-
     def reset_count(self):
         self.two_to_one_sumito = 0
         self.three_to_one_sumito = 0

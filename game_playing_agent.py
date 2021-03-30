@@ -100,26 +100,30 @@ class GamePlayingAgent:
             next_opponent_move_values.append(greatest_opponent_move_value)
         return next_opponent_move_values, next_opponent_moves
 
+    def set_input_list(self, input_list):
+        self._input_list = input_list
+        self._agent_color = input_list[0]
+
 
 def main():
     running = True
     running_count = 0
-    agent2 = None
     my_list = ["b",
                "A1b,A2b,A3b,A4b,A5b,B1b,B2b,B3b,B4b,B5b,B6b,C3b,C4b,C5b,G5w,G6w,G7w,H4w,H5w,H6w,H7w,H8w,H9w,I5w,I6w,I7w,I8w,I9w"]
+    agent = GamePlayingAgent(my_list)
     while running:
-        running_count = running_count + 1
-        next_state = ["w"]
+        running_count += 1
         print("Black Moving")
-        agent = GamePlayingAgent(my_list)
-        next_state.append(agent.make_turn())
-        print(next_state[1])
-        my_list = ["b"]
+        new_state = agent.make_turn()
+        print(new_state)
         print("White Moving")
-        agent2 = GamePlayingAgent(next_state)
-        my_list.append(agent2.make_turn())
-        print(my_list[1])
-        if running_count == 20:
+        agent.set_input_list(["w",
+                              new_state])
+        new_state = agent.make_turn()
+        print(new_state)
+        agent.set_input_list(["b",
+                              new_state])
+        if running_count == 6:
             running = False
 
 
