@@ -478,7 +478,7 @@ class StateSpace:
         return translate_movements
 
     def to_2d_array(self, marble_positions):
-        result_array = EMPTY_GAME_BOARD_ARRAY
+        result_array = copy.deepcopy(EMPTY_GAME_BOARD_ARRAY)
         for position in marble_positions:
             array_position_row, array_position_col = CoordinateHelper.fromCubeto2DArray(position.get_position())
             result_array[array_position_row][array_position_col] = position.get_team().value
