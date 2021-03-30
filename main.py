@@ -2,14 +2,18 @@ import re
 
 import pygame
 import pygame_gui
-from pygame_gui.elements import UIWindow, UIPanel, UIButton, UISelectionList, UITextEntryLine, UIDropDownMenu, UILabel
+from pygame_gui.elements import UIPanel, UIButton, UISelectionList
 from pygame_gui.elements.ui_text_box import UITextBox
+
 from config import ConfigMenu
 from player_section import PlayerSection
 from models.board import Board
 from constants import *
 from enums.team_enum import TeamEnum
 from enums.direction import DirectionEnum
+from enums.team_enum import TeamEnum
+from models.board import Board
+from player_section import PlayerSection
 
 
 class GameMenu:
@@ -128,10 +132,9 @@ class GameMenu:
             relative_rect=pygame.Rect(self.white_panel_position, (-1, -1)), manager=self.manager,
             layer_starting_height=2)
 
-
         self.black_player = PlayerSection(self.manager, self.black_player_panel)
         self.white_player = PlayerSection(self.manager, self.white_player_panel)
-
+        # endregion Initialization
     @staticmethod
     def button(x, y, w, h, text, manager):
         return UIButton(relative_rect=pygame.Rect((x, y), (w, h)), text=text, manager=manager)
@@ -185,9 +188,6 @@ class GameMenu:
                     if event.ui_element == self.reset_button:
                         self.resetting_board_player_panel()
                         self.start_game = False
-
-
-
 
                     if event.ui_element in self.direction_buttons:
                         self.on_direction_button_click(event.ui_element)

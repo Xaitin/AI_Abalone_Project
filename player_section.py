@@ -1,7 +1,9 @@
 import pygame
-from pygame_gui.elements import UIWindow, UIPanel, UIButton, UISelectionList, UITextEntryLine, UIDropDownMenu, UILabel
+from pygame_gui.elements import UISelectionList, UILabel
 from pygame_gui.elements.ui_text_box import UITextBox
+
 from constants import *
+
 
 class PlayerSection:
     def __init__(self, manager, player):
@@ -67,6 +69,5 @@ class PlayerSection:
                                               manager=self.manager,
                                               container=self.player,
                                               allow_multi_select=True)
-
-        self.your_turn = UILabel(relative_rect=pygame.Rect((pose_x + 2.5 * gap, pose_y - 0.8*gap), (120, 30)),
-            text='', manager=self.manager, container=self.player)
+        self.your_turn = UILabel(relative_rect=pygame.Rect((pose_x + 2.5 * gap, pose_y - 0.8 * gap), (120, 30)),
+                                 text='', manager=self.manager, container=self.player)

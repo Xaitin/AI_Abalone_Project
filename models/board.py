@@ -1,3 +1,5 @@
+from operator import sub
+
 import pygame
 
 from constants import WHITE, BOARD_SIZE, INITIAL_GAME_BOARD_SETUPS, WINDOW_WIDTH, WINDOW_HEIGHT
@@ -62,8 +64,7 @@ class Board:
     def update(self):
         self.draw_hexagons()
 
-        for marble in self.marbles:
-            marble.draw(self.win)
+        self.marbles.draw(self.win)
 
         for marble in self.selected_marbles:
             marble.draw_selection_circle(self.win)
@@ -94,23 +95,44 @@ class Board:
         #         self.reset_selected_hexagon()
 
     def select_marble(self, x, y):
+        # TODO change selected_team -> team of the turn
         try:
             selected_team = self.selected_marbles[0].team
         except IndexError:
             selected_team = None
 
-        for marble in self.marbles:
-            if marble.rect.collidepoint(x, y) and (selected_team is None or marble.team == selected_team):
-                if marble not in self.selected_marbles:
-                    self.selected_marbles.append(marble)
-                    print(self.selected_marbles)
-                    return True
-                elif marble in self.selected_marbles:
-                    self.selected_marbles.remove(marble)
-                    print(self.selected_marbles)
-                    return True
+        try:
+            clicked_marble = next(filter(lambda marble: marble.rect.collidepoint(x, y), self.marbles))
+        except StopIteration:
+            return
+
+        # only ally can be added unless no marble is selected yet
+        if selected_team is None or clicked_marble.team == selected_team:
+            n_selected = len(self.selected_marbles)
+
+            if n_selected == 0:
+                self.add_remove_selected_marble(clicked_marble)
+            else:
+                first_marble = self.selected_marbles[0]
+                # when one marble is selected, only a neighbor ally marble can be added.
+                if n_selected == 1 and CoordinateHelper.manhattan_distance(first_marble, clicked_marble) == 1:
+                    self.add_remove_selected_marble(clicked_marble)
+                elif n_selected == 2:
+                    second_marble = self.selected_marbles[1]
+                    direction = tuple(map(sub, second_marble.position_2d, first_marble.position_2d))
 
         return False
+
+    def add_remove_selected_marble(self, marble):
+        if marble not in self.selected_marbles:
+            self.selected_marbles.append(marble)
+            print("Marble added", marble)
+            print(self.selected_marbles)
+
+        else:
+            self.selected_marbles.remove(marble)
+            print("Marble removed", marble)
+            print(self.selected_marbles)
 
     def is_marble_selected(self):
         return len(self.selected_marbles) > 0

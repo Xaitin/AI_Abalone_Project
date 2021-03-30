@@ -53,5 +53,13 @@ class CoordinateHelper:
     @staticmethod
     def from_2d_to_cube_str(position_2d, with_gutter=True):
         if with_gutter:
-            return CoordinateHelper.from_cube_to_cube_str(CoordinateHelper.from2DArraytoCube(position_2d, with_gutter=with_gutter))
-        return CoordinateHelper.from_cube_to_cube_str(CoordinateHelper.from2DArraytoCube(position_2d, with_gutter=with_gutter))
+            return CoordinateHelper.from_cube_to_cube_str(
+                CoordinateHelper.from2DArraytoCube(position_2d, with_gutter=with_gutter))
+        return CoordinateHelper.from_cube_to_cube_str(
+            CoordinateHelper.from2DArraytoCube(position_2d, with_gutter=with_gutter))
+
+    @staticmethod
+    def manhattan_distance(position_a: (int, int), position_b: (int, int)):
+        return (abs(position_a[0] - position_b[0])
+                + abs(position_a[0] + position_a[1] - position_b[0] - position_b[1])
+                + abs(position_a[1] - position_b[1])) / 2
