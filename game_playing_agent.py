@@ -29,10 +29,17 @@ class GamePlayingAgent:
         self.next_moves_values = self.assign_move_values()
         self.next_moves, self.next_move_board_states, self.next_moves_values = self.find_best_next_moves()
         self.next_opponent_moves_values, self.next_opponents_moves = self.find_next_opponent_moves()
-        print(self.next_moves)
-        print(self.next_moves_values)
-        print(self.next_opponent_moves_values)
-        print(self.next_opponents_moves)
+        if len(self.next_moves) == 1:
+            print(self.next_moves[0])
+            return self.next_move_board_states[0]
+        else:
+            lowest_opponent_value = math.inf
+            for i in range(len(self.next_moves)):
+                if self.next_opponent_moves_values[i] < lowest_opponent_value:
+                    lowest_opponent_value = self.next_opponent_moves_values[i]
+            move_to_choose = self.next_opponent_moves_values.index(lowest_opponent_value)
+            print(self.next_moves[move_to_choose])
+            return self.next_move_board_states[move_to_choose]
         # This is our list of best moves and states with a depth of 2
 
     def assign_move_values(self):
@@ -65,7 +72,6 @@ class GamePlayingAgent:
             color = "w"
         else:
             color = "b"
-            print(self.next_move_board_states)
         for state in self.next_move_board_states:
             next_opponent_board_states = list()
             input_list = list()
@@ -96,11 +102,25 @@ class GamePlayingAgent:
 
 
 def main():
-    my_list = list()
-    my_list.append("b")
-    my_list.append("C3b,C4b,C5b,D4b,D5b,E5b,F5w,F6w,G5w,G7w,H5w,H6w,H7w,H8w")
-    agent = GamePlayingAgent(my_list)
-    agent.make_turn()
+    running = True
+    running_count = 0
+    agent2 = None
+    my_list = ["b",
+               "A1b,A2b,A3b,A4b,A5b,B1b,B2b,B3b,B4b,B5b,B6b,C3b,C4b,C5b,G5w,G6w,G7w,H4w,H5w,H6w,H7w,H8w,H9w,I5w,I6w,I7w,I8w,I9w"]
+    while running:
+        running_count = running_count + 1
+        next_state = ["w"]
+        print("Black Moving")
+        agent = GamePlayingAgent(my_list)
+        next_state.append(agent.make_turn())
+        print(next_state[1])
+        my_list = ["b"]
+        print("White Moving")
+        agent2 = GamePlayingAgent(next_state)
+        my_list.append(agent2.make_turn())
+        print(my_list[1])
+        if running_count == 20:
+            running = False
 
 
 if __name__ == '__main__':
