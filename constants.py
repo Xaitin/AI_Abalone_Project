@@ -169,6 +169,7 @@ MANHATTAN_WEIGHT = [
 
 
 DEFAULT_MARBLE_POSITION = ['C5b', 'D5b', 'E4b', 'E5b', 'E6b', 'F5b', 'F6b', 'F7b', 'F8b', 'G6b', 'H6b', 'C3w', 'C4w', 'D3w', 'D4w', 'D6w', 'E7w', 'F4w', 'G5w', 'G7w', 'G8w', 'G9w', 'H7w', 'H8w', 'H9w']
+STANDARD_MARBLE_POSITION = ['A1b', 'A2b', 'A3b', 'A4b', 'A5b', 'B1b', 'B2b', 'B3b', 'B5b', 'B6b', 'C3b', 'C4b', 'C5b', 'G5w', 'G6w', 'G7w', 'H4w', 'H5w', 'H6w', 'H7w', 'H9w', 'I5w', 'I6w', 'I7w', 'I8w', 'I9w']
 
 FRIENDLY_SQUARE_VALUES = {
     "I5": -1, "I6": -1, "I7": -1, "I8": -1, "I9": -1,
