@@ -98,12 +98,12 @@ class GameMenu:
             WINDOW_WIDTH // 2 + PANEL_DISTANCE_FROM_CENTER - PANEL_WIDTH, TITLE_DISTANCE_TOP * 2 + self.button_h
         ]
 
-        self.black_player = UIPanel(
+        self.black_player_panel = UIPanel(
             relative_rect=pygame.Rect(self.black_panel_position, (PANEL_WIDTH, PANEL_HEIGHT)),
             starting_layer_height=2,
             manager=self.manager
         )
-        self.white_player = UIPanel(
+        self.white_player_panel = UIPanel(
             relative_rect=pygame.Rect(self.white_panel_position, (PANEL_WIDTH, PANEL_HEIGHT)),
             starting_layer_height=2,
             manager=self.manager
@@ -121,9 +121,9 @@ class GameMenu:
             relative_rect=pygame.Rect(self.white_panel_position, (-1, -1)), manager=self.manager,
             layer_starting_height=2)
 
-        self.player_info(self.black_player)
-        self.player_info(self.white_player)
-        # endregion Initialization
+        self.black_player = PlayerSection(self.manager , self.black_player_panel)
+        self.white_player = PlayerSection(self.manager , self.white_player_panel)
+
 
     @staticmethod
     def button(x, y, w, h, text, manager):
@@ -136,59 +136,6 @@ class GameMenu:
         text_rect.center = (pose[0], pose[1])
         self.display.blit(text_surface, text_rect)
 
-    def player_info(self, container):
-        gap = 40
-        pose_x = 10
-        pose_y = 35
-        self.score = UITextBox(
-            html_text=f"<body bgcolor={UI_TEXT_BG_COLOR}><font face='verdana' color={UI_TEXT_COLOR} size=1><b><i>"
-                      "Score:</i></b></font></body>", object_id="score",
-            relative_rect=pygame.Rect((pose_x, pose_y), (-1, -1)), manager=self.manager, container=container
-        )
-        self.time_limit = UITextBox(
-            html_text=f"<body bgcolor={UI_TEXT_BG_COLOR}><font face='verdana' color={UI_TEXT_COLOR} size=1><b><i>"
-                      "Time Limit:</i></b></font></body>", object_id="time_limit",
-            relative_rect=pygame.Rect((pose_x, pose_y + gap), (-1, -1)), manager=self.manager, container=container
-        )
-        self.time_hist = UITextBox(
-            html_text=f"<body bgcolor={UI_TEXT_BG_COLOR}><font face='verdana' color={UI_TEXT_COLOR} size=1><b><i>"
-                      "Time History:</i></b></font></body>", object_id="time_hist",
-            relative_rect=pygame.Rect((pose_x, pose_y + 2 * gap), (-1, -1)), manager=self.manager, container=container
-        )
-        self.total_time = UITextBox(
-            html_text=f"<body bgcolor={UI_TEXT_BG_COLOR}><font face='verdana' color={UI_TEXT_COLOR} size=1><b><i>"
-                      "Total Time:</i></b></font></body>", object_id="total_time",
-            relative_rect=pygame.Rect((pose_x, pose_y + 5 * gap), (-1, -1)), manager=self.manager, container=container
-        )
-        self.move_hist = UITextBox(
-            html_text=f"<body bgcolor={UI_TEXT_BG_COLOR}><font face='verdana' color={UI_TEXT_COLOR} size=1><b><i>"
-                      "Move History:</i></b></font></body>", object_id="move_hist",
-            relative_rect=pygame.Rect((pose_x, pose_y + 6 * gap), (-1, -1)), manager=self.manager, container=container
-        )
-
-        self.score_info = UIButton(
-            relative_rect=pygame.Rect((pose_x + 3 * gap // 1, pose_y), (70, 30)),
-            text='0', manager=self.manager, container=container)
-        self.score_info.disable()
-        self.time_limit_info = UIButton(
-            relative_rect=pygame.Rect((pose_x + 3 * gap // 1, pose_y + gap), (70, 30)),
-            text='0 secs', manager=self.manager, container=container)
-        self.time_limit_info.disable()
-        self.total_time_info = UIButton(
-            relative_rect=pygame.Rect((pose_x + 3 * gap // 1, pose_y + 5 * gap), (70, 30)),
-            text='0 secs', manager=self.manager, container=container)
-        self.total_time_info.disable()
-        self.drop_down_time_hist = UISelectionList(pygame.Rect(pose_x, pose_y + 3 * gap, 120, 80),
-                                                   item_list=[],
-                                                   manager=self.manager,
-                                                   container=container,
-                                                   allow_multi_select=True)
-
-        self.drop_move_hist = UISelectionList(pygame.Rect(pose_x, pose_y + 7 * gap, 120, 80),
-                                              item_list=[],
-                                              manager=self.manager,
-                                              container=container,
-                                              allow_multi_select=True)
 
     def check_event(self):
         for event in pygame.event.get():
@@ -231,6 +178,8 @@ class GameMenu:
                         print('Undo!')
                     if event.ui_element == self.reset_button:
                         print('Reset!')
+
+                    #     for testing purpose
                     if event.ui_element == self.NW_button:
                         self.switch_player()
                         self.start_count = True

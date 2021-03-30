@@ -143,7 +143,7 @@ class ConfigMenu(UIWindow):
         # Buttons below here
         self.START_BUTTON = UIButton(
             relative_rect=pygame.Rect(((self.rect.width - gap) // 2, self.rect.height - gap), (100, 50)),
-            text='Start',
+            text='Apply',
             manager=self.manager, container=self)
         self.STANDARD_BUTTON = UIButton(relative_rect=pygame.Rect((80, 35), (120, 50)),
                                         text='Standard', manager=self.manager,
@@ -166,19 +166,10 @@ class ConfigMenu(UIWindow):
         self.BLACK_COMPUTER_BUTTON = UIButton(relative_rect=pygame.Rect((84, 70), (74, 30)),
                                               text='Computer', manager=self.manager,
                                               container=self.GAME_OPTIONS_LAYOUT)
-        # # Text input elements
-        # self.TIME_LIMIT_INPUT_P1 = UITextEntryLine(relative_rect=pygame.Rect((220, 38), (50, 50)),
-        #                                            manager=self.manager,
-        #                                            container=self.PLAYER_OPTIONS_LAYOUT)
-        # self.TIME_LIMIT_INPUT_P2 = UITextEntryLine(relative_rect=pygame.Rect((280, 38), (50, 50)),
-        #                                            manager=self.manager,
-        #                                            container=self.PLAYER_OPTIONS_LAYOUT)
-        # self.MOVE_LIMIT_INPUT = UITextEntryLine(relative_rect=pygame.Rect((220, 83), (50, 50)),
-        #                                         manager=self.manager,
-        #                                         container=self.PLAYER_OPTIONS_LAYOUT)
-        drop_down_h = 260
+
+        drop_down_h = 240
         gap = 40
-        black_white_h = 260 - gap
+        black_white_h = 260 - 2*gap
         time_list = list()
         move_list = list()
         for i in range(1, 11):
@@ -207,15 +198,9 @@ class ConfigMenu(UIWindow):
                                                         manager=self.manager,
                                                         container=self)
         current_move_string = '5 moves'
-        self.move_drop_down_menu_white = UIDropDownMenu(move_list,
+        self.move_drop_down_menu = UIDropDownMenu(move_list,
                                                         current_move_string,
-                                                        pygame.Rect((300, drop_down_h + gap), (90, 40)),
+                                                        pygame.Rect((320, drop_down_h + 1.3*gap), (130, 40)),
                                                         manager=self.manager,
                                                         container=self)
-        self.move_drop_down_menu_black = UIDropDownMenu(move_list,
-                                                        current_move_string,
-                                                        pygame.Rect((380, drop_down_h + gap), (90, 40)),
-                                                        manager=self.manager,
-                                                        container=self)
-
         self.WHITE_TIME_INPUT.rebuild_from_changed_theme_data()
