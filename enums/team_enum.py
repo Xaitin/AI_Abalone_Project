@@ -16,3 +16,12 @@ class TeamEnum(Enum):
             return WHITE_MARBLE_PATH
         else:
             raise ValueError('no such team')
+
+    @staticmethod
+    def get_team_str(teamEnum):
+        if teamEnum == TeamEnum.WHITE:
+            return 'w'
+        elif teamEnum == TeamEnum.BLACK:
+            return 'b'
+        else:
+            return None

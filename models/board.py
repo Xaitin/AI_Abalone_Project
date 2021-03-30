@@ -1,3 +1,5 @@
+import copy
+from models.state_space import StateSpace
 from helper.direction_helper import DirectionHelper
 from operator import add, sub
 
@@ -33,14 +35,18 @@ class Board:
         self.white_marble_list = list()
         win.fill(WHITE)
         self.initialize_marbles(self.teams, setup)
-        self.__str__()
+        self.state_space = StateSpace(marble_positions=self.__str__(
+        ), player=TeamEnum.get_team_str(self.team_of_turn))
 
     def __str__(self) -> str:
         marble_str_arr = []
-        marble_str_arr += sorted([str(marble) for marble in self.marbles.sprites() if marble.team == TeamEnum.BLACK.value])
-        marble_str_arr += sorted([str(marble) for marble in self.marbles.sprites() if marble.team == TeamEnum.WHITE.value])
+        marble_str_arr += sorted([str(marble) for marble in self.marbles.sprites()
+                                  if marble.team == TeamEnum.BLACK.value])
+        marble_str_arr += sorted([str(marble) for marble in self.marbles.sprites()
+                                  if marble.team == TeamEnum.WHITE.value])
         for marble_str in marble_str_arr:
             print(marble_str, end=', ')
+        print()
 
         return marble_str_arr
 
@@ -161,20 +167,35 @@ class Board:
 
     def generate_move(self, move_direction: DirectionEnum):
         n_selected = len(self.selected_marbles)
+        direction_vector_2d = DirectionEnum.get_direction_vector_2d(
+            move_direction)
+
         if n_selected == 1:
             marble = self.selected_marbles[0]
-            return Move(MoveType.InLine, marble.position_2d, DirectionEnum.get_direction_vector_2d(move_direction))
+            return Move(MoveType.InLine, marble.position_2d, direction_vector_2d)
         else:
             first_marble, second_marble = self.selected_marbles[0], self.selected_marbles[1]
             marble_alignment_direction = tuple(
                 map(sub, second_marble.position_2d, first_marble.position_2d))
 
-            if DirectionHelper.are_directions_on_the_same_axis(DirectionEnum.get_direction_vector_2d(move_direction), marble_alignment_direction):
+            if DirectionHelper.are_directions_on_the_same_axis(direction_vector_2d, marble_alignment_direction):
                 move_type = MoveType.InLine
+
+                # When you selected marbles in reversed-direction compared to the direction you wanna move
+                if DirectionHelper.get_opposite_direction(direction_vector_2d) == marble_alignment_direction:
+                    self.selected_marbles = list(reversed(self.selected_marbles))
+
             else:
                 move_type = MoveType.SideStep
 
-            return Move(move_type=move_type, spots=[marble.position_2d for marble in self.selected_marbles], direction=DirectionEnum.get_direction_vector_2d(move_direction))
+            move_spots = [
+                marble.position_2d for marble in self.selected_marbles]
+
+            return Move(move_type=move_type, spots=move_spots, direction=direction_vector_2d)
+
+    def validate_move(self, move: Move):
+        self.state_space.generate_all_resulting_board_states()
+        return str(move) in self.state_space.get_move_list()
 
     def apply_move(self, move: Move):
         marbles = self.marbles.sprites()
@@ -192,24 +213,55 @@ class Board:
         # In-line move needs to push marbles in front of them
         else:
             last_marble = marbles_to_move[-1]
-
             next_spot = tuple(
                 map(add, last_marble.position_2d, move.direction))
             next_marble = next(
                 filter(lambda m: m.position_2d == next_spot, marbles), None)
-            # next_spot is empty
 
-            if next_marble is None:
-                for marble in reversed(marbles_to_move):
-                    marble.move_by_direction(
-                        move_direction_enum)
-            else:
+            while next_marble is not None:
                 marbles_to_move.append(next_marble)
-                for marble in reversed(marbles_to_move):
-                    marble.move_by_direction(
-                        move_direction_enum)
+                last_marble = marbles_to_move[-1]
+                next_spot = tuple(
+                    map(add, last_marble.position_2d, move.direction))
+                next_marble = next(
+                    filter(lambda m: m.position_2d == next_spot, marbles), None)
+
+            for marble in reversed(marbles_to_move):
+                marble.move_by_direction(move_direction_enum)
+
+            # next_spot = tuple(
+            #     map(add, last_marble.position_2d, move.direction))
+            # next_marble = next(
+            #     filter(lambda m: m.position_2d == next_spot, marbles), None)
+
+            # len(marbles_to_move) == 2
+            # # next_spot is empty
+            # if next_marble is None:
+            # else:
+            #     marbles_to_move.append(next_marble)
+            #     for marble in reversed(marbles_to_move):
+            #         marble.move_by_direction(
+            #             move_direction_enum)
+
+            # len(marbles_to_move) == 3
+            # # next_spot is empty
+            # if next_marble is None:
+            #     for marble in reversed(marbles_to_move):
+            #         marble.move_by_direction(
+            #             move_direction_enum)
+            # else:
+            #     marbles_to_move.append(next_marble)
+            #     for marble in reversed(marbles_to_move):
+            #         marble.move_by_direction(
+            #             move_direction_enum)
 
         self.reset_selected_marbles()
+        self.switch_player()
+        self.update_state_space()
+
+    def update_state_space(self):
+        self.state_space = StateSpace(marble_positions=copy.copy(self.__str__()),
+                                      player=TeamEnum.get_team_str(self.team_of_turn))
 
     def is_inside_game_board(self, x, y):
         z = -x - y
