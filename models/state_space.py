@@ -27,8 +27,6 @@ class StateSpace:
         self.triplets = 0
         self.player_value = None
 
-
-
     def reset_count(self):
         self.two_to_one_sumito = 0
         self.three_to_one_sumito = 0
@@ -136,7 +134,7 @@ class StateSpace:
         singular_moves = self.get_singular_move_resulting_marble_positions()
         double_moves = self.get_double_marble_move_resulting_marble_positions()
         triple_moves = self.get_triple_marble_move_resulting_marble_positions()
-        print("singular:", len(singular_moves), "double:", len(double_moves), "triple:", len(triple_moves))
+        # print("singular:", len(singular_moves), "double:", len(double_moves), "triple:", len(triple_moves))
 
         return singular_moves + double_moves + triple_moves
 
@@ -173,7 +171,8 @@ class StateSpace:
 
             first_marble_pos = first_marble.position
             first_marble_pos_2d = CoordinateHelper.fromCubeto2DArray(first_marble_pos)
-            print("fromCubeto2DArray", first_marble_pos_2d)
+            # print("fromCubeto2DArray", first_marble_pos_2d)
+
             surroundings = copy.deepcopy(self.get_surrounding_dir_positions(first_marble_pos_2d))
 
             for dir, second_marble_pos_2d in surroundings:
@@ -189,7 +188,7 @@ class StateSpace:
                     side_step_result_states = copy.deepcopy(self.generate_side_step_moves_result_states(
                         marble_positions=[first_marble_pos_2d, second_marble_pos_2d],
                         direction_vector=dir))
-                    print("side_step_result_states", side_step_result_states)
+                    # print("side_step_result_states", side_step_result_states)
                     if in_line_result_state is not None:
                         resulting_marble_positions.append(self.to_marble_position_list(in_line_result_state))
                     if side_step_result_states is not None:
