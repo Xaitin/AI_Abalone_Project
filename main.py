@@ -361,6 +361,7 @@ class GameMenu:
             self.white_player.time_limit_info.set_text(f"{self.player_each_time[1] - start_zero} secs")
 
     def switch_player(self):
+        self.board.switch_player()
         if self.player_turn == TeamEnum.BLACK:
             self.black_player.time_hist_list.append(f"{self.each_time_count} secs")
             self.black_player.total_time_count += self.each_time_count

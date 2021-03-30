@@ -5,6 +5,7 @@ import pygame
 from constants import WHITE, BOARD_SIZE, INITIAL_GAME_BOARD_SETUPS, WINDOW_WIDTH, WINDOW_HEIGHT
 from enums.direction import DirectionEnum
 from enums.move_type import MoveType
+from enums.team_enum import TeamEnum
 from helper.coordinate_helper import CoordinateHelper
 from models.hexagon import Hexagon
 from models.marble import Marble
@@ -25,10 +26,14 @@ class Board:
 
         self.teams = [None, pygame.sprite.Group(), pygame.sprite.Group()]
         self.marbles = pygame.sprite.Group()
+        self.team_of_turn = TeamEnum.BLACK
         self.black_marble_list = list()
         self.white_marble_list = list()
         win.fill(WHITE)
         self.initialize_marbles(self.teams, setup)
+
+    def switch_player(self):
+        self.team_of_turn = TeamEnum.WHITE if self.team_of_turn == TeamEnum.BLACK else TeamEnum.BLACK
 
     def generate_move(self, direction: DirectionEnum):
         if len(self.selected_marbles) == 1:
@@ -95,19 +100,19 @@ class Board:
         #         self.reset_selected_hexagon()
 
     def select_marble(self, x, y):
-        # TODO change selected_team -> team of the turn
-        try:
-            selected_team = self.selected_marbles[0].team
-        except IndexError:
-            selected_team = None
-
+        # try:
+        #     selected_team = self.selected_marbles[0].team
+        # except IndexError:
+        #     selected_team = None
+        #
         try:
             clicked_marble = next(filter(lambda marble: marble.rect.collidepoint(x, y), self.marbles))
         except StopIteration:
+            print("no clicked marble?")
             return
 
         # only ally can be added unless no marble is selected yet
-        if selected_team is None or clicked_marble.team == selected_team:
+        if clicked_marble.team == self.team_of_turn.value:
             n_selected = len(self.selected_marbles)
 
             if n_selected == 0:
