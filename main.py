@@ -307,7 +307,6 @@ class GameMenu:
         config.BLACK_TYPE_INPUT.enable()
         self.board = Board(self.window, self.board_setup[self.setting_result["selected_layout"]])
         self.player_each_time = [int(re.search(r'\d+', self.setting_result["black_time"]).group()), int(re.search(r'\d+', self.setting_result["white_time"]).group())]
-
         config.SELECTED_INITIAL.set_text(self.setting_result["selected_layout"])
         config.WHITE_TIME_INPUT.set_text(self.setting_result["white_time"])
         config.WHITE_TYPE_INPUT.set_text(self.setting_result["white_type"])
@@ -316,10 +315,10 @@ class GameMenu:
 
     def resetting_board_player_panel(self):
         self.start_count = True
+        self.black_player.drop_down_time_hist.kill()
+        self.white_player.drop_down_time_hist.kill()
         self.black_player = PlayerSection(self.manager, self.black_player_panel)
-        self.black_player.drop_down_time_hist.set_item_list("")
         self.white_player = PlayerSection(self.manager, self.white_player_panel)
-        self.white_player.drop_down_time_hist.set_item_list("")
         self.board = Board(self.window, self.board_setup[self.setting_result["selected_layout"]])
 
     def display_menu(self):
@@ -355,10 +354,11 @@ class GameMenu:
     def add_timer(self):
         start_zero = int(self.time_count - self.current_time)
         self.each_time_count = start_zero
+        time_in_secs = self.player_each_time[0] - start_zero
         if self.player_turn == TeamEnum.BLACK:
-            self.black_player.time_limit_info.set_text(f"{self.player_each_time[0] - start_zero} secs")
+            self.black_player.time_limit_info.set_text(f"{time_in_secs} secs" if time_in_secs>=0 else f"{time_in_secs} secs!")
         else:
-            self.white_player.time_limit_info.set_text(f"{self.player_each_time[1] - start_zero} secs")
+            self.white_player.time_limit_info.set_text(f"{time_in_secs} secs" if time_in_secs>=0 else f"{time_in_secs} secs!")
 
     def switch_player(self):
         self.board.switch_player()
