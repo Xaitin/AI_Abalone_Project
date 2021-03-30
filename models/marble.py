@@ -1,7 +1,10 @@
+from _operator import add
+
 import pygame
 from pygame.sprite import AbstractGroup, Sprite
 
 from constants import MARBLE_SIZE, RED
+from enums.direction import DirectionEnum
 from helper.coordinate_helper import CoordinateHelper
 from enums.team_enum import TeamEnum
 
@@ -10,6 +13,7 @@ class Marble(Sprite):
     def __init__(self, position_2d, team, *groups: AbstractGroup):
         super().__init__(*groups)
         self.image = self.get_team_marble_img(team)
+        self.team = team
         self.position_2d = position_2d
         self.position_cube = CoordinateHelper.from2DArraytoCube(position_2d)
         self.xy_pos = None
@@ -20,10 +24,18 @@ class Marble(Sprite):
     def draw(self, window):
         window.blit(self.image, dest=self.xy_pos)
 
-    def move(self, new_position_cube):
+    def move_by_position_cube(self, new_position_cube):
         print(f"Moving Marble from {self.position_cube} to {new_position_cube}")
         self.position_2d = CoordinateHelper.fromCubeto2DArray(new_position_cube)
         self.recalc_position()
+
+    def move_by_direction(self, direction: DirectionEnum):
+        prev_position_cube = tuple(self.position_cube)
+        new_position_2d = tuple(map(add, self.position_2d, DirectionEnum.get_direction_vector(direction)))
+        self.position_2d = new_position_2d
+        self.recalc_position()
+
+        print(f"Moving Marble from {prev_position_cube} to {self.position_cube}")
 
     def get_team_marble_img(self, team):
         marble_img_path = TeamEnum.get_image_path(team)

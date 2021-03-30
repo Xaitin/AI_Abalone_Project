@@ -7,6 +7,7 @@ from player_section import PlayerSection
 from models.board import Board
 from constants import *
 from enums.team_enum import TeamEnum
+from enums.direction import DirectionEnum
 
 class GameMenu:
 
@@ -65,6 +66,7 @@ class GameMenu:
         button_h_dir = self.button_h // 1.2
         index = 2.8
         sub_h = WINDOW_HEIGHT - 100
+
         self.NW_button = self.button(WINDOW_WIDTH // index + temp - self.button_w, sub_h,
                                      button_w_dir, button_h_dir, "NW",
                                      self.manager)
@@ -84,6 +86,10 @@ class GameMenu:
                                      button_w_dir, button_h_dir, "SE",
                                      self.manager)
 
+        # Just an additional accessor for direction buttons
+        self.direction_buttons = [self.NW_button, self.NE_button, self.W_button, self.E_button, self.SW_button,
+                                  self.SE_button]
+
         # region Player Panels Initialization
         self.black_panel_position = [
             WINDOW_WIDTH // 2 - PANEL_DISTANCE_FROM_CENTER, TITLE_DISTANCE_TOP * 2 + self.button_h
@@ -92,12 +98,12 @@ class GameMenu:
             WINDOW_WIDTH // 2 + PANEL_DISTANCE_FROM_CENTER - PANEL_WIDTH, TITLE_DISTANCE_TOP * 2 + self.button_h
         ]
 
-        self.black_player_panel = UIPanel(
+        self.black_player = UIPanel(
             relative_rect=pygame.Rect(self.black_panel_position, (PANEL_WIDTH, PANEL_HEIGHT)),
             starting_layer_height=2,
             manager=self.manager
         )
-        self.white_player_panel = UIPanel(
+        self.white_player = UIPanel(
             relative_rect=pygame.Rect(self.white_panel_position, (PANEL_WIDTH, PANEL_HEIGHT)),
             starting_layer_height=2,
             manager=self.manager
@@ -115,8 +121,9 @@ class GameMenu:
             relative_rect=pygame.Rect(self.white_panel_position, (-1, -1)), manager=self.manager,
             layer_starting_height=2)
 
-        self.black_player = PlayerSection(self.manager, self.black_player_panel)
-        self.white_player = PlayerSection(self.manager, self.white_player_panel)
+        self.player_info(self.black_player)
+        self.player_info(self.white_player)
+        # endregion Initialization
 
     @staticmethod
     def button(x, y, w, h, text, manager):
@@ -128,6 +135,60 @@ class GameMenu:
         text_rect = text_surface.get_rect()
         text_rect.center = (pose[0], pose[1])
         self.display.blit(text_surface, text_rect)
+
+    def player_info(self, container):
+        gap = 40
+        pose_x = 10
+        pose_y = 35
+        self.score = UITextBox(
+            html_text=f"<body bgcolor={UI_TEXT_BG_COLOR}><font face='verdana' color={UI_TEXT_COLOR} size=1><b><i>"
+                      "Score:</i></b></font></body>", object_id="score",
+            relative_rect=pygame.Rect((pose_x, pose_y), (-1, -1)), manager=self.manager, container=container
+        )
+        self.time_limit = UITextBox(
+            html_text=f"<body bgcolor={UI_TEXT_BG_COLOR}><font face='verdana' color={UI_TEXT_COLOR} size=1><b><i>"
+                      "Time Limit:</i></b></font></body>", object_id="time_limit",
+            relative_rect=pygame.Rect((pose_x, pose_y + gap), (-1, -1)), manager=self.manager, container=container
+        )
+        self.time_hist = UITextBox(
+            html_text=f"<body bgcolor={UI_TEXT_BG_COLOR}><font face='verdana' color={UI_TEXT_COLOR} size=1><b><i>"
+                      "Time History:</i></b></font></body>", object_id="time_hist",
+            relative_rect=pygame.Rect((pose_x, pose_y + 2 * gap), (-1, -1)), manager=self.manager, container=container
+        )
+        self.total_time = UITextBox(
+            html_text=f"<body bgcolor={UI_TEXT_BG_COLOR}><font face='verdana' color={UI_TEXT_COLOR} size=1><b><i>"
+                      "Total Time:</i></b></font></body>", object_id="total_time",
+            relative_rect=pygame.Rect((pose_x, pose_y + 5 * gap), (-1, -1)), manager=self.manager, container=container
+        )
+        self.move_hist = UITextBox(
+            html_text=f"<body bgcolor={UI_TEXT_BG_COLOR}><font face='verdana' color={UI_TEXT_COLOR} size=1><b><i>"
+                      "Move History:</i></b></font></body>", object_id="move_hist",
+            relative_rect=pygame.Rect((pose_x, pose_y + 6 * gap), (-1, -1)), manager=self.manager, container=container
+        )
+
+        self.score_info = UIButton(
+            relative_rect=pygame.Rect((pose_x + 3 * gap // 1, pose_y), (70, 30)),
+            text='0', manager=self.manager, container=container)
+        self.score_info.disable()
+        self.time_limit_info = UIButton(
+            relative_rect=pygame.Rect((pose_x + 3 * gap // 1, pose_y + gap), (70, 30)),
+            text='0 secs', manager=self.manager, container=container)
+        self.time_limit_info.disable()
+        self.total_time_info = UIButton(
+            relative_rect=pygame.Rect((pose_x + 3 * gap // 1, pose_y + 5 * gap), (70, 30)),
+            text='0 secs', manager=self.manager, container=container)
+        self.total_time_info.disable()
+        self.drop_down_time_hist = UISelectionList(pygame.Rect(pose_x, pose_y + 3 * gap, 120, 80),
+                                                   item_list=[],
+                                                   manager=self.manager,
+                                                   container=container,
+                                                   allow_multi_select=True)
+
+        self.drop_move_hist = UISelectionList(pygame.Rect(pose_x, pose_y + 7 * gap, 120, 80),
+                                              item_list=[],
+                                              manager=self.manager,
+                                              container=container,
+                                              allow_multi_select=True)
 
     def check_event(self):
         for event in pygame.event.get():
@@ -142,8 +203,14 @@ class GameMenu:
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
                     self.board.reset_selected_marbles()
+                if DirectionEnum.is_direction_key(event.key):
+                    self.on_direction_key_pushed(event.key)
 
             if event.type == pygame.USEREVENT:
+                if event.user_type == pygame_gui.UI_TEXT_ENTRY_FINISHED and event.ui_object_id == '#suggested_move':
+                    print(event.text)
+                elif event.user_type == pygame_gui.UI_TEXT_ENTRY_FINISHED and event.ui_object_id == '#next_move':
+                    print(event.text)
 
                 if event.user_type == pygame_gui.UI_BUTTON_PRESSED:
                     if event.ui_element == self.config_button:
@@ -168,8 +235,10 @@ class GameMenu:
                         self.switch_player()
                         self.start_count = True
 
-                    if self.config_menu != None:
+                    if event.ui_element in self.direction_buttons:
+                        self.on_direction_button_click(event.ui_element)
 
+                    if self.config_menu != None:
                         if event.ui_element == self.config_menu.START_BUTTON:
                             self.config_menu.WHITE_TYPE_INPUT.html_text = 'Start'
                             self.setting_result[
@@ -233,6 +302,23 @@ class GameMenu:
                             print('Belgian Daisy')
             self.manager.process_events(event)
 
+    def on_direction_button_click(self, ui_element: UIButton):
+        if not self.board.is_marble_selected():
+            print("Warning: Select marbles, first")
+            return
+        direction_str = ui_element.text
+        direction = DirectionEnum[direction_str]
+        move = self.board.generate_move(direction)
+        self.board.apply_move(move)
+
+    def on_direction_key_pushed(self, key):
+        if not self.board.is_marble_selected():
+            print("Warning: Select marbles, first")
+            return
+        direction = DirectionEnum.get_from_key(key)
+        move = self.board.generate_move(direction)
+        self.board.apply_move(move)
+
     @staticmethod
     def click_func(check_click, button1, button2):
         if check_click:
@@ -273,7 +359,7 @@ class GameMenu:
         self.manager.root_container.show()
         game_board_img = pygame.image.load('drawables/game_board.png').convert_alpha()
         # game_board_img = pygame.transform.scale(game_board_img, (BOARD_IMAGE_SIZE, BOARD_IMAGE_SIZE))
-        start_ticks = pygame.time.get_ticks()  # starter tick
+
         clock = pygame.time.Clock()
         timer_event = pygame.USEREVENT + 1
         pygame.time.set_timer(timer_event, 1000)
