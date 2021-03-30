@@ -8,6 +8,7 @@ from enums.direction import DirectionEnum
 from enums.move_type import MoveType
 from enums.team_enum import TeamEnum
 from helper.coordinate_helper import CoordinateHelper
+from models import marble
 from models.hexagon import Hexagon
 from models.marble import Marble
 from models.move import Move
@@ -32,6 +33,16 @@ class Board:
         self.white_marble_list = list()
         win.fill(WHITE)
         self.initialize_marbles(self.teams, setup)
+        self.__str__()
+
+    def __str__(self) -> str:
+        marble_str_arr = []
+        marble_str_arr += sorted([str(marble) for marble in self.marbles.sprites() if marble.team == TeamEnum.BLACK.value])
+        marble_str_arr += sorted([str(marble) for marble in self.marbles.sprites() if marble.team == TeamEnum.WHITE.value])
+        for marble_str in marble_str_arr:
+            print(marble_str, end=', ')
+
+        return marble_str_arr
 
     def switch_player(self):
         self.team_of_turn = TeamEnum.WHITE if self.team_of_turn == TeamEnum.BLACK else TeamEnum.BLACK
@@ -158,24 +169,25 @@ class Board:
             marble_alignment_direction = tuple(
                 map(sub, second_marble.position_2d, first_marble.position_2d))
 
-            if DirectionHelper.are_directions_on_the_same_axis(move_direction, marble_alignment_direction):
+            if DirectionHelper.are_directions_on_the_same_axis(DirectionEnum.get_direction_vector_2d(move_direction), marble_alignment_direction):
                 move_type = MoveType.InLine
             else:
                 move_type = MoveType.SideStep
 
-            return Move(move_type=move_type, spots=[marble.position_2d for marble in self.selected_marbles], direction=DirectionEnum.get_direction_vector(move_direction))
+            return Move(move_type=move_type, spots=[marble.position_2d for marble in self.selected_marbles], direction=DirectionEnum.get_direction_vector_2d(move_direction))
 
     def apply_move(self, move: Move):
         marbles = self.marbles.sprites()
         # marbles_for_move = list(filter(lambda marble: marble.position_2d in
         #                       move.spots, marbles))
         marbles_to_move = self.selected_marbles
+        move_direction_enum = DirectionEnum.get_from_2d(move.direction)
 
         # SideStep move doesn't push other marbles
         if move.move_type == MoveType.SideStep:
             for marble in marbles_to_move:
                 marble.move_by_direction(
-                    DirectionEnum.get_from_2d(move.direction))
+                    move_direction_enum)
 
         # In-line move needs to push marbles in front of them
         else:
@@ -190,12 +202,12 @@ class Board:
             if next_marble is None:
                 for marble in reversed(marbles_to_move):
                     marble.move_by_direction(
-                        DirectionEnum.get_from_2d(move.direction))
+                        move_direction_enum)
             else:
                 marbles_to_move.append(next_marble)
                 for marble in reversed(marbles_to_move):
                     marble.move_by_direction(
-                        DirectionEnum.get_from_2d(move.direction))
+                        move_direction_enum)
 
         self.reset_selected_marbles()
 

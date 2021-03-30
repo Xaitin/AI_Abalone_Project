@@ -361,6 +361,8 @@ class GameMenu:
 
     def switch_player(self):
         self.board.switch_player()
+        # Use this to get the board state
+        self.board.__str__()
         if self.player_turn == TeamEnum.BLACK:
             self.black_player.time_hist_list.append(f"{self.each_time_count} secs")
             self.black_player.total_time_count += self.each_time_count
