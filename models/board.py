@@ -1,15 +1,17 @@
 import pygame
 
 from constants import WHITE, BOARD_SIZE, INITIAL_GAME_BOARD_SETUPS, WINDOW_WIDTH, WINDOW_HEIGHT
+from enums.direction import DirectionEnum
+from enums.move_type import MoveType
 from helper.coordinate_helper import CoordinateHelper
 from models.hexagon import Hexagon
 from models.marble import Marble
+from models.move import Move
 
 SETUP_CONSTANT = 0
 
 
 class Board:
-
     def __init__(self, win):
         # 2D array
         self.hexagons = {}
@@ -25,6 +27,14 @@ class Board:
         self.white_marble_list = list()
         win.fill(WHITE)
         self.initialize_marbles(self.teams, SETUP_CONSTANT)
+
+    def generate_move(self, direction: DirectionEnum):
+        if len(self.selected_marbles) == 1:
+            marble = self.selected_marbles.pop()
+
+            return Move(MoveType.InLine, marble.position_2d, DirectionEnum.get_direction_vector(direction))
+        else:
+            return None
 
     def init_hexagons(self, win):
         board_range = range(-BOARD_SIZE, BOARD_SIZE + 1)
@@ -67,18 +77,50 @@ class Board:
         print("Mouse button down", x, y)
         print("Mouse button down", q, r)
 
-        if not self.isInsideGameBoard(q, r):
+        if not self.is_inside_game_board(q, r):
             print("outside of the gameboard")
             return
 
         self.select_marble(x, y)
-        if len(self.selected_marbles) > 0:
-            position_cube = self.select_hexagon(q, r)
-            if self.selected_hexagon is not None:
-                self.selected_marbles.pop().move(position_cube)
-                self.reset_selected_hexagon()
 
-    def isInsideGameBoard(self, x, y):
+        """
+        Moving by clicking.. 
+        We decided to just use select marbles by click and then keyboard input or button to move marbles. 
+        """
+        # if len(self.selected_marbles) > 0:
+        #     position_cube = self.select_hexagon(q, r)
+        #     if self.selected_hexagon is not None:
+        #         self.selected_marbles.pop().move(position_cube)
+        #         self.reset_selected_hexagon()
+
+    def select_marble(self, x, y):
+        try:
+            selected_team = self.selected_marbles[0].team
+        except IndexError:
+            selected_team = None
+
+        for marble in self.marbles:
+            if marble.rect.collidepoint(x, y) and (selected_team is None or marble.team == selected_team):
+                if marble not in self.selected_marbles:
+                    self.selected_marbles.append(marble)
+                    print(self.selected_marbles)
+                    return True
+                elif marble in self.selected_marbles:
+                    self.selected_marbles.remove(marble)
+                    print(self.selected_marbles)
+                    return True
+
+        return False
+
+    def is_marble_selected(self):
+        return len(self.selected_marbles) > 0
+
+    def apply_move(self, move: Move):
+        marbles = filter(lambda marble: marble.position_2d == move.spots, self.marbles.sprites())
+        for marble in marbles:
+            marble.move_by_direction(DirectionEnum.get_from_2d(move.direction))
+
+    def is_inside_game_board(self, x, y):
         z = -x - y
         return abs(x) <= BOARD_SIZE and abs(y) <= BOARD_SIZE and abs(z) <= BOARD_SIZE
 
@@ -87,20 +129,6 @@ class Board:
 
     def reset_selected_hexagon(self):
         self.selected_hexagon = None
-
-    def select_marble(self, x, y):
-        for marble in self.marbles:
-            if marble.rect.collidepoint(x, y):
-                if marble not in self.selected_marbles:
-                    self.selected_marbles.append(marble)
-                    print(self.selected_marbles)
-                    return True
-                else:
-                    self.selected_marbles.remove(marble)
-                    print(self.selected_marbles)
-                    return True
-
-        return False
 
     def draw_hexagons(self):
         for position, hexagon in self.hexagons.items():

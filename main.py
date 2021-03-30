@@ -1,10 +1,11 @@
 import pygame
 import pygame_gui
-from pygame_gui.elements import UIWindow, UIPanel, UIButton, UISelectionList, UITextEntryLine, UIDropDownMenu
+from pygame_gui.elements import UIWindow, UIPanel, UIButton, UISelectionList, UIDropDownMenu
 from pygame_gui.elements.ui_text_box import UITextBox
 
-from models.board import Board
 from constants import *
+from enums.direction import DirectionEnum
+from models.board import Board
 
 
 class ConfigMenu(UIWindow):
@@ -281,6 +282,7 @@ class GameMenu:
         button_h_dir = self.button_h // 1.2
         index = 2.8
         sub_h = WINDOW_HEIGHT - 100
+
         self.NW_button = self.button(WINDOW_WIDTH // index + temp - self.button_w, sub_h,
                                      button_w_dir, button_h_dir, "NW",
                                      self.manager)
@@ -299,6 +301,10 @@ class GameMenu:
         self.SE_button = self.button(WINDOW_WIDTH // index + temp * 6 - self.button_w, sub_h,
                                      button_w_dir, button_h_dir, "SE",
                                      self.manager)
+
+        # Just an additional accessor for direction buttons
+        self.direction_buttons = [self.NW_button, self.NE_button, self.W_button, self.E_button, self.SW_button,
+                                  self.SE_button]
 
         # region Player Panels Initialization
         self.black_panel_position = [
@@ -413,6 +419,8 @@ class GameMenu:
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
                     self.board.reset_selected_marbles()
+                if DirectionEnum.is_direction_key(event.key):
+                    self.on_direction_key_pushed(event.key)
 
             if event.type == pygame.USEREVENT:
                 if event.user_type == pygame_gui.UI_TEXT_ENTRY_FINISHED and event.ui_object_id == '#suggested_move':
@@ -439,6 +447,9 @@ class GameMenu:
                         print('Undo!')
                     if event.ui_element == self.reset_button:
                         print('Reset!')
+
+                    if event.ui_element in self.direction_buttons:
+                        self.on_direction_button_click(event.ui_element)
 
                     if self.config_menu != None:
                         if event.ui_element == self.config_menu.START_BUTTON:
@@ -504,6 +515,23 @@ class GameMenu:
                             print('Belgian Daisy')
             self.manager.process_events(event)
 
+    def on_direction_button_click(self, ui_element: UIButton):
+        if not self.board.is_marble_selected():
+            print("Warning: Select marbles, first")
+            return
+        direction_str = ui_element.text
+        direction = DirectionEnum[direction_str]
+        move = self.board.generate_move(direction)
+        self.board.apply_move(move)
+
+    def on_direction_key_pushed(self, key):
+        if not self.board.is_marble_selected():
+            print("Warning: Select marbles, first")
+            return
+        direction = DirectionEnum.get_from_key(key)
+        move = self.board.generate_move(direction)
+        self.board.apply_move(move)
+
     @staticmethod
     def click_func(check_click, button1, button2):
         if check_click:
@@ -557,6 +585,7 @@ class GameMenu:
             pygame.display.update()
 
         pygame.quit()
+
 
 
 def main():
