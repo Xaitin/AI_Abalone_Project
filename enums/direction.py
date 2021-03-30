@@ -43,6 +43,19 @@ class DirectionEnum(enum.Enum):
         return direction_vector_2d_mapper.get(vector_2d)
 
     @staticmethod
+    def get_direction_vector_2d(direction_enum):
+        direction_vector_mapper = {
+            DirectionEnum.SW: (1, -1),
+            DirectionEnum.NE: (-1, 1),
+            DirectionEnum.SE: (1, 0),
+            DirectionEnum.E: (0, 1),
+            DirectionEnum.NW: (-1, 0),
+            DirectionEnum.W: (0, -1)
+        }
+
+        return direction_vector_mapper.get(direction_enum)
+
+    @staticmethod
     def get_from_key(keyboard_input):
         key_direction_mapper = {
             pygame.K_u: DirectionEnum.NW,

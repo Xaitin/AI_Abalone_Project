@@ -14,7 +14,7 @@ class Marble(Sprite):
         super().__init__(*groups)
         self.image = self.get_team_marble_img(team)
         self.team = team
-        self.position_2d = position_2d
+        self.position_2d = tuple(position_2d)
         self.position_cube = CoordinateHelper.from2DArraytoCube(position_2d)
         self.xy_pos = None
         self.xy_center = None

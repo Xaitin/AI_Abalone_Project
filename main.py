@@ -7,7 +7,6 @@ from pygame_gui.elements.ui_text_box import UITextBox
 
 from config import ConfigMenu
 from player_section import PlayerSection
-from models.board import Board
 from constants import *
 from enums.team_enum import TeamEnum
 from enums.direction import DirectionEnum
