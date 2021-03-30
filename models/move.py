@@ -1,10 +1,11 @@
+from typing import List, Tuple
 from helper.coordinate_helper import CoordinateHelper
 from enums.direction import DirectionEnum
 from enums.move_type import MoveType
 
 
 class Move:
-    def __init__(self, move_type: MoveType, spots: [(int, int)], direction: (int, int)) -> None:
+    def __init__(self, move_type: MoveType, spots: List[Tuple[int, int]], direction: Tuple[int, int]) -> None:
         self.move_type = move_type
         self.spots = spots
         self.direction = direction

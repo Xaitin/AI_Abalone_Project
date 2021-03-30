@@ -11,8 +11,8 @@ class TeamEnum(Enum):
     @staticmethod
     def get_image_path(val):
         if val == TeamEnum.BLACK.value:
-            return WHITE_MARBLE_PATH
-        elif val == TeamEnum.WHITE.value:
             return BLACK_MARBLE_PATH
+        elif val == TeamEnum.WHITE.value:
+            return WHITE_MARBLE_PATH
         else:
             raise ValueError('no such team')
