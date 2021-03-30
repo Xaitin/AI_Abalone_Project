@@ -24,12 +24,11 @@ class CoordinateHelper:
         # It was removed because it shifted the marble positions on the game board.
         if with_gutter:
             return position_2d[1] - BOARD_SIZE - 1, position_2d[0] - BOARD_SIZE - 1
+        return position_2d[1] - BOARD_SIZE, position_2d[0] - BOARD_SIZE
 
     @staticmethod
-    def fromCubeto2DArray(cube_position, with_gutter=False):
-        if with_gutter:
-            return cube_position[1] + BOARD_SIZE + 1, cube_position[0] + BOARD_SIZE + 1
-        return cube_position[1] + BOARD_SIZE, cube_position[0] + BOARD_SIZE
+    def fromCubeto2DArray(cube_position):
+        return cube_position[1] + BOARD_SIZE + 1, cube_position[0] + BOARD_SIZE + 1
 
     @staticmethod
     def from2DArraytoXY(position_2d):
@@ -54,5 +53,5 @@ class CoordinateHelper:
     @staticmethod
     def from_2d_to_cube_str(position_2d, with_gutter=True):
         if with_gutter:
-            return CoordinateHelper.from_cube_to_cube_str(CoordinateHelper.from2DArraytoCube(position_2d))
-        return CoordinateHelper.from_cube_to_cube_str(CoordinateHelper.from2DArraytoCube(position_2d))
+            return CoordinateHelper.from_cube_to_cube_str(CoordinateHelper.from2DArraytoCube(position_2d, with_gutter=with_gutter))
+        return CoordinateHelper.from_cube_to_cube_str(CoordinateHelper.from2DArraytoCube(position_2d, with_gutter=with_gutter))

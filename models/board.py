@@ -35,8 +35,8 @@ class Board:
                         self.hexagons[(x, y)] = Hexagon(self, x, y, z, win)
 
     def initialize_marbles(self, teams, setup=0):
-        for row, row_value in enumerate(INITIAL_GAME_BOARD_SETUPS[setup][1: -1]):
-            for col, value in enumerate(row_value[1: -1]):
+        for row, row_value in enumerate(INITIAL_GAME_BOARD_SETUPS[setup]):
+            for col, value in enumerate(row_value):
                 try:
                     if value > 0:
                         position_2d = [row, col]
@@ -52,8 +52,8 @@ class Board:
     def update(self):
         self.draw_hexagons()
 
-        for team in self.teams[1:]:
-            team.draw(self.win)
+        for marble in self.marbles:
+            marble.draw(self.win)
 
         for marble in self.selected_marbles:
             marble.draw_selection_circle(self.win)

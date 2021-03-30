@@ -17,6 +17,9 @@ class Marble(Sprite):
         self.rect = None
         self.recalc_position()
 
+    def draw(self, window):
+        window.blit(self.image, dest=self.xy_pos)
+
     def move(self, new_position_cube):
         print(f"Moving Marble from {self.position_cube} to {new_position_cube}")
         self.position_2d = CoordinateHelper.fromCubeto2DArray(new_position_cube)

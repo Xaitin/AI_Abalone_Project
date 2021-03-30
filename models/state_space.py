@@ -147,7 +147,7 @@ class StateSpace:
             if position.team != self.player_of_turn:
                 continue
             position_cube = position.get_position()
-            position_2d = CoordinateHelper.fromCubeto2DArray(position_cube, with_gutter=True)
+            position_2d = CoordinateHelper.fromCubeto2DArray(position_cube)
             surroundings = copy.deepcopy(self.get_surrounding_dir_positions(position_2d=position_2d))
             for dir, spot in surroundings:
                 spot_val = self.marble_positions_2d[spot[0]][spot[1]]
@@ -172,7 +172,7 @@ class StateSpace:
                 continue
 
             first_marble_pos = first_marble.position
-            first_marble_pos_2d = CoordinateHelper.fromCubeto2DArray(first_marble_pos, with_gutter=True)
+            first_marble_pos_2d = CoordinateHelper.fromCubeto2DArray(first_marble_pos)
             print("fromCubeto2DArray", first_marble_pos_2d)
             surroundings = copy.deepcopy(self.get_surrounding_dir_positions(first_marble_pos_2d))
 
@@ -206,7 +206,7 @@ class StateSpace:
                 continue
 
             first_marble_pos = first_marble.position
-            first_marble_pos_2d = CoordinateHelper.fromCubeto2DArray(first_marble_pos, with_gutter=True)
+            first_marble_pos_2d = CoordinateHelper.fromCubeto2DArray(first_marble_pos)
             surroundings = copy.deepcopy(self.get_surrounding_dir_positions(first_marble_pos_2d))
 
             for dir, second_marble_pos_2d in surroundings:
@@ -481,8 +481,7 @@ class StateSpace:
     def to_2d_array(self, marble_positions):
         result_array = EMPTY_GAME_BOARD_ARRAY
         for position in marble_positions:
-            array_position_row, array_position_col = CoordinateHelper.fromCubeto2DArray(position.get_position(),
-                                                                                        with_gutter=True)
+            array_position_row, array_position_col = CoordinateHelper.fromCubeto2DArray(position.get_position())
             result_array[array_position_row][array_position_col] = position.get_team().value
 
         # print(result_array)
