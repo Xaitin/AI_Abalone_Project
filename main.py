@@ -25,11 +25,11 @@ class GameMenu:
         self.manager = pygame_gui.UIManager((WINDOW_WIDTH, WINDOW_HEIGHT))
 
         # board initialization
-        self.board = Board(self.window, )
+        self.board = Board(self.window)
         self.initial_board = 0
 
         # agent initialization
-        self.agent = GamePlayingAgent(board=self.board)
+        # self.agent = GamePlayingAgent()
         
         self.run_display = True
         self.display.fill(BLACK)
@@ -281,10 +281,18 @@ class GameMenu:
         move = self.board.generate_move(direction)
         print(move)
         is_valid_move = self.board.validate_move(move)
-        
+        # if is_agent
         if is_valid_move:
-            self.move = self.board.apply_move(move)
-            self.switch_player()
+            if self.is_agent_computer():
+                self.move = self.board.apply_move(move)
+                self.board.reset_selected_marbles()
+                self.board.switch_player()
+                self.board.update_state_space()
+                # self.switch_player()
+                self.switch_player()
+            else:
+                self.move = self.board.apply_move(move)
+                self.switch_player()
         else: 
             print("Invalid move detected!")
 
@@ -372,7 +380,16 @@ class GameMenu:
             self.manager.update(time_delta)
             self.window.blit(self.display, (0, 0))
             self.manager.draw_ui(self.window)
+            start = 1
             if not self.open_config and self.start_game:
+                if self.is_agent_computer():
+                    if start == 1:
+                        start += 1
+                        self.player_turn = TeamEnum.WHITE
+                        # self.board.reset_selected_marbles()
+                        self.board.switch_player()
+                        self.board.update_state_space()
+
                 if self.start_count:
                     self.current_time = self.time_count
                     self.start_count = False
@@ -391,23 +408,30 @@ class GameMenu:
         else:
             self.white_player.time_limit_info.set_text(f"{time_in_secs:.1f} secs" if time_in_secs>=0 else f"{time_in_secs:.1f} secs!")
 
+    def is_agent_computer(self):
+        return self.setting_result["white_type"] == "Human" and self.setting_result["black_type"] == "Computer"
+
     def switch_player(self):
         score = 14
         # Use this to get the board state
         self.board.__str__()
         if self.player_turn == TeamEnum.BLACK:
-            self.black_player.time_hist_list.append(f"{self.each_time_count:.1f} secs")
-            self.black_player.total_time_count += self.each_time_count
-            self.black_player.total_time_info.set_text(f"{self.black_player.total_time_count:.1f} secs")
-            self.black_player.drop_down_time_hist.set_item_list(self.black_player.time_hist_list)
-            self.black_player.your_turn.set_text("")
-            self.black_player.score_count = score - len(self.board.white_marble_list)
-            self.black_player.score_info.set_text(f"{self.black_player.score_count}")
-            self.black_player.drop_move_hist_list.append(f"{self.move}")
-            self.black_player.drop_move_hist.set_item_list(self.black_player.drop_move_hist_list)
-            self.white_player.your_turn.set_text("Your Turn!")
-            self.player_turn = TeamEnum.WHITE
-            self.start_count = True
+            if self.is_agent_computer():
+                self.player_turn = TeamEnum.WHITE
+                self.start_count = True
+            else:
+                self.black_player.time_hist_list.append(f"{self.each_time_count:.1f} secs")
+                self.black_player.total_time_count += self.each_time_count
+                self.black_player.total_time_info.set_text(f"{self.black_player.total_time_count:.1f} secs")
+                self.black_player.drop_down_time_hist.set_item_list(self.black_player.time_hist_list)
+                self.black_player.your_turn.set_text("")
+                self.black_player.score_count = score - len(self.board.white_marble_list)
+                self.black_player.score_info.set_text(f"{self.black_player.score_count}")
+                self.black_player.drop_move_hist_list.append(f"{self.move}")
+                self.black_player.drop_move_hist.set_item_list(self.black_player.drop_move_hist_list)
+                self.white_player.your_turn.set_text("Your Turn!")
+                self.player_turn = TeamEnum.WHITE
+                self.start_count = True
         else:
             self.white_player.time_hist_list.append(f"{self.each_time_count:.1f} secs")
             self.white_player.total_time_count += self.each_time_count
@@ -421,6 +445,10 @@ class GameMenu:
             self.black_player.your_turn.set_text("Your Turn!")
             self.player_turn = TeamEnum.BLACK
             self.start_count = True
+
+    def is_agent_computer(self):
+        return self.setting_result["white_type"] == "Human" and self.setting_result["black_type"] == "Computer"
+
 
     def finish(self):
 
