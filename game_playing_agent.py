@@ -140,6 +140,7 @@ def main():
     agent = GamePlayingAgent(my_list)
     while running:
         running_count += 1
+        print(f"Move #: {running_count}")
         print("White Moving")
         new_state = agent.make_turn()
         print("Black Moving")
