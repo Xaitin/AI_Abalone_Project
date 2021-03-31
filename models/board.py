@@ -5,7 +5,7 @@ from operator import add, sub
 
 import pygame
 
-from constants import WHITE, BOARD_SIZE, INITIAL_GAME_BOARD_SETUPS, WINDOW_WIDTH, WINDOW_HEIGHT
+from constants import WHITE, BOARD_SIZE, INITIAL_GAME_BOARD_SETUPS, WINDOW_WIDTH, WINDOW_HEIGHT, EMPTY_GAME_BOARD_ARRAY, BOARD_ARRAY_SIZE, OUTSIDE_OF_THE_BOARD_VALUE
 from enums.direction import DirectionEnum
 from enums.move_type import MoveType
 from enums.team_enum import TeamEnum
@@ -76,13 +76,11 @@ class Board:
                                 CoordinateHelper.from2DArraytoCube(position_2d))
                 except ValueError:
                     pass
-        print(self.black_marble_list)
 
     def update(self):
         self.draw_hexagons()
-
+        # self.check_position_2d()
         self.marbles.draw(self.win)
-
         for marble in self.selected_marbles:
             marble.draw_selection_circle(self.win)
 
@@ -156,6 +154,26 @@ class Board:
         print(self.selected_marbles)
         print([marble.position_2d for marble in self.selected_marbles])
         return False
+
+    def check_position_2d(self):
+        print(self.black_marble_list)
+        for index in self.black_marble_list:
+            if index in self.boundary():
+                print("black", index)
+                self.black_marble_list.remove(index)
+        for index in self.white_marble_list:
+            if index in self.boundary():
+                print("white", index)
+                self.white_marble_list.remove(index)
+
+    def boundary(self):
+        boundaries = list()
+        for i in range(BOARD_ARRAY_SIZE):
+            for j in range(BOARD_ARRAY_SIZE):
+                if EMPTY_GAME_BOARD_ARRAY[i][j] == OUTSIDE_OF_THE_BOARD_VALUE:
+                    boundaries.append((i, j))
+        return boundaries
+
 
     def add_selected_marble(self, marble):
         if marble not in self.selected_marbles:
@@ -231,6 +249,7 @@ class Board:
                 next_marble = next(
                     filter(lambda m: m.position_2d == next_spot, marbles), None)
 
+
             for marble in reversed(marbles_to_move):
                 marble.move_by_direction(move_direction_enum)
 
@@ -263,6 +282,10 @@ class Board:
         self.reset_selected_marbles()
         self.switch_player()
         self.update_state_space()
+
+        return move
+
+
 
     def update_state_space(self):
         self.state_space = StateSpace(marble_positions=copy.copy(self.__str__()),
