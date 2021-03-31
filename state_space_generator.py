@@ -75,8 +75,6 @@ class StateSpaceGenerator:
                 # _str = "" + line
                 file.write(line + "\n")
 
-
-
     @staticmethod
     def check_board_answer(result, file_name):
         print("result", len(result))
@@ -91,7 +89,8 @@ class StateSpaceGenerator:
         # test_result = read.double_move_states + read.single_move_states
         # set_result = [sorted(row) for row in test_result]
         check_answer = StateSpaceGenerator()
-        check_answer.read_board_data(file_name.replace("Given", "Static") + ".board")
+        check_answer.read_board_data(
+            file_name.replace("Given", "Static") + ".board")
 
         # print(len(set(tuple(row) for row in result)))
         print()
@@ -113,8 +112,6 @@ class StateSpaceGenerator:
         # read.read_board_data("StaticTest1.board")
 
 
-
-
 def main():
 
     # Instantiates a StateSpaceGenerator and generates resulting board state based on given Test.input file.
@@ -124,7 +121,8 @@ def main():
         try:
             # Asks for Test.input file name without extension here.
 
-            file_name = input("Please enter the name of the input file without the extension (e.g. Test1): ")
+            file_name = input(
+                "Please enter the name of the input file without the extension (e.g. Test1): ")
             state_space_generator.read_input_data(file_name + ".input")
             success = False
         except FileNotFoundError as e:
@@ -132,7 +130,8 @@ def main():
     result = state_space_generator.state_space.generate_all_resulting_board_states()
 
     # Writes Test.board and Test.move output files.
-    state_space_generator.write_result_data(src=file_name + ".board", result=result)
+    state_space_generator.write_result_data(
+        src=file_name + ".board", result=result)
     state_space_generator.write_move_result_data(src=file_name + ".move",
                                                  result=state_space_generator.state_space.get_move_list())
 

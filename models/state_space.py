@@ -1,6 +1,7 @@
 import copy
 import itertools
 from operator import add
+from typing import List, Tuple
 
 from constants import EMPTY_GAME_BOARD_ARRAY, EMPTY_SPOT_VALUE, OUTSIDE_OF_THE_BOARD_VALUE, DIRECTION_VECTORS_2D, \
     BOARD_ARRAY_SIZE, DEFAULT_MARBLE_POSITION
@@ -230,8 +231,8 @@ class StateSpace:
 
         return resulting_marble_positions
 
-    def generate_double_in_line_moves_result_states(self, first_marble_pos: (int, int), second_marble_pos: (int, int),
-                                                    direction_vector: (int, int)):
+    def generate_double_in_line_moves_result_states(self, first_marble_pos: Tuple[int, int], second_marble_pos: Tuple[int, int],
+                                                    direction_vector: Tuple[int, int]):
         """
         In-line moves with double-marble.
         :param second_marble_pos:
@@ -272,7 +273,7 @@ class StateSpace:
                 # We can push the enemy marble a spot
                 self.two_to_one_sumito += 1
 
-                move = Move(move_type=MoveType.InLine, spots=[first_marble_pos, second_marble_pos, next_spot],
+                move = Move(move_type=MoveType.InLine, spots=[first_marble_pos, second_marble_pos],
                             direction=direction_vector)
                 self.moves_list.append(move.__str__())
                 return copy.deepcopy(self.generate_new_state_after_move(move))
@@ -333,7 +334,7 @@ class StateSpace:
                 self.three_to_one_sumito += 1
 
                 move = Move(move_type=MoveType.InLine,
-                            spots=[first_marble_pos, second_marble_pos, third_marble_pos, next_spot],
+                            spots=[first_marble_pos, second_marble_pos, third_marble_pos],
                             direction=direction_vector)
                 self.moves_list.append(move.__str__())
                 return copy.deepcopy(self.generate_new_state_after_move(move))
@@ -363,8 +364,7 @@ class StateSpace:
                     self.three_to_two_sumito += 1
 
                     move = Move(move_type=MoveType.InLine,
-                                spots=[first_marble_pos, second_marble_pos, third_marble_pos, next_spot,
-                                       next_next_spot],
+                                spots=[first_marble_pos, second_marble_pos, third_marble_pos],
                                 direction=direction_vector)
                     self.moves_list.append(move.__str__())
                     return copy.deepcopy(self.generate_new_state_after_move(move))
@@ -375,7 +375,7 @@ class StateSpace:
 
                     # We're not putting the last enemy marble's spot in the move as it's going to be kicked out of the board.
                     move = Move(move_type=MoveType.InLine,
-                                spots=[first_marble_pos, second_marble_pos, third_marble_pos, next_spot],
+                                spots=[first_marble_pos, second_marble_pos, third_marble_pos],
                                 direction=direction_vector)
                     self.moves_list.append(move.__str__())
                     return copy.deepcopy(self.generate_new_state_after_move(move))
@@ -383,8 +383,8 @@ class StateSpace:
                 else:
                     pass
 
-    def generate_side_step_moves_result_states(self, marble_positions: [(int, int)],
-                                               direction_vector: (int, int)):
+    def generate_side_step_moves_result_states(self, marble_positions: List[Tuple[int, int]],
+                                               direction_vector: Tuple[int, int]):
         left_positions = []
         left_common_positions = []
         left_directions = DirectionHelper.get_left_directions(direction_vector)
@@ -405,17 +405,37 @@ class StateSpace:
 
         return new_result_states
 
-    def generate_new_state_after_move(self, move: Move) -> [[int]]:
+    def generate_new_state_after_move(self, move: Move) -> List[List[int]]:
         new_state = copy.deepcopy(self.marble_positions_2d)
         # first element in the first spot = the first marble
         # last element in the last spot = the last marble
-        spots = move.get_spots()
-        new_spots = [tuple(map(add, sp, move.direction)) for sp in spots]
+        marbles_to_move = move.get_spots()
+        first_marble_pos = marbles_to_move[0]
+        ally_val = new_state[first_marble_pos[0]][first_marble_pos[1]]
+
+        # In-line move needs to push marbles in front of them
+        if move.move_type == MoveType.InLine:
+            last_marble = marbles_to_move[-1]
+            next_x, next_y = tuple(map(add, last_marble, move.direction))
+            next_spot_val = new_state[next_x][next_y]
+            is_next_spot_enemy = next_spot_val not in [EMPTY_SPOT_VALUE, OUTSIDE_OF_THE_BOARD_VALUE, ally_val] 
+
+            while is_next_spot_enemy:
+                marbles_to_move.append((next_x, next_y))
+                last_marble = marbles_to_move[-1]
+                next_x, next_y = tuple(map(add, last_marble, move.direction))
+                next_spot_val = new_state[next_x][next_y]
+                is_next_spot_enemy = next_spot_val not in [EMPTY_SPOT_VALUE, OUTSIDE_OF_THE_BOARD_VALUE, ally_val] 
+            
+            if next_spot_val == OUTSIDE_OF_THE_BOARD_VALUE:
+                marbles_to_move = marbles_to_move[:-1]
+
+        new_spots = [tuple(map(add, spot, move.direction)) for spot in marbles_to_move]
         prev_x, prev_y, new_x, new_y = int(), int(), int(), int()
 
         if move.get_move_type() == MoveType.InLine:
-            for index in reversed(range(len(spots))):
-                prev_x, prev_y = spots[index]
+            for index in reversed(range(len(marbles_to_move))):
+                prev_x, prev_y = marbles_to_move[index]
                 new_x, new_y = new_spots[index]
                 new_state[new_x][new_y] = int(self.marble_positions_2d[prev_x][prev_y])
 
@@ -425,8 +445,8 @@ class StateSpace:
 
 
         else:
-            for index in range(len(spots)):
-                prev_x, prev_y = spots[index]
+            for index in range(len(marbles_to_move)):
+                prev_x, prev_y = marbles_to_move[index]
                 new_x, new_y = new_spots[index]
                 new_state[new_x][new_y] = self.marble_positions_2d[prev_x][prev_y]
                 new_state[prev_x][prev_y] = EMPTY_SPOT_VALUE

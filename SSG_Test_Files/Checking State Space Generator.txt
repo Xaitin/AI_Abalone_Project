@@ -1,0 +1,50 @@
+Checking State Space Generator
+""" Haejoon """
+A1b,A2b,A3b,A4b,A5b, | B2b,B3b,B4b,B5b,B6b, | C2b,C3b,C4b,C5b, | G5w,G6w,G7w, | H4w,H5w,H6w,H7w,H8w,H9w, | I5w,I6w,I7w,I8w,I9w   i-B1-B1-NE
+A1b,A2b,A3b,A4b,A5b, | B2b,B3b,B4b,B5b,B6b, | C1b,C3b,C4b,C5b, | G5w,G6w,G7w, | H4w,H5w,H6w,H7w,H8w,H9w, | I5w,I6w,I7w,I8w,I9w   i-B1-B1-NW
+A1b,A2b,A3b,A4b,A5b, | B1b,B3b,B4b,B5b,B6b, | C2b,C3b,C4b,C5b, | G5w,G6w,G7w, | H4w,H5w,H6w,H7w,H8w,H9w, | I5w,I6w,I7w,I8w,I9w   i-B2-B2-NW
+A1b,A2b,A3b,A4b,A5b, | B1b,B2b,B3b,B4b,B6b, | C3b,C4b,C5b,C6b, | G5w,G6w,G7w, | H4w,H5w,H6w,H7w,H8w,H9w, | I5w,I6w,I7w,I8w,I9w   i-B5-B5-NE
+A1b,A2b,A3b,A4b,A5b, | B1b,B2b,B3b,B4b,B5b, | C3b,C4b,C5b,C7b, | G5w,G6w,G7w, | H4w,H5w,H6w,H7w,H8w,H9w, | I5w,I6w,I7w,I8w,I9w   i-B6-B6-NE
+A1b,A2b,A3b,A4b,A5b, | B1b,B2b,B3b,B4b,B5b, | C3b,C4b,C5b,C6b, | G5w,G6w,G7w, | H4w,H5w,H6w,H7w,H8w,H9w, | I5w,I6w,I7w,I8w,I9w   i-B6-B6-NW
+A1b,A2b,A3b,A4b,A5b, | B1b,B2b,B3b,B4b,B5b,B6b, | C4b,C5b,D4b, | G5w,G6w,G7w, | H4w,H5w,H6w,H7w,H8w,H9w, | I5w,I6w,I7w,I8w,I9w   i-C3-C3-NE
+A1b,A2b,A3b,A4b,A5b, | B1b,B2b,B3b,B4b,B5b,B6b, | C2b,C4b,C5b, | G5w,G6w,G7w, | H4w,H5w,H6w,H7w,H8w,H9w, | I5w,I6w,I7w,I8w,I9w   i-C3-C3-W
+A1b,A2b,A3b,A4b,A5b, | B1b,B2b,B3b,B4b,B5b,B6b, | C4b,C5b,D3b, | G5w,G6w,G7w, | H4w,H5w,H6w,H7w,H8w,H9w, | I5w,I6w,I7w,I8w,I9w   i-C3-C3-NW
+A1b,A2b,A3b,A4b,A5b, | B1b,B2b,B3b,B4b,B5b,B6b, | C3b,C5b,D5b, | G5w,G6w,G7w, | H4w,H5w,H6w,H7w,H8w,H9w, | I5w,I6w,I7w,I8w,I9w   i-C4-C4-NE
+A1b,A2b,A3b,A4b,A5b, | B1b,B2b,B3b,B4b,B5b,B6b, | C3b,C5b,D4b, | G5w,G6w,G7w, | H4w,H5w,H6w,H7w,H8w,H9w, | I5w,I6w,I7w,I8w,I9w   i-C4-C4-NW
+A1b,A2b,A3b,A4b,A5b, | B1b,B2b,B3b,B4b,B5b,B6b, | C3b,C4b,D6b, | G5w,G6w,G7w, | H4w,H5w,H6w,H7w,H8w,H9w, | I5w,I6w,I7w,I8w,I9w   i-C5-C5-NE
+A1b,A2b,A3b,A4b,A5b, | B1b,B2b,B3b,B4b,B5b,B6b, | C3b,C4b,C6b, | G5w,G6w,G7w, | H4w,H5w,H6w,H7w,H8w,H9w, | I5w,I6w,I7w,I8w,I9w   i-C5-C5-E
+A1b,A2b,A3b,A4b,A5b, | B1b,B2b,B3b,B4b,B5b,B6b, | C3b,C4b,D5b, | G5w,G6w,G7w, | H4w,H5w,H6w,H7w,H8w,H9w, | I5w,I6w,I7w,I8w,I9w   i-C5-C5-NW
+A2b,A3b,A4b,A5b,B1b,B2b,B3b,B4b,B5b,B6b,C1b,C3b,C4b,C5b,G5w,G6w,G7w,H4w,H5w,H6w,H7w,H8w,H9w,I5w,I6w,I7w,I8w,I9w   i-A1-B1-NW
+A1b,A3b,A4b,A5b,B1b,B2b,B3b,B4b,B5b,B6b,C2b,C3b,C4b,C5b,G5w,G6w,G7w,H4w,H5w,H6w,H7w,H8w,H9w,I5w,I6w,I7w,I8w,I9w   i-A2-B2-NW
+A1b,A2b,A3b,A5b,B1b,B2b,B3b,B4b,B5b,B6b,C3b,C4b,C5b,C6b,G5w,G6w,G7w,H4w,H5w,H6w,H7w,H8w,H9w,I5w,I6w,I7w,I8w,I9w   i-A4-B5-NE
+A1b,A2b,A3b,A4b,B1b,B2b,B3b,B4b,B5b,B6b,C3b,C4b,C5b,C7b,G5w,G6w,G7w,H4w,H5w,H6w,H7w,H8w,H9w,I5w,I6w,I7w,I8w,I9w   i-A5-B6-NE
+
+""" Geoff """
+A1b,A2b,A3b,A4b,A5b,B3b,B4b,B5b,B6b,C1b,C2b,C3b,C4b,C5b,G5w,G6w,G7w,H4w,H5w,H6w,H7w,H8w,H9w,I5w,I6w,I7w,I8w,I9w   s-B1-B2-NW
+A1b,A2b,A3b,A4b,A5b,B1b,B3b,B4b,B5b,B6b,C3b,C4b,C5b,D4b,G5w,G6w,G7w,H4w,H5w,H6w,H7w,H8w,H9w,I5w,I6w,I7w,I8w,I9w   i-B2-C3-NE
+A1b,A2b,A3b,A4b,A5b,B1b,B3b,B4b,B5b,B6b,C2b,C4b,C5b,D3b,G5w,G6w,G7w,H4w,H5w,H6w,H7w,H8w,H9w,I5w,I6w,I7w,I8w,I9w   s-B2-C3-NW
+A1b,A2b,A3b,A4b,A5b,B1b,B2b,B4b,B5b,B6b,C3b,C4b,C5b,D5b,G5w,G6w,G7w,H4w,H5w,H6w,H7w,H8w,H9w,I5w,I6w,I7w,I8w,I9w   i-B3-C4-NE
+A1b,A2b,A3b,A4b,A5b,B1b,B2b,B4b,B5b,B6b,C3b,C4b,C5b,D3b,G5w,G6w,G7w,H4w,H5w,H6w,H7w,H8w,H9w,I5w,I6w,I7w,I8w,I9w   i-B3-C3-NW
+A1b,A2b,A3b,A4b,A5b,B1b,B2b,B3b,B5b,B6b,C3b,C4b,C5b,D6b,G5w,G6w,G7w,H4w,H5w,H6w,H7w,H8w,H9w,I5w,I6w,I7w,I8w,I9w   i-B4-C5-NE
+A1b,A2b,A3b,A4b,A5b,B1b,B2b,B3b,B5b,B6b,C3b,C4b,C5b,D4b,G5w,G6w,G7w,H4w,H5w,H6w,H7w,H8w,H9w,I5w,I6w,I7w,I8w,I9w   i-B4-C4-NW
+A1b,A2b,A3b,A4b,A5b,B1b,B2b,B3b,B4b,C3b,C4b,C5b,C6b,C7b,G5w,G6w,G7w,H4w,H5w,H6w,H7w,H8w,H9w,I5w,I6w,I7w,I8w,I9w   s-B5-B6-NE
+A1b,A2b,A3b,A4b,A5b,B1b,B2b,B3b,B4b,B6b,C3b,C4b,C5b,D5b,G5w,G6w,G7w,H4w,H5w,H6w,H7w,H8w,H9w,I5w,I6w,I7w,I8w,I9w   i-B5-C5-NW
+A1b,A2b,A3b,A4b,A5b,B1b,B2b,B3b,B4b,B5b,B6b,C5b,D4b,D5b,G5w,G6w,G7w,H4w,H5w,H6w,H7w,H8w,H9w,I5w,I6w,I7w,I8w,I9w   s-C3-C4-NE
+A1b,A2b,A3b,A4b,A5b,B1b,B2b,B3b,B4b,B5b,B6b,C5b,D3b,D4b,G5w,G6w,G7w,H4w,H5w,H6w,H7w,H8w,H9w,I5w,I6w,I7w,I8w,I9w   s-C3-C4-NW
+A1b,A2b,A3b,A4b,A5b,B1b,B2b,B3b,B4b,B5b,B6b,C3b,C5b,C6b,G5w,G6w,G7w,H4w,H5w,H6w,H7w,H8w,H9w,I5w,I6w,I7w,I8w,I9w   i-C4-C5-E
+A1b,A2b,A3b,A4b,A5b,B1b,B2b,B3b,B4b,B5b,B6b,C3b,D5b,D6b,G5w,G6w,G7w,H4w,H5w,H6w,H7w,H8w,H9w,I5w,I6w,I7w,I8w,I9w   s-C4-C5-NE
+   
+""" Grace """
+A1b,A2b,A3b,A4b,A5b,B1b,B2b,B3b,B4b,B5b,B6b,C3b,D4b,D5b,G5w,G6w,G7w,H4w,H5w,H6w,H7w,H8w,H9w,I5w,I6w,I7w,I8w,I9w   s-C4-C5-NW
+A1b,A2b,A3b,A4b,A5b,B1b,B2b,B3b,B4b,B5b,B6b,C2b,C3b,C5b,G5w,G6w,G7w,H4w,H5w,H6w,H7w,H8w,H9w,I5w,I6w,I7w,I8w,I9w   i-C4-C3-W
+A1b,A2b,A3b,A4b,A5b,B1b,B2b,B3b,B4b,B6b,C3b,C4b,C6b,D6b,G5w,G6w,G7w,H4w,H5w,H6w,H7w,H8w,H9w,I5w,I6w,I7w,I8w,I9w   s-C5-B5-NE
+A2b,A3b,A4b,A5b,B1b,B2b,B3b,B4b,B5b,B6b,C3b,C4b,C5b,D4b,G5w,G6w,G7w,H4w,H5w,H6w,H7w,H8w,H9w,I5w,I6w,I7w,I8w,I9w   i-A1-C3-NE
+A1b,A3b,A4b,A5b,B1b,B2b,B3b,B4b,B5b,B6b,C3b,C4b,C5b,D5b,G5w,G6w,G7w,H4w,H5w,H6w,H7w,H8w,H9w,I5w,I6w,I7w,I8w,I9w   i-A2-C4-NE
+A1b,A2b,A4b,A5b,B1b,B2b,B3b,B4b,B5b,B6b,C3b,C4b,C5b,D6b,G5w,G6w,G7w,H4w,H5w,H6w,H7w,H8w,H9w,I5w,I6w,I7w,I8w,I9w   i-A3-C5-NE
+A1b,A2b,A4b,A5b,B1b,B2b,B3b,B4b,B5b,B6b,C3b,C4b,C5b,D3b,G5w,G6w,G7w,H4w,H5w,H6w,H7w,H8w,H9w,I5w,I6w,I7w,I8w,I9w   i-A3-C3-NW
+A1b,A2b,A3b,A5b,B1b,B2b,B3b,B4b,B5b,B6b,C3b,C4b,C5b,D4b,G5w,G6w,G7w,H4w,H5w,H6w,H7w,H8w,H9w,I5w,I6w,I7w,I8w,I9w   i-A4-C4-NW
+A1b,A2b,A3b,A4b,B1b,B2b,B3b,B4b,B5b,B6b,C3b,C4b,C5b,D5b,G5w,G6w,G7w,H4w,H5w,H6w,H7w,H8w,H9w,I5w,I6w,I7w,I8w,I9w   i-A5-C5-NW
+A1b,A2b,A3b,A4b,A5b,B1b,B2b,B3b,B4b,B5b,B6b,C4b,C5b,C6b,G5w,G6w,G7w,H4w,H5w,H6w,H7w,H8w,H9w,I5w,I6w,I7w,I8w,I9w   i-C3-C5-E
+A1b,A2b,A3b,A4b,A5b,B1b,B2b,B3b,B4b,B5b,B6b,D4b,D5b,D6b,G5w,G6w,G7w,H4w,H5w,H6w,H7w,H8w,H9w,I5w,I6w,I7w,I8w,I9w   s-C3-C5-NE
+A1b,A2b,A3b,A4b,A5b,B1b,B2b,B3b,B4b,B5b,B6b,D3b,D4b,D5b,G5w,G6w,G7w,H4w,H5w,H6w,H7w,H8w,H9w,I5w,I6w,I7w,I8w,I9w   s-C3-C5-NW
+A1b,A2b,A3b,A4b,A5b,B1b,B2b,B3b,B4b,B5b,B6b,C2b,C3b,C4b,G5w,G6w,G7w,H4w,H5w,H6w,H7w,H8w,H9w,I5w,I6w,I7w,I8w,I9w   i-C5-C3-W

@@ -6,7 +6,6 @@ from eval_func_geoff import EvaluationFunction as ef
 
 
 class GamePlayingAgent:
-
     def __init__(self, input_list):
         self._input_list = input_list
         self._agent_color = input_list[0]
@@ -119,6 +118,7 @@ def main():
     agent = GamePlayingAgent(my_list)
     while running:
         running_count += 1
+        print("Move #", running_count)
         print("Black Moving")
         new_state = agent.make_turn()
         print("White Moving")
@@ -127,7 +127,8 @@ def main():
         new_state = agent.make_turn()
         agent.set_input_list(["b",
                               new_state])
-        if running_count == 20:
+        print()
+        if running_count == 100:
             running = False
 
 

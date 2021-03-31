@@ -262,6 +262,7 @@ class GameMenu:
         direction_str = ui_element.text
         direction = DirectionEnum[direction_str]
         move = self.board.generate_move(direction)
+
         print(move)
         is_valid_move = self.board.validate_move(move)
         
