@@ -45,7 +45,7 @@ class GamePlayingAgent:
         if len(self.next_moves) == 1:
             print(self.next_moves[0])
             print(self.next_move_board_states[0])
-            return self.next_move_board_states[0]
+            return self.next_moves[0]
         else:
             lowest_opponent_value = math.inf
             for i in range(len(self.next_moves)):
@@ -62,7 +62,7 @@ class GamePlayingAgent:
             move_to_choose = indexes[random.randint(0, len(indexes) - 1)]
             print(self.next_moves[move_to_choose])
             print(self.next_move_board_states[move_to_choose])
-            return self.next_move_board_states[move_to_choose]
+            return self.next_moves[move_to_choose]
         # This is our list of best moves and states with a depth of 2
 
     def assign_move_values(self):
@@ -207,7 +207,7 @@ class GamePlayingAgent:
         return return_list
 
 
-def main():
+"""def main():
     running = True
     running_count = 0
     my_list = ["w",
@@ -230,3 +230,4 @@ def main():
 
 if __name__ == '__main__':
     main()
+"""
