@@ -15,7 +15,6 @@ from enums.team_enum import TeamEnum
 from models.board import Board
 from player_section import PlayerSection
 
-
 class GameMenu:
 
     def __init__(self):
@@ -280,7 +279,6 @@ class GameMenu:
         direction_str = ui_element.text
         direction = DirectionEnum[direction_str]
         move = self.board.generate_move(direction)
-
         print(move)
         is_valid_move = self.board.validate_move(move)
         
@@ -298,7 +296,6 @@ class GameMenu:
         move = self.board.generate_move(direction)
         print(move)
         is_valid_move = self.board.validate_move(move)
-        
         if is_valid_move:
             self.board.apply_move(move)
             self.switch_player()

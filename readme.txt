@@ -27,5 +27,8 @@ Game-Playing Agent:
     best move. A quiescent search is applied when there's a move that pushes the opponent's marbles off the board
     and searches for the next nonquiescent position and its score.
 
-    - To Run the Game-Playing Agent on it's own: Run the main() inside the GamePlayingAgent class (game_playing_agent.py)
-    and the agent will play against another agent. Each player's responses will be outputted as move notations.
+    - To Run the Game-Playing Agent on it's own: Run the main() (uncomment it) inside the GamePlayingAgent class
+    (game_playing_agent.py) and the agent will play against another agent. Each player's responses will be outputted
+    as move notations.
+    - To Run the Game-Playing Agent in the Abalone GUI: when Black Player is selected as the Computer the agent will
+    start the game by playing a random legal move.
