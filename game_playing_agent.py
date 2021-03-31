@@ -1,5 +1,4 @@
 import math
-import random
 
 from state_space_generator import StateSpaceGenerator as ssg
 from eval_func_geoff import EvaluationFunction as ef
@@ -35,15 +34,10 @@ class GamePlayingAgent:
             return self.next_move_board_states[0]
         else:
             lowest_opponent_value = math.inf
-            indexes = list()
             for i in range(len(self.next_moves)):
                 if self.next_opponent_moves_values[i] < lowest_opponent_value:
-                    indexes.clear()
                     lowest_opponent_value = self.next_opponent_moves_values[i]
-                    indexes.append(i)
-                elif self.next_opponent_moves_values[i] == lowest_opponent_value:
-                    indexes.append(i)
-            move_to_choose = indexes[random.randint(0, len(indexes) - 1)]
+            move_to_choose = self.next_opponent_moves_values.index(lowest_opponent_value)
             print(self.next_moves[move_to_choose])
             return self.next_move_board_states[move_to_choose]
         # This is our list of best moves and states with a depth of 2
