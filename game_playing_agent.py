@@ -19,12 +19,6 @@ class GamePlayingAgent:
         self.next_opponent_moves_values = None
         self.next_opponents_moves = None
 
-    def update_current_state():
-        print("updating current state of the agent")
-        if board is not None:
-            self._agent_color = TeamEnum.get_team_str(self.board.team_of_turn)
-            self._input_list = self.board.get_agent_input()
-
     def make_turn(self):
         self._state_space_gen.read_input_list(self._input_list)
         board_states = self._state_space_gen.state_space.generate_all_resulting_board_states()
@@ -34,19 +28,9 @@ class GamePlayingAgent:
                 stri += marble + ","
             self.next_move_board_states.append(stri[:-1])
         self.next_moves = self._state_space_gen.state_space.get_move_list()
-        print("Printing next moves pre best moves")
-        for i in range(5):
-            if i < len(self.next_moves):
-                print(self.next_moves[i])
-                print(self.next_move_board_states[i])
-        print("Break")
         self.next_moves_values = self.assign_move_values()
         self.next_moves, self.next_move_board_states, self.next_moves_values = self.find_best_next_moves()
         self.next_opponent_moves_values, self.next_opponents_moves = self.find_next_opponent_moves()
-        print("Printing next moves pre-selection")
-        print(self.next_moves)
-        print(self.next_move_board_states)
-        print("Break")
         if len(self.next_moves) == 1:
             print(self.next_moves[0])
             print(self.next_move_board_states[0])
