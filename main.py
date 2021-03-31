@@ -427,7 +427,6 @@ class GameMenu:
         self.start_game = False
 
 
-
 def main():
     game = GameMenu()
     game.display_menu()

@@ -219,8 +219,8 @@ class GamePlayingAgent:
             return_list.append(counter)
         return return_list
 
-
-"""def main():
+"""
+def main():
     running = True
     running_count = 0
     my_list = ["w",
