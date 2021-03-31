@@ -21,16 +21,27 @@ class GamePlayingAgent:
         self._state_space_gen.read_input_list(self._input_list)
         board_states = self._state_space_gen.state_space.generate_all_resulting_board_states()
         for line in board_states:
-            _str = ""
+            stri = ""
             for marble in line:
-                _str += marble + ","
-            self.next_move_board_states.append(_str[:-1])
+                stri += marble + ","
+            self.next_move_board_states.append(stri[:-1])
         self.next_moves = self._state_space_gen.state_space.get_move_list()
+        print("Printing next moves pre best moves")
+        for i in range(5):
+            if i < len(self.next_moves):
+                print(self.next_moves[i])
+                print(self.next_move_board_states[i])
+        print("Break")
         self.next_moves_values = self.assign_move_values()
         self.next_moves, self.next_move_board_states, self.next_moves_values = self.find_best_next_moves()
         self.next_opponent_moves_values, self.next_opponents_moves = self.find_next_opponent_moves()
+        print("Printing next moves pre-selection")
+        print(self.next_moves)
+        print(self.next_move_board_states)
+        print("Break")
         if len(self.next_moves) == 1:
             print(self.next_moves[0])
+            print(self.next_move_board_states[0])
             return self.next_move_board_states[0]
         else:
             lowest_opponent_value = math.inf
@@ -39,6 +50,7 @@ class GamePlayingAgent:
                     lowest_opponent_value = self.next_opponent_moves_values[i]
             move_to_choose = self.next_opponent_moves_values.index(lowest_opponent_value)
             print(self.next_moves[move_to_choose])
+            print(self.next_move_board_states[move_to_choose])
             return self.next_move_board_states[move_to_choose]
         # This is our list of best moves and states with a depth of 2
 
@@ -103,25 +115,32 @@ class GamePlayingAgent:
     def set_input_list(self, input_list):
         self._input_list = input_list
         self._agent_color = input_list[0]
+        self._state_space_gen = ssg()
+        self.next_move_board_states = list()
+        self.next_moves = None
+        self.next_moves_values = None
+        self.greatest_move_value = 0
+        self.next_opponent_moves_values = None
+        self.next_opponents_moves = None
 
 
 def main():
     running = True
     running_count = 0
-    my_list = ["b",
-               "A1b,A2b,A3b,A4b,A5b,B1b,B2b,B3b,B4b,B5b,B6b,C3b,C4b,C5b,G5w,G6w,G7w,H4w,H5w,H6w,H7w,H8w,H9w,I5w,I6w,I7w,I8w,I9w"]
+    my_list = ["w",
+               "A2b,A3b,A4b,A5b,B1b,B2b,B3b,B4b,B5b,B6b,C3b,C4b,C5b,D4b,G5w,G6w,G7w,H4w,H5w,H6w,H7w,H8w,H9w,I5w,I6w,I7w,I8w,I9w"]
     agent = GamePlayingAgent(my_list)
     while running:
         running_count += 1
-        print("Black Moving")
-        new_state = agent.make_turn()
         print("White Moving")
-        agent.set_input_list(["w",
-                              new_state])
         new_state = agent.make_turn()
+        print("Black Moving")
         agent.set_input_list(["b",
                               new_state])
-        if running_count == 20:
+        new_state_w = agent.make_turn()
+        agent.set_input_list(["w",
+                              new_state_w])
+        if running_count == 5:
             running = False
 
 
