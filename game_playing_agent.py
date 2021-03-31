@@ -1,4 +1,5 @@
 import math
+import random
 
 from state_space_generator import StateSpaceGenerator as ssg
 from eval_func_geoff import EvaluationFunction as ef
@@ -48,7 +49,15 @@ class GamePlayingAgent:
             for i in range(len(self.next_moves)):
                 if self.next_opponent_moves_values[i] < lowest_opponent_value:
                     lowest_opponent_value = self.next_opponent_moves_values[i]
-            move_to_choose = self.next_opponent_moves_values.index(lowest_opponent_value)
+            indexes = list()
+            for i in range(len(self.next_moves)):
+                if self.next_opponent_moves_values[i] < lowest_opponent_value:
+                    indexes.clear()
+                    lowest_opponent_value = self.next_opponent_moves_values[i]
+                    indexes.append(i)
+                elif self.next_opponent_moves_values[i] == lowest_opponent_value:
+                    indexes.append(i)
+            move_to_choose = indexes[random.randint(0, len(indexes) - 1)]
             print(self.next_moves[move_to_choose])
             print(self.next_move_board_states[move_to_choose])
             return self.next_move_board_states[move_to_choose]
@@ -140,7 +149,7 @@ def main():
         new_state_w = agent.make_turn()
         agent.set_input_list(["w",
                               new_state_w])
-        if running_count == 5:
+        if running_count == 20:
             running = False
 
 
