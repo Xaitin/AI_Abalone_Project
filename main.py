@@ -2,7 +2,7 @@ import re
 
 import pygame
 import pygame_gui
-from pygame_gui.elements import UIPanel, UIButton, UISelectionList
+from pygame_gui.elements import UIPanel, UIButton, UITextEntryLine
 from pygame_gui.elements.ui_text_box import UITextBox
 
 from config import ConfigMenu
@@ -46,6 +46,7 @@ class GameMenu:
         self.setting_result["selected_layout"] = "Standard"
         self.setting_result["white_type"] = "Human"
         self.setting_result["black_type"] = "Computer"
+        self.setting_result["moves"] = 10
         self.player_each_time = [5, 5]
         # Texts
         self.draw_text("Abalone", self.font_size, (WINDOW_WIDTH // 2, TITLE_DISTANCE_TOP + self.button_h // 2))
@@ -73,26 +74,27 @@ class GameMenu:
 
         temp = 60
         button_w_dir = self.button_w // 2
-        button_h_dir = self.button_h // 1.2
+        button_h_dir = self.button_h // 1.4
         index = 2.8
         sub_h = WINDOW_HEIGHT - 100
+        shift_w = 5
 
-        self.NW_button = self.button(WINDOW_WIDTH // index + temp - self.button_w, sub_h,
+        self.NW_button = self.button(WINDOW_WIDTH // index + temp * 3 - self.button_w + shift_w, sub_h - 0.6 * temp,
                                      button_w_dir, button_h_dir, "NW",
                                      self.manager)
-        self.NE_button = self.button(WINDOW_WIDTH // index + temp * 2 - self.button_w, sub_h,
+        self.NE_button = self.button(WINDOW_WIDTH // index + temp * 4 - self.button_w + shift_w, sub_h - 0.6 * temp,
                                      button_w_dir, button_h_dir, "NE",
                                      self.manager)
-        self.W_button = self.button(WINDOW_WIDTH // index + temp * 3 - self.button_w, sub_h,
+        self.W_button = self.button(WINDOW_WIDTH // index + temp * 2.5 - self.button_w + shift_w, sub_h,
                                     button_w_dir, button_h_dir, "W",
                                     self.manager)
-        self.E_button = self.button(WINDOW_WIDTH // index + temp * 4 - self.button_w, sub_h,
+        self.E_button = self.button(WINDOW_WIDTH // index + temp * 4.5 - self.button_w + shift_w, sub_h,
                                     button_w_dir, button_h_dir, "E",
                                     self.manager)
-        self.SW_button = self.button(WINDOW_WIDTH // index + temp * 5 - self.button_w, sub_h,
+        self.SW_button = self.button(WINDOW_WIDTH // index + temp * 3 - self.button_w + shift_w, sub_h + 0.6 * temp,
                                      button_w_dir, button_h_dir, "SW",
                                      self.manager)
-        self.SE_button = self.button(WINDOW_WIDTH // index + temp * 6 - self.button_w, sub_h,
+        self.SE_button = self.button(WINDOW_WIDTH // index + temp * 4 - self.button_w + shift_w, sub_h + 0.6 * temp,
                                      button_w_dir, button_h_dir, "SE",
                                      self.manager)
 
@@ -107,6 +109,11 @@ class GameMenu:
         self.white_panel_position = [
             WINDOW_WIDTH // 2 + PANEL_DISTANCE_FROM_CENTER - PANEL_WIDTH, TITLE_DISTANCE_TOP * 2 + self.button_h
         ]
+
+        self.suggested_entry = UITextEntryLine(
+            pygame.Rect((WINDOW_WIDTH // 2 - 5.7 * shift_w, TITLE_DISTANCE_TOP + temp), (80, -1)), self.manager)
+
+        self.draw_text("Suggested move", self.font_size//2, (WINDOW_WIDTH // 2 - 1.7*temp, TITLE_DISTANCE_TOP + 1.2*temp))
 
         self.black_player_panel = UIPanel(
             relative_rect=pygame.Rect(self.black_panel_position, (PANEL_WIDTH, PANEL_HEIGHT)),
@@ -175,6 +182,7 @@ class GameMenu:
                         print('Config!')
                     if event.ui_element == self.start_button:
                         self.open_config = False
+                        self.resetting_board_player_panel()
                         self.start_game = True
                         print('Start!')
                     if event.ui_element == self.stop_button:
@@ -198,7 +206,10 @@ class GameMenu:
                                 "white_time"] = self.config_menu.time_drop_down_menu_white.selected_option
                             self.setting_result[
                                 "black_time"] = self.config_menu.time_drop_down_menu_black.selected_option
+                            self.setting_result["moves"] = self.config_menu.move_drop_down_menu.selected_option
                             self.setting_result_func(self.config_menu)
+                            self.resetting_board_player_panel()
+                            self.start_game = False
                             # move_limit = int(self.MOVE_LIMIT_INPUT.get_text())
                             # Configure sending start data to gameBoard here
                         if event.ui_element == self.config_menu.WHITE_HUMAN_BUTTON:
@@ -253,6 +264,8 @@ class GameMenu:
                             self.third_click_func(self.initial_board, self.config_menu.STANDARD_BUTTON,
                                                   self.config_menu.GER_DAISY_BUTTON, self.config_menu.BEL_DAISY_BUTTON)
                             print('Belgian Daisy')
+
+
             self.manager.process_events(event)
 
     def on_direction_button_click(self, ui_element: UIButton):
@@ -267,7 +280,7 @@ class GameMenu:
         is_valid_move = self.board.validate_move(move)
         
         if is_valid_move:
-            self.board.apply_move(move)
+            self.move = self.board.apply_move(move)
             self.switch_player()
         else: 
             print("Invalid move detected!")
@@ -319,6 +332,8 @@ class GameMenu:
         config.BLACK_TYPE_INPUT.enable()
         self.board = Board(self.window, self.board_setup[self.setting_result["selected_layout"]])
         self.player_each_time = [int(re.search(r'\d+', self.setting_result["black_time"]).group()), int(re.search(r'\d+', self.setting_result["white_time"]).group())]
+        self.player_each_move = int(re.search(r'\d+', self.setting_result["moves"]).group())
+
         config.SELECTED_INITIAL.set_text(self.setting_result["selected_layout"])
         config.WHITE_TIME_INPUT.set_text(self.setting_result["white_time"])
         config.WHITE_TYPE_INPUT.set_text(self.setting_result["white_type"])
@@ -329,6 +344,8 @@ class GameMenu:
         self.start_count = True
         self.black_player.drop_down_time_hist.kill()
         self.white_player.drop_down_time_hist.kill()
+        self.black_player.drop_move_hist.kill()
+        self.white_player.drop_move_hist.kill()
         self.black_player = PlayerSection(self.manager, self.black_player_panel)
         self.white_player = PlayerSection(self.manager, self.white_player_panel)
         self.board = Board(self.window, self.board_setup[self.setting_result["selected_layout"]])
@@ -364,35 +381,49 @@ class GameMenu:
         pygame.quit()
 
     def add_timer(self):
-        start_zero = int(self.time_count - self.current_time)
+        start_zero = self.time_count - self.current_time
         self.each_time_count = start_zero
         time_in_secs = self.player_each_time[0] - start_zero
         if self.player_turn == TeamEnum.BLACK:
-            self.black_player.time_limit_info.set_text(f"{time_in_secs} secs" if time_in_secs>=0 else f"{time_in_secs} secs!")
+            self.black_player.time_limit_info.set_text(f"{time_in_secs:.1f} secs" if time_in_secs>=0 else f"{time_in_secs:.1f} secs!")
         else:
-            self.white_player.time_limit_info.set_text(f"{time_in_secs} secs" if time_in_secs>=0 else f"{time_in_secs} secs!")
+            self.white_player.time_limit_info.set_text(f"{time_in_secs:.1f} secs" if time_in_secs>=0 else f"{time_in_secs:.1f} secs!")
 
     def switch_player(self):
+        score = 14
         # Use this to get the board state
         self.board.__str__()
         if self.player_turn == TeamEnum.BLACK:
-            self.black_player.time_hist_list.append(f"{self.each_time_count} secs")
+            self.black_player.time_hist_list.append(f"{self.each_time_count:.1f} secs")
             self.black_player.total_time_count += self.each_time_count
-            self.black_player.total_time_info.set_text(f"{self.black_player.total_time_count} secs")
+            self.black_player.total_time_info.set_text(f"{self.black_player.total_time_count:.1f} secs")
             self.black_player.drop_down_time_hist.set_item_list(self.black_player.time_hist_list)
             self.black_player.your_turn.set_text("")
+            self.black_player.score_count = score - len(self.board.white_marble_list)
+            self.black_player.score_info.set_text(f"{self.black_player.score_count}")
+            self.black_player.drop_move_hist_list.append(f"{self.move}")
+            self.black_player.drop_move_hist.set_item_list(self.black_player.drop_move_hist_list)
             self.white_player.your_turn.set_text("Your Turn!")
             self.player_turn = TeamEnum.WHITE
             self.start_count = True
         else:
-            self.white_player.time_hist_list.append(f"{self.each_time_count} secs")
+            self.white_player.time_hist_list.append(f"{self.each_time_count:.1f} secs")
             self.white_player.total_time_count += self.each_time_count
-            self.white_player.total_time_info.set_text(f"{self.white_player.total_time_count} secs")
+            self.white_player.total_time_info.set_text(f"{self.white_player.total_time_count:.1f} secs")
             self.white_player.drop_down_time_hist.set_item_list(self.white_player.time_hist_list)
             self.white_player.your_turn.set_text("")
+            self.white_player.score_count = score - len(self.board.black_marble_list)
+            self.white_player.score_info.set_text(f"{self.black_player.score_count}")
+            self.white_player.drop_move_hist_list.append(f"{self.move}")
+            self.white_player.drop_move_hist.set_item_list(self.white_player.drop_move_hist_list)
             self.black_player.your_turn.set_text("Your Turn!")
             self.player_turn = TeamEnum.BLACK
             self.start_count = True
+
+    def finish(self):
+
+        self.start_game = False
+
 
 
 def main():

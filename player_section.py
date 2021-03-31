@@ -49,15 +49,12 @@ class PlayerSection:
         self.score_info = UILabel(
             relative_rect=pygame.Rect((pose_x + 3 * gap // 1, pose_y), (label_len, 30)),
             text='0', manager=manager, container=player)
-        self.score_info.disable()
         self.time_limit_info = UILabel(
             relative_rect=pygame.Rect((pose_x + 3 * gap // 1, pose_y + gap), (label_len, 30)),
             text='0 secs', manager=self.manager, container=self.player)
-        self.time_limit_info.disable()
         self.total_time_info = UILabel(
             relative_rect=pygame.Rect((pose_x + 3 * gap // 1, pose_y + 5 * gap), (label_len, 30)),
             text=f'0 secs', manager=self.manager, container=self.player)
-        self.total_time_info.disable()
         self.drop_down_time_hist = UISelectionList(pygame.Rect(pose_x, pose_y + 3 * gap, 120, 80),
                                                    item_list=self.time_hist_list,
                                                    manager=self.manager,
