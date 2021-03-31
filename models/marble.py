@@ -39,7 +39,7 @@ class Marble(Sprite):
         self.recalc_position()
 
         print(
-            f"Moving Marble from {prev_position_cube} to {self.position_cube}")
+            f"Moving Marble from {prev_position_cube}:{CoordinateHelper.from_cube_to_cube_str(prev_position_cube)} to {self.position_cube}:{CoordinateHelper.from_cube_to_cube_str(self.position_cube)}")
 
     def get_team_marble_img(self, team):
         marble_img_path = TeamEnum.get_image_path(team)

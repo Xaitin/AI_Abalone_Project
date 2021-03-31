@@ -9,7 +9,7 @@ class DirectionHelper:
 
     @staticmethod
     def get_opposite_direction(direction_vector: Tuple[int, int]):
-        return direction_vector[1], direction_vector[0]
+        return -direction_vector[0], -direction_vector[1]
 
     @staticmethod
     def get_perpendicular_directions(direction_vector: Tuple[int, int]):

@@ -262,8 +262,14 @@ class GameMenu:
         direction_str = ui_element.text
         direction = DirectionEnum[direction_str]
         move = self.board.generate_move(direction)
-        self.switch_player()
-        self.board.apply_move(move)
+        print(move)
+        is_valid_move = self.board.validate_move(move)
+        
+        if is_valid_move:
+            self.board.apply_move(move)
+            self.switch_player()
+        else: 
+            print("Invalid move detected!")
 
     def on_direction_key_pushed(self, key):
         if not self.board.is_marble_selected():
@@ -271,8 +277,14 @@ class GameMenu:
             return
         direction = DirectionEnum.get_from_key(key)
         move = self.board.generate_move(direction)
-        self.switch_player()
-        self.board.apply_move(move)
+        print(move)
+        is_valid_move = self.board.validate_move(move)
+        
+        if is_valid_move:
+            self.board.apply_move(move)
+            self.switch_player()
+        else: 
+            print("Invalid move detected!")
 
     @staticmethod
     def click_func(check_click, button1, button2):
@@ -360,7 +372,6 @@ class GameMenu:
             self.white_player.time_limit_info.set_text(f"{time_in_secs} secs" if time_in_secs>=0 else f"{time_in_secs} secs!")
 
     def switch_player(self):
-        self.board.switch_player()
         # Use this to get the board state
         self.board.__str__()
         if self.player_turn == TeamEnum.BLACK:
