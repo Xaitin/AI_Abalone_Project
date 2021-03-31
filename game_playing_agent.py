@@ -17,6 +17,7 @@ class GamePlayingAgent:
         self.greatest_move_value = 0
         self.next_opponent_moves_values = None
         self.next_opponents_moves = None
+        self.was_marble_pushed_off = False
 
     def make_turn(self):
         self._state_space_gen.read_input_list(self._input_list)
@@ -131,6 +132,7 @@ class GamePlayingAgent:
         self.greatest_move_value = 0
         self.next_opponent_moves_values = None
         self.next_opponents_moves = None
+        self.was_marble_pushed_off = False
 
 
 def main():
