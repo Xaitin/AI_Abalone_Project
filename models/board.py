@@ -53,6 +53,13 @@ class Board:
     def switch_player(self):
         self.team_of_turn = TeamEnum.WHITE if self.team_of_turn == TeamEnum.BLACK else TeamEnum.BLACK
 
+    def get_agent_input(self):
+        board_str_arr = self.__str__
+        result = ""
+        for arr in board_str_arr:
+            result += arr + ","
+        return result[:-1]
+
     def init_hexagons(self, win):
         board_range = range(-BOARD_SIZE, BOARD_SIZE + 1)
         for x in board_range:

@@ -1,3 +1,4 @@
+from game_playing_agent import GamePlayingAgent
 import re
 
 import pygame
@@ -14,7 +15,6 @@ from enums.team_enum import TeamEnum
 from models.board import Board
 from player_section import PlayerSection
 
-
 class GameMenu:
 
     def __init__(self):
@@ -25,8 +25,12 @@ class GameMenu:
         self.manager = pygame_gui.UIManager((WINDOW_WIDTH, WINDOW_HEIGHT))
 
         # board initialization
-        self.board = Board(self.window)
+        self.board = Board(self.window, )
         self.initial_board = 0
+
+        # agent initialization
+        self.agent = GamePlayingAgent(board=self.board)
+        
         self.run_display = True
         self.display.fill(BLACK)
         self.config_menu = None
@@ -275,7 +279,6 @@ class GameMenu:
         direction_str = ui_element.text
         direction = DirectionEnum[direction_str]
         move = self.board.generate_move(direction)
-
         print(move)
         is_valid_move = self.board.validate_move(move)
         
@@ -293,7 +296,6 @@ class GameMenu:
         move = self.board.generate_move(direction)
         print(move)
         is_valid_move = self.board.validate_move(move)
-        
         if is_valid_move:
             self.board.apply_move(move)
             self.switch_player()
