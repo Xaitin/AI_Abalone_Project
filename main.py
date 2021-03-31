@@ -1,3 +1,4 @@
+from game_playing_agent import GamePlayingAgent
 import re
 
 import pygame
@@ -25,8 +26,12 @@ class GameMenu:
         self.manager = pygame_gui.UIManager((WINDOW_WIDTH, WINDOW_HEIGHT))
 
         # board initialization
-        self.board = Board(self.window)
+        self.board = Board(self.window, )
         self.initial_board = 0
+
+        # agent initialization
+        self.agent = GamePlayingAgent(board=self.board)
+        
         self.run_display = True
         self.display.fill(BLACK)
         self.config_menu = None

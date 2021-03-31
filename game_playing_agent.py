@@ -1,4 +1,6 @@
+from enums.team_enum import TeamEnum
 import math
+from models.board import Board
 import random
 
 from state_space_generator import StateSpaceGenerator as ssg
@@ -6,9 +8,14 @@ from eval_func_geoff import EvaluationFunction as ef
 
 
 class GamePlayingAgent:
-    def __init__(self, input_list):
+    def __init__(self, input_list, board: Board = None):
         self._input_list = input_list
         self._agent_color = input_list[0]
+        self.board = board
+
+        if board is not None:
+            self._agent_color = TeamEnum.get_team_str(board.team_of_turn)
+            self._input_list = board.get_agent_input()
         self._state_space_gen = ssg()
         self.next_move_board_states = list()
         self.next_moves = None
@@ -16,6 +23,12 @@ class GamePlayingAgent:
         self.greatest_move_value = 0
         self.next_opponent_moves_values = None
         self.next_opponents_moves = None
+
+    def update_current_state():
+        print("updating current state of the agent")
+        if self.board is not None:
+            self._agent_color = TeamEnum.get_team_str(self.board.team_of_turn)
+            self._input_list = self.board.get_agent_input()
 
     def make_turn(self):
         self._state_space_gen.read_input_list(self._input_list)
