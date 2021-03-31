@@ -1,4 +1,5 @@
 import math
+from typing import Tuple
 
 from constants import COS30, SIN30, HEXAGON_SIDE_LENGTH, WINDOW_WIDTH, WINDOW_HEIGHT, BOARD_SIZE, NUMBER_SHIFT, \
     LETTER_SHIFT
@@ -13,12 +14,14 @@ class CoordinateHelper:
 
     @staticmethod
     def fromCubetoXY(position):
-        _left = ((2 * COS30) * position[0] + COS30 * position[1]) * HEXAGON_SIDE_LENGTH + WINDOW_WIDTH / 2
-        _top = 3 * SIN30 * position[1] * HEXAGON_SIDE_LENGTH + WINDOW_HEIGHT / 2
+        _left = ((2 * COS30) * position[0] + COS30 *
+                 position[1]) * HEXAGON_SIDE_LENGTH + WINDOW_WIDTH / 2
+        _top = 3 * SIN30 * position[1] * \
+            HEXAGON_SIDE_LENGTH + WINDOW_HEIGHT / 2
         return _left, _top
 
     @staticmethod
-    def from2DArraytoCube(position_2d, with_gutter=True):
+    def from2DArraytoCube(position_2d: Tuple[int, int], with_gutter=True):
         # print("2DArray", position_2d)
         # The "-1" that was originally here for each variable is now used when this function is used in state_space.
         # It was removed because it shifted the marble positions on the game board.
@@ -51,7 +54,7 @@ class CoordinateHelper:
         return x + str(y)
 
     @staticmethod
-    def from_2d_to_cube_str(position_2d, with_gutter=True):
+    def from_2d_to_cube_str(position_2d: Tuple[int, int], with_gutter=True):
         if with_gutter:
             return CoordinateHelper.from_cube_to_cube_str(
                 CoordinateHelper.from2DArraytoCube(position_2d, with_gutter=with_gutter))
@@ -61,5 +64,6 @@ class CoordinateHelper:
     @staticmethod
     def manhattan_distance(position_a: (int, int), position_b: (int, int)):
         return (abs(position_a[0] - position_b[0])
-                + abs(position_a[0] + position_a[1] - position_b[0] - position_b[1])
+                + abs(position_a[0] + position_a[1] -
+                      position_b[0] - position_b[1])
                 + abs(position_a[1] - position_b[1])) / 2

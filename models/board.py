@@ -153,7 +153,8 @@ class Board:
                         map(add, second_marble.position_2d, direction))
                     if clicked_marble.position_2d == second_marble_next_spot:
                         self.add_selected_marble(clicked_marble)
-
+        print(self.selected_marbles)
+        print([marble.position_2d for marble in self.selected_marbles])
         return False
 
     def add_selected_marble(self, marble):
@@ -195,6 +196,10 @@ class Board:
 
     def validate_move(self, move: Move):
         self.state_space.generate_all_resulting_board_states()
+        valid_moves = self.state_space.get_move_list()
+        print("state_space.marble_positions_2d", self.state_space.marble_positions_2d)
+        print("state_space self.__str__()", self.__str__())
+        print(valid_moves)
         return str(move) in self.state_space.get_move_list()
 
     def apply_move(self, move: Move):
