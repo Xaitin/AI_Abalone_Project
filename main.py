@@ -112,7 +112,7 @@ class GameMenu:
         ]
 
         self.suggested_entry = UITextEntryLine(
-            pygame.Rect((WINDOW_WIDTH // 2 - 5.7 * shift_w, TITLE_DISTANCE_TOP + temp), (80, -1)), self.manager)
+            pygame.Rect((WINDOW_WIDTH // 2 - 5.7 * shift_w, TITLE_DISTANCE_TOP + temp), (120, -1)), self.manager)
 
         self.draw_text("Suggested move", self.font_size // 2,
                        (WINDOW_WIDTH // 2 - 1.7 * temp, TITLE_DISTANCE_TOP + 1.2 * temp))
@@ -187,13 +187,13 @@ class GameMenu:
                         self.open_config = False
                         self.resetting_board_player_panel()
                         self.start_game = True
+                        self.pause = True
                         print('Start!')
                     if event.ui_element == self.stop_button:
-                        self.start_game = False
+                        self.game_playing = False
                         print('Stop!')
                     if event.ui_element == self.pause_button:
-                        self.pause_button.set_text("Continue")
-                        self.pause()
+                        self.pause = False
                         print('Pause!')
                     if event.ui_element == self.undo_button:
                         print('Undo!')
@@ -202,7 +202,9 @@ class GameMenu:
                         self.start_game = False
 
                     if event.ui_element in self.direction_buttons:
+                        self.pause = True
                         self.on_direction_button_click(event.ui_element)
+                        self.agent_suggested()
 
                     if self.config_menu != None:
                         if event.ui_element == self.config_menu.START_BUTTON:
@@ -272,24 +274,24 @@ class GameMenu:
 
             self.manager.process_events(event)
 
-    def pause(self):
-        pause = True
-        while pause:
-            for event in pygame.event.get():
-
-                if event.type == pygame.KEYDOWN:
-                    if event.key == pygame.K_c:
-                        pause = False
-                    elif event.key == pygame.K_q:
-                        pygame.quit()
-                        quit()
-                if event.type == pygame.USEREVENT:
-                    if event.user_type == pygame_gui.UI_BUTTON_PRESSED:
-                        if event.ui_element == self.pause_button:
-                            self.pause_button.set_text("Pause")
-                            pause = False
-            self.display.fill(BLACK)
-        quit()
+    # def pause(self):
+    #     pause = True
+    #     while pause:
+    #         for event in pygame.event.get():
+    #
+    #             if event.type == pygame.KEYDOWN:
+    #                 if event.key == pygame.K_c:
+    #                     pause = False
+    #                 elif event.key == pygame.K_q:
+    #                     pygame.quit()
+    #                     quit()
+    #             if event.type == pygame.USEREVENT:
+    #                 if event.user_type == pygame_gui.UI_BUTTON_PRESSED:
+    #                     if event.ui_element == self.pause_button:
+    #                         self.pause_button.set_text("Pause")
+    #                         pause = False
+    #         self.display.fill(BLACK)
+    #     quit()
 
     def on_direction_button_click(self, ui_element: UIButton):
         if not self.board.is_marble_selected():
@@ -303,14 +305,22 @@ class GameMenu:
         if is_valid_move:
             self.move = self.board.apply_move(move)
             self.switch_player()
-            self.agent_play()
         else:
             print("Invalid move detected!")
 
-    def agent_play(self):
+    def agent_suggested(self, agent="b"):
+        if self.is_agent_computer() and self.player_turn == TeamEnum.BLACK:
+            new_state = self.board.get_agent_input()
+            input_list = [agent, new_state]
+            self.agent.set_input_list(input_list)
+            new_move, new_state_from_agent = self.agent.make_turn()
+            self.suggested_entry.set_text(new_move)
+
+
+    def agent_play(self, agent="b"):
         if self.is_agent_computer():
             new_state = self.board.get_agent_input()
-            input_list = ["b", new_state]
+            input_list = [agent, new_state]
             self.agent.set_input_list(input_list)
             new_move, new_state_from_agent = self.agent.make_turn()
             self.move = new_move
@@ -403,6 +413,7 @@ class GameMenu:
         self.player_turn = TeamEnum.BLACK
         self.each_time_count = 0
         self.initialize_one_time = True
+        self.pause = True
         while self.game_playing:
             time_delta = clock.tick(30) / 1000.0
             self.time_count += time_delta
@@ -411,15 +422,16 @@ class GameMenu:
             self.window.blit(self.display, (0, 0))
             self.manager.draw_ui(self.window)
             if not self.open_config and self.start_game:
-                if self.is_agent_computer():
-                    if self.initialize_one_time:
-                        self.agent_play()
-                        self.initialize_one_time = False
+                if self.pause:
+                    if self.is_agent_computer():
+                        if self.initialize_one_time:
+                            self.agent_play()
+                            self.initialize_one_time = False
 
-                if self.start_count:
-                    self.current_time = self.time_count
-                    self.start_count = False
-                self.add_timer()
+                    if self.start_count:
+                        self.current_time = self.time_count
+                        self.start_count = False
+                    self.add_timer()
                 self.board.update()
             pygame.display.update()
 
@@ -469,9 +481,6 @@ class GameMenu:
             self.black_player.your_turn.set_text("Your Turn!")
             self.player_turn = TeamEnum.BLACK
             self.start_count = True
-
-    def is_agent_computer(self):
-        return self.setting_result["white_type"] == "Human" and self.setting_result["black_type"] == "Computer"
 
     def finish(self):
         self.start_game = False
