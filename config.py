@@ -203,4 +203,6 @@ class ConfigMenu(UIWindow):
                                                         pygame.Rect((320, drop_down_h + 1.3*gap), (130, 40)),
                                                         manager=self.manager,
                                                         container=self)
+
+
         self.WHITE_TIME_INPUT.rebuild_from_changed_theme_data()

@@ -204,7 +204,15 @@ class GameMenu:
                     if event.ui_element in self.direction_buttons:
                         self.pause = True
                         self.on_direction_button_click(event.ui_element)
-                        self.agent_suggested()
+                        if self.is_agent_computer() and self.player_turn == TeamEnum.BLACK:
+                            self.agent_suggested()
+                        elif self.is_computer_agent() and self.player_turn == TeamEnum.WHITE:
+                            self.agent_suggested('w')
+                        elif self.is_computer_computer():
+                            if self.player_turn == TeamEnum.BLACK:
+                                self.agent_suggested()
+                            else:
+                                self.agent_suggested('w')
 
                     if self.config_menu != None:
                         if event.ui_element == self.config_menu.START_BUTTON:
@@ -309,28 +317,26 @@ class GameMenu:
             print("Invalid move detected!")
 
     def agent_suggested(self, agent="b"):
-        if self.is_agent_computer() and self.player_turn == TeamEnum.BLACK:
-            new_state = self.board.get_agent_input()
-            input_list = [agent, new_state]
-            self.agent.set_input_list(input_list)
-            new_move, new_state_from_agent = self.agent.make_turn()
-            self.suggested_entry.set_text(new_move)
-
+        new_state = self.board.get_agent_input()
+        input_list = [agent, new_state]
+        self.agent.set_input_list(input_list)
+        new_move, new_state_from_agent = self.agent.make_turn()
+        self.suggested_entry.set_text(new_move)
 
     def agent_play(self, agent="b"):
-        if self.is_agent_computer():
-            new_state = self.board.get_agent_input()
-            input_list = [agent, new_state]
-            self.agent.set_input_list(input_list)
-            new_move, new_state_from_agent = self.agent.make_turn()
-            self.move = new_move
-            new_input_list = ["w", new_state_from_agent]
-            new_pose_2d = self.agent.get_ssg_list_position_2d(new_input_list)
-            self.board = Board(self.window, self.board_setup[self.setting_result["selected_layout"]], True, new_pose_2d)
-            self.board.reset_selected_marbles()
-            self.board.switch_player()
-            self.board.update_state_space()
-            self.switch_player()
+        new_state = self.board.get_agent_input()
+        input_list = [agent, new_state]
+        self.agent.set_input_list(input_list)
+        new_move, new_state_from_agent = self.agent.make_turn()
+        self.move = new_move
+        opponent_agent = "w" if agent == "b" else "b"
+        new_input_list = [opponent_agent, new_state_from_agent]
+        new_pose_2d = self.agent.get_ssg_list_position_2d(new_input_list)
+        self.board = Board(self.window, self.board_setup[self.setting_result["selected_layout"]], True, new_pose_2d)
+        self.board.reset_selected_marbles()
+        self.board.switch_player()
+        self.board.update_state_space()
+        self.switch_player()
 
     def on_direction_key_pushed(self, key):
         if not self.board.is_marble_selected():
@@ -401,9 +407,7 @@ class GameMenu:
 
     def display_menu(self):
         self.manager.root_container.show()
-        game_board_img = pygame.image.load('drawables/game_board.png').convert_alpha()
-        # game_board_img = pygame.transform.scale(game_board_img, (BOARD_IMAGE_SIZE, BOARD_IMAGE_SIZE))
-
+        pygame.image.load('drawables/game_board.png').convert_alpha()
         clock = pygame.time.Clock()
         timer_event = pygame.USEREVENT + 1
         pygame.time.set_timer(timer_event, 1000)
@@ -423,18 +427,17 @@ class GameMenu:
             self.manager.draw_ui(self.window)
             if not self.open_config and self.start_game:
                 if self.pause:
-                    if self.is_agent_computer():
+                    if self.is_agent_computer() or self.is_computer_computer():
                         if self.initialize_one_time:
+                            print("pass agent move")
                             self.agent_play()
                             self.initialize_one_time = False
-
                     if self.start_count:
                         self.current_time = self.time_count
                         self.start_count = False
                     self.add_timer()
                 self.board.update()
             pygame.display.update()
-
         pygame.quit()
 
     def add_timer(self):
@@ -451,6 +454,13 @@ class GameMenu:
     def is_agent_computer(self):
         return self.setting_result["white_type"] == "Human" and self.setting_result["black_type"] == "Computer"
 
+    def is_computer_agent(self):
+        return self.setting_result["white_type"] == "Computer" and self.setting_result["black_type"] == "Human"
+
+    def is_computer_computer(self):
+        return self.setting_result["white_type"] == "Computer" and self.setting_result["black_type"] == "Computer"
+
+
     def switch_player(self):
         score = 14
         # Use this to get the board state
@@ -465,6 +475,8 @@ class GameMenu:
             self.black_player.score_info.set_text(f"{self.black_player.score_count}")
             self.black_player.drop_move_hist_list.append(f"{self.move}")
             self.black_player.drop_move_hist.set_item_list(self.black_player.drop_move_hist_list)
+            move_counts = len(self.black_player.drop_move_hist_list)
+            self.black_player.total_move_info.set_text(f"{move_counts} moves")
             self.white_player.your_turn.set_text("Your Turn!")
             self.player_turn = TeamEnum.WHITE
             self.start_count = True
@@ -478,12 +490,11 @@ class GameMenu:
             self.white_player.score_info.set_text(f"{self.black_player.score_count}")
             self.white_player.drop_move_hist_list.append(f"{self.move}")
             self.white_player.drop_move_hist.set_item_list(self.white_player.drop_move_hist_list)
+            move_counts = len(self.white_player.drop_move_hist_list)
+            self.white_player.total_move_info.set_text(f"{move_counts} moves")
             self.black_player.your_turn.set_text("Your Turn!")
             self.player_turn = TeamEnum.BLACK
             self.start_count = True
-
-    def finish(self):
-        self.start_game = False
 
 
 def main():

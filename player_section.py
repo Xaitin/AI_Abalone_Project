@@ -66,5 +66,16 @@ class PlayerSection:
                                               manager=self.manager,
                                               container=self.player,
                                               allow_multi_select=True)
+
+        self.total_move = UITextBox(
+            html_text=f"<body bgcolor={UI_TEXT_BG_COLOR}><font face='verdana' color={UI_TEXT_COLOR} size=1><b><i>"
+                      "Total Moves:</i></b></font></body>", object_id="time_limit",
+            relative_rect=pygame.Rect((pose_x, pose_y + 9 *gap), (-1, -1)), manager=self.manager,
+            container=self.player
+        )
+        self.total_move_info = UILabel(
+            relative_rect=pygame.Rect((pose_x + 3 * gap // 1, pose_y + 9 *gap), (label_len, 30)),
+            text=f'0 moves', manager=self.manager, container=self.player)
+
         self.your_turn = UILabel(relative_rect=pygame.Rect((pose_x + 2.5 * gap, pose_y - 0.8 * gap), (120, 30)),
                                  text='', manager=self.manager, container=self.player)
