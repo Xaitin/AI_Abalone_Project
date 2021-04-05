@@ -431,6 +431,8 @@ class GameMenu:
                         if self.initialize_one_time:
                             print("pass agent move")
                             self.agent_play()
+                            if self.is_computer_computer():
+                                self.agent_suggested("w")
                             self.initialize_one_time = False
                     if self.start_count:
                         self.current_time = self.time_count
