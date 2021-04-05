@@ -62,7 +62,7 @@ class CoordinateHelper:
             CoordinateHelper.from2DArraytoCube(position_2d, with_gutter=with_gutter))
 
     @staticmethod
-    def manhattan_distance(position_a: (int, int), position_b: (int, int)):
+    def get_manhattan_distance(position_a: Tuple[int, int], position_b: Tuple[int, int]) -> int:
         return (abs(position_a[0] - position_b[0])
                 + abs(position_a[0] + position_a[1] -
                       position_b[0] - position_b[1])

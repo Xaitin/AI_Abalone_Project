@@ -1,16 +1,19 @@
 import copy
-from models.state_space import StateSpace
-from helper.direction_helper import DirectionHelper
 from operator import add, sub
+
 import pygame
-from constants import WHITE, BOARD_SIZE, INITIAL_GAME_BOARD_SETUPS, WINDOW_WIDTH, WINDOW_HEIGHT, EMPTY_GAME_BOARD_ARRAY, BOARD_ARRAY_SIZE, OUTSIDE_OF_THE_BOARD_VALUE
+
+from constants import WHITE, BOARD_SIZE, INITIAL_GAME_BOARD_SETUPS, WINDOW_WIDTH, WINDOW_HEIGHT, EMPTY_GAME_BOARD_ARRAY, \
+    BOARD_ARRAY_SIZE, OUTSIDE_OF_THE_BOARD_VALUE
 from enums.direction import DirectionEnum
 from enums.move_type import MoveType
 from enums.team_enum import TeamEnum
 from helper.coordinate_helper import CoordinateHelper
+from helper.direction_helper import DirectionHelper
 from models.hexagon import Hexagon
 from models.marble import Marble
 from models.move import Move
+from models.state_space import StateSpace
 
 SETUP_CONSTANT = 0
 
@@ -30,6 +33,8 @@ class Board:
         self.team_of_turn = TeamEnum.BLACK
         self.black_marble_list = list()
         self.white_marble_list = list()
+        self.black_dead_marbles = list()
+        self.white_dead_marbles = list()
         win.fill(WHITE)
         if not update_state:
             self.initialize_marbles(self.teams, setup)
@@ -67,8 +72,6 @@ class Board:
                     if (x + y + z == 0):
                         self.hexagons[(x, y)] = Hexagon(self, x, y, z, win)
 
-
-
     def initialize_marbles(self, teams, setup=0):
         for row, row_value in enumerate(INITIAL_GAME_BOARD_SETUPS[setup]):
             for col, value in enumerate(row_value):
@@ -101,7 +104,6 @@ class Board:
                                     CoordinateHelper.from2DArraytoCube(position_2d))
                     except ValueError:
                         pass
-
 
     def update(self):
         self.draw_hexagons()
@@ -166,8 +168,8 @@ class Board:
 
                 # Marble Selection
                 # when one marble is selected, only a neighbor ally marble can be added.
-                if n_selected == 1 and CoordinateHelper.manhattan_distance(first_marble.position_2d,
-                                                                           clicked_marble.position_2d) == 1:
+                if n_selected == 1 and CoordinateHelper.get_manhattan_distance(first_marble.position_2d,
+                                                                               clicked_marble.position_2d) == 1:
                     self.add_selected_marble(clicked_marble)
                 elif n_selected == 2:
                     second_marble = self.selected_marbles[1]
@@ -199,7 +201,6 @@ class Board:
                 if EMPTY_GAME_BOARD_ARRAY[i][j] == OUTSIDE_OF_THE_BOARD_VALUE:
                     boundaries.append((i, j))
         return boundaries
-
 
     def add_selected_marble(self, marble):
         if marble not in self.selected_marbles:
@@ -275,7 +276,6 @@ class Board:
                 next_marble = next(
                     filter(lambda m: m.position_2d == next_spot, marbles), None)
 
-
             for marble in reversed(marbles_to_move):
                 marble.move_by_direction(move_direction_enum)
 
@@ -307,11 +307,22 @@ class Board:
 
         self.reset_selected_marbles()
         self.switch_player()
+        self.handle_dead_marbles()
         self.update_state_space()
 
         return move
 
-
+    def handle_dead_marbles(self):
+        for marble in self.marbles.sprites():  # type: Marble
+            if marble.get_manhattan_distance_from_origin() > BOARD_SIZE:
+                print("outside of the board marble: ", marble)
+                marble.kill()
+                if marble.team == TeamEnum.BLACK:
+                    self.black_dead_marbles.append(marble)
+                    self.black_left -= 1
+                else:
+                    self.white_dead_marbles.append(marble)
+                    self.white_left -= 1
 
     def update_state_space(self):
         self.state_space = StateSpace(marble_positions=copy.copy(self.__str__()),

@@ -1,13 +1,15 @@
-from game_playing_agent import GamePlayingAgent
 import re
+
 import pygame
 import pygame_gui
 from pygame_gui.elements import UIPanel, UIButton, UITextEntryLine
 from pygame_gui.elements.ui_text_box import UITextBox
+
 from config import ConfigMenu
 from constants import *
 from enums.direction import DirectionEnum
 from enums.team_enum import TeamEnum
+from game_playing_agent import GamePlayingAgent
 from models.board import Board
 from player_section import PlayerSection
 
@@ -54,25 +56,27 @@ class GameMenu:
                                                    2, TITLE_DISTANCE_TOP + self.button_h // 2))
 
         # Buttons on the top
-        self.config_button = self.button(WINDOW_WIDTH // 2 - BUTTON_DISTANCE_3 - self.button_w, TITLE_DISTANCE_TOP,
-                                         self.button_w, self.button_h, "config",
-                                         self.manager)
-        self.start_button = self.button(WINDOW_WIDTH // 2 - BUTTON_DISTANCE_2 - self.button_w, TITLE_DISTANCE_TOP,
-                                        self.button_w, self.button_h, "start",
-                                        self.manager)
-        self.stop_button = self.button(WINDOW_WIDTH // 2 - BUTTON_DISTANCE_1 - self.button_w, TITLE_DISTANCE_TOP,
-                                       self.button_w, self.button_h, "stop",
-                                       self.manager)
-        self.pause_button = self.button(WINDOW_WIDTH // 2 + BUTTON_DISTANCE_1, TITLE_DISTANCE_TOP, self.button_w,
-                                        self.button_h, "pause",
-                                        self.manager)
-        self.undo_button = self.button(WINDOW_WIDTH // 2 + BUTTON_DISTANCE_2, TITLE_DISTANCE_TOP, self.button_w,
-                                       self.button_h,
-                                       "undo",
-                                       self.manager)
-        self.reset_button = self.button(WINDOW_WIDTH // 2 + BUTTON_DISTANCE_3, TITLE_DISTANCE_TOP, self.button_w,
-                                        self.button_h, "reset",
-                                        self.manager)
+        self.config_button = self.create_button(WINDOW_WIDTH // 2 - BUTTON_DISTANCE_3 - self.button_w,
+                                                TITLE_DISTANCE_TOP,
+                                                self.button_w, self.button_h, "config",
+                                                self.manager)
+        self.start_button = self.create_button(WINDOW_WIDTH // 2 - BUTTON_DISTANCE_2 - self.button_w,
+                                               TITLE_DISTANCE_TOP,
+                                               self.button_w, self.button_h, "start",
+                                               self.manager)
+        self.stop_button = self.create_button(WINDOW_WIDTH // 2 - BUTTON_DISTANCE_1 - self.button_w, TITLE_DISTANCE_TOP,
+                                              self.button_w, self.button_h, "stop",
+                                              self.manager)
+        self.pause_button = self.create_button(WINDOW_WIDTH // 2 + BUTTON_DISTANCE_1, TITLE_DISTANCE_TOP, self.button_w,
+                                               self.button_h, "pause",
+                                               self.manager)
+        self.undo_button = self.create_button(WINDOW_WIDTH // 2 + BUTTON_DISTANCE_2, TITLE_DISTANCE_TOP, self.button_w,
+                                              self.button_h,
+                                              "undo",
+                                              self.manager)
+        self.reset_button = self.create_button(WINDOW_WIDTH // 2 + BUTTON_DISTANCE_3, TITLE_DISTANCE_TOP, self.button_w,
+                                               self.button_h, "reset",
+                                               self.manager)
 
         temp = 60
         button_w_dir = self.button_w // 2
@@ -81,24 +85,28 @@ class GameMenu:
         sub_h = WINDOW_HEIGHT - 100
         shift_w = 5
 
-        self.NW_button = self.button(WINDOW_WIDTH // index + temp * 3 - self.button_w + shift_w, sub_h - 0.6 * temp,
-                                     button_w_dir, button_h_dir, "NW",
-                                     self.manager)
-        self.NE_button = self.button(WINDOW_WIDTH // index + temp * 4 - self.button_w + shift_w, sub_h - 0.6 * temp,
-                                     button_w_dir, button_h_dir, "NE",
-                                     self.manager)
-        self.W_button = self.button(WINDOW_WIDTH // index + temp * 2.5 - self.button_w + shift_w, sub_h,
-                                    button_w_dir, button_h_dir, "W",
-                                    self.manager)
-        self.E_button = self.button(WINDOW_WIDTH // index + temp * 4.5 - self.button_w + shift_w, sub_h,
-                                    button_w_dir, button_h_dir, "E",
-                                    self.manager)
-        self.SW_button = self.button(WINDOW_WIDTH // index + temp * 3 - self.button_w + shift_w, sub_h + 0.6 * temp,
-                                     button_w_dir, button_h_dir, "SW",
-                                     self.manager)
-        self.SE_button = self.button(WINDOW_WIDTH // index + temp * 4 - self.button_w + shift_w, sub_h + 0.6 * temp,
-                                     button_w_dir, button_h_dir, "SE",
-                                     self.manager)
+        self.NW_button = self.create_button(WINDOW_WIDTH // index + temp * 3 - self.button_w + shift_w,
+                                            sub_h - 0.6 * temp,
+                                            button_w_dir, button_h_dir, "NW",
+                                            self.manager)
+        self.NE_button = self.create_button(WINDOW_WIDTH // index + temp * 4 - self.button_w + shift_w,
+                                            sub_h - 0.6 * temp,
+                                            button_w_dir, button_h_dir, "NE",
+                                            self.manager)
+        self.W_button = self.create_button(WINDOW_WIDTH // index + temp * 2.5 - self.button_w + shift_w, sub_h,
+                                           button_w_dir, button_h_dir, "W",
+                                           self.manager)
+        self.E_button = self.create_button(WINDOW_WIDTH // index + temp * 4.5 - self.button_w + shift_w, sub_h,
+                                           button_w_dir, button_h_dir, "E",
+                                           self.manager)
+        self.SW_button = self.create_button(WINDOW_WIDTH // index + temp * 3 - self.button_w + shift_w,
+                                            sub_h + 0.6 * temp,
+                                            button_w_dir, button_h_dir, "SW",
+                                            self.manager)
+        self.SE_button = self.create_button(WINDOW_WIDTH // index + temp * 4 - self.button_w + shift_w,
+                                            sub_h + 0.6 * temp,
+                                            button_w_dir, button_h_dir, "SE",
+                                            self.manager)
 
         # Just an additional accessor for direction buttons
         self.direction_buttons = [self.NW_button, self.NE_button, self.W_button, self.E_button, self.SW_button,
@@ -151,7 +159,7 @@ class GameMenu:
         # endregion Initialization
 
     @staticmethod
-    def button(x, y, w, h, text, manager):
+    def create_button(x, y, w, h, text, manager):
         return UIButton(relative_rect=pygame.Rect((x, y), (w, h)), text=text, manager=manager)
 
     def draw_text(self, text, size, pose):
@@ -479,8 +487,7 @@ class GameMenu:
             self.black_player.drop_down_time_hist.set_item_list(
                 self.black_player.time_hist_list)
             self.black_player.your_turn.set_text("")
-            self.black_player.score_count = score - \
-                len(self.board.white_marble_list)
+            self.black_player.score_count = score - self.board.white_left
             self.black_player.score_info.set_text(
                 f"{self.black_player.score_count}")
             self.black_player.drop_move_hist_list.append(f"{self.move}")
@@ -500,10 +507,9 @@ class GameMenu:
             self.white_player.drop_down_time_hist.set_item_list(
                 self.white_player.time_hist_list)
             self.white_player.your_turn.set_text("")
-            self.white_player.score_count = score - \
-                len(self.board.black_marble_list)
+            self.white_player.score_count = score - self.board.black_left
             self.white_player.score_info.set_text(
-                f"{self.black_player.score_count}")
+                f"{self.white_player.score_count}")
             self.white_player.drop_move_hist_list.append(f"{self.move}")
             self.white_player.drop_move_hist.set_item_list(
                 self.white_player.drop_move_hist_list)

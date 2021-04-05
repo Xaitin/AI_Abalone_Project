@@ -69,6 +69,10 @@ class Marble(Sprite):
     def get_position_cube(self):
         return self.position_cube
 
+    def get_manhattan_distance_from_origin(self) -> int:
+        origin_pos_cube = (0, 0)
+        return CoordinateHelper.get_manhattan_distance(origin_pos_cube, self.position_cube)
+
     def __str__(self) -> str:
         team_str = "b" if self.team == TeamEnum.BLACK.value else "w"
         return f"{CoordinateHelper.from_2d_to_cube_str(self.position_2d)}{team_str}"
