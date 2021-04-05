@@ -41,6 +41,8 @@ class GameMenu:
         self.button_h = 50
         self.adjust = 30
         self.font_size = 30
+        self.font_size_win = 15
+        self.win = None
         self.board_setup = dict()
         self.setting_result = dict()
         self.board_setup["Standard"] = 0
@@ -201,13 +203,13 @@ class GameMenu:
                         self.open_config = False
                         self.resetting_board_player_panel()
                         self.start_game = True
-                        self.pause = True
+                        self.pause = False
                         print('Start!')
                     if event.ui_element == self.stop_button:
                         self.game_playing = False
                         print('Stop!')
                     if event.ui_element == self.pause_button:
-                        self.pause = False
+                        self.pause = True
                         print('Pause!')
                     if event.ui_element == self.undo_button:
                         print('Undo!')
@@ -216,7 +218,7 @@ class GameMenu:
                         self.start_game = False
 
                     if event.ui_element in self.direction_buttons:
-                        self.pause = True
+                        self.pause = False
                         self.on_direction_input(event.ui_element)
                         if self.is_agent_computer() and self.player_turn == TeamEnum.BLACK:
                             self.agent_suggested()
@@ -416,6 +418,8 @@ class GameMenu:
         self.player_turn = TeamEnum.BLACK
         self.board = Board(
             self.window, self.board_setup[self.setting_result["selected_layout"]])
+        if self.win is not None:
+            self.win.kill()
 
     def display_menu(self):
         self.manager.root_container.show()
@@ -429,7 +433,7 @@ class GameMenu:
         self.player_turn = TeamEnum.BLACK
         self.each_time_count = 0
         self.initialize_one_time = True
-        self.pause = True
+        self.pause = False
         while self.game_playing:
             time_delta = clock.tick(30) / 1000.0
             self.time_count += time_delta
@@ -438,7 +442,7 @@ class GameMenu:
             self.window.blit(self.display, (0, 0))
             self.manager.draw_ui(self.window)
             if not self.open_config and self.start_game:
-                if self.pause:
+                if not self.pause:
                     if self.is_agent_computer() or self.is_computer_computer():
                         if self.initialize_one_time:
                             print("pass agent move")
@@ -451,6 +455,7 @@ class GameMenu:
                         self.start_count = False
                     self.add_timer()
                 self.board.update()
+                self.finish_game()
             pygame.display.update()
         pygame.quit()
 
@@ -493,8 +498,8 @@ class GameMenu:
             self.black_player.drop_move_hist_list.append(f"{self.move}")
             self.black_player.drop_move_hist.set_item_list(
                 self.black_player.drop_move_hist_list)
-            move_counts = len(self.black_player.drop_move_hist_list)
-            self.black_player.total_move_info.set_text(f"{move_counts} moves")
+            self.black_player.move_counts = len(self.black_player.drop_move_hist_list)
+            self.black_player.total_move_info.set_text(f"{self.black_player.move_counts} moves")
             self.white_player.your_turn.set_text("Your Turn!")
             self.player_turn = TeamEnum.WHITE
             self.start_count = True
@@ -513,11 +518,37 @@ class GameMenu:
             self.white_player.drop_move_hist_list.append(f"{self.move}")
             self.white_player.drop_move_hist.set_item_list(
                 self.white_player.drop_move_hist_list)
-            move_counts = len(self.white_player.drop_move_hist_list)
-            self.white_player.total_move_info.set_text(f"{move_counts} moves")
+            self.white_player.move_counts = len(self.white_player.drop_move_hist_list)
+            self.white_player.total_move_info.set_text(f"{self.white_player.move_counts} moves")
             self.black_player.your_turn.set_text("Your Turn!")
             self.player_turn = TeamEnum.BLACK
             self.start_count = True
+
+    def finish_game(self):
+        if self.black_player.score_count == 6:
+            self.start_game = False
+            self.win = self.draw_text("Congratulations! White player is winner!", self.font_size_win,
+                                      (WINDOW_WIDTH // 2, WINDOW_HEIGHT // 2))
+        elif self.black_player.score_count == 6:
+            self.start_game = False
+            self.win = self.draw_text("Congratulations! Black player is winner!", self.font_size_win,
+                                      (WINDOW_WIDTH // 2, WINDOW_HEIGHT // 2))
+        elif self.white_player.move_counts == self.setting_result["moves"] and self.black_player.move_counts == \
+                self.setting_result["moves"]:
+            if self.white_player.score_count > self.black_player.score_count:
+                self.start_game = False
+                self.win = self.draw_text("Congratulations! White player is winner with the higher score!",
+                                          self.font_size_win,
+                                          (WINDOW_WIDTH // 2, WINDOW_HEIGHT // 2))
+            elif self.white_player.score_count < self.black_player.score_count:
+                self.start_game = False
+                self.win = self.draw_text("Congratulations! Black player is winner with the higher score!",
+                                          self.font_size_win,
+                                          (WINDOW_WIDTH // 2, WINDOW_HEIGHT // 2))
+            else:
+                self.start_game = False
+                self.win = self.draw_text("It's Tie!", self.font_size_win,
+                                          (WINDOW_WIDTH // 2, WINDOW_HEIGHT // 2))
 
 
 def main():

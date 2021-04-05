@@ -16,6 +16,7 @@ class PlayerSection:
         self.drop_move_hist_list = list()
         self.score_count = 0
         self.total_time_count = 0
+        self.move_counts = 0
         self.score = UITextBox(
             html_text=f"<body bgcolor={UI_TEXT_BG_COLOR}><font face='verdana' color={UI_TEXT_COLOR} size=1><b><i>"
                       "Score:</i></b></font></body>", object_id="score",
