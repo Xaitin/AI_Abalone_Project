@@ -113,7 +113,6 @@ class StateSpaceGenerator:
 
 
 def main():
-
     # Instantiates a StateSpaceGenerator and generates resulting board state based on given Test.input file.
     state_space_generator = StateSpaceGenerator()
     success = True

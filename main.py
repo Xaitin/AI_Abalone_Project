@@ -50,7 +50,8 @@ class GameMenu:
         self.setting_result["moves"] = 10
         self.player_each_time = [5, 5]
         # Texts
-        self.draw_text("Abalone", self.font_size, (WINDOW_WIDTH // 2, TITLE_DISTANCE_TOP + self.button_h // 2))
+        self.draw_text("Abalone", self.font_size, (WINDOW_WIDTH //
+                                                   2, TITLE_DISTANCE_TOP + self.button_h // 2))
 
         # Buttons on the top
         self.config_button = self.button(WINDOW_WIDTH // 2 - BUTTON_DISTANCE_3 - self.button_w, TITLE_DISTANCE_TOP,
@@ -108,7 +109,8 @@ class GameMenu:
             WINDOW_WIDTH // 2 - PANEL_DISTANCE_FROM_CENTER, TITLE_DISTANCE_TOP * 2 + self.button_h
         ]
         self.white_panel_position = [
-            WINDOW_WIDTH // 2 + PANEL_DISTANCE_FROM_CENTER - PANEL_WIDTH, TITLE_DISTANCE_TOP * 2 + self.button_h
+            WINDOW_WIDTH // 2 + PANEL_DISTANCE_FROM_CENTER -
+            PANEL_WIDTH, TITLE_DISTANCE_TOP * 2 + self.button_h
         ]
 
         self.suggested_entry = UITextEntryLine(
@@ -118,12 +120,14 @@ class GameMenu:
                        (WINDOW_WIDTH // 2 - 1.7 * temp, TITLE_DISTANCE_TOP + 1.2 * temp))
 
         self.black_player_panel = UIPanel(
-            relative_rect=pygame.Rect(self.black_panel_position, (PANEL_WIDTH, PANEL_HEIGHT)),
+            relative_rect=pygame.Rect(
+                self.black_panel_position, (PANEL_WIDTH, PANEL_HEIGHT)),
             starting_layer_height=2,
             manager=self.manager
         )
         self.white_player_panel = UIPanel(
-            relative_rect=pygame.Rect(self.white_panel_position, (PANEL_WIDTH, PANEL_HEIGHT)),
+            relative_rect=pygame.Rect(
+                self.white_panel_position, (PANEL_WIDTH, PANEL_HEIGHT)),
             starting_layer_height=2,
             manager=self.manager
         )
@@ -140,8 +144,10 @@ class GameMenu:
             relative_rect=pygame.Rect(self.white_panel_position, (-1, -1)), manager=self.manager,
             layer_starting_height=2)
 
-        self.black_player = PlayerSection(self.manager, self.black_player_panel)
-        self.white_player = PlayerSection(self.manager, self.white_player_panel)
+        self.black_player = PlayerSection(
+            self.manager, self.black_player_panel)
+        self.white_player = PlayerSection(
+            self.manager, self.white_player_panel)
         # endregion Initialization
 
     @staticmethod
@@ -169,7 +175,7 @@ class GameMenu:
                 if event.key == pygame.K_ESCAPE:
                     self.board.reset_selected_marbles()
                 if DirectionEnum.is_direction_key(event.key):
-                    self.on_direction_key_pushed(event.key)
+                    self.on_direction_input(event.key)
 
             if event.type == pygame.USEREVENT:
                 if event.user_type == pygame_gui.UI_TEXT_ENTRY_FINISHED and event.ui_object_id == '#suggested_move':
@@ -203,7 +209,7 @@ class GameMenu:
 
                     if event.ui_element in self.direction_buttons:
                         self.pause = True
-                        self.on_direction_button_click(event.ui_element)
+                        self.on_direction_input(event.ui_element)
                         if self.is_agent_computer() and self.player_turn == TeamEnum.BLACK:
                             self.agent_suggested()
                         elif self.is_computer_agent() and self.player_turn == TeamEnum.WHITE:
@@ -301,17 +307,22 @@ class GameMenu:
     #         self.display.fill(BLACK)
     #     quit()
 
-    def on_direction_button_click(self, ui_element: UIButton):
+    def on_direction_input(self, input: UIButton or int):
         if not self.board.is_marble_selected():
             print("Warning: Select marbles, first")
             return
-        direction_str = ui_element.text
-        direction = DirectionEnum[direction_str]
+
+        if isinstance(input, UIButton):
+            direction_str = input.text
+            direction = DirectionEnum[direction_str]
+        else:
+            direction = DirectionEnum.get_from_key(input)
+
         move = self.board.generate_move(direction)
-        # print(move)
+        print(move)
         is_valid_move = self.board.validate_move(move)
         if is_valid_move:
-            self.move = self.board.apply_move(move)
+            self.board.apply_move(move)
             self.switch_player()
         else:
             print("Invalid move detected!")
@@ -332,25 +343,12 @@ class GameMenu:
         opponent_agent = "w" if agent == "b" else "b"
         new_input_list = [opponent_agent, new_state_from_agent]
         new_pose_2d = self.agent.get_ssg_list_position_2d(new_input_list)
-        self.board = Board(self.window, self.board_setup[self.setting_result["selected_layout"]], True, new_pose_2d)
+        self.board = Board(
+            self.window, self.board_setup[self.setting_result["selected_layout"]], True, new_pose_2d)
         self.board.reset_selected_marbles()
         self.board.switch_player()
         self.board.update_state_space()
         self.switch_player()
-
-    def on_direction_key_pushed(self, key):
-        if not self.board.is_marble_selected():
-            print("Warning: Select marbles, first")
-            return
-        direction = DirectionEnum.get_from_key(key)
-        move = self.board.generate_move(direction)
-        print(move)
-        is_valid_move = self.board.validate_move(move)
-        if is_valid_move:
-            self.board.apply_move(move)
-            self.switch_player()
-        else:
-            print("Invalid move detected!")
 
     @staticmethod
     def click_func(check_click, button1, button2):
@@ -382,12 +380,15 @@ class GameMenu:
         config.WHITE_TYPE_INPUT.enable()
         config.BLACK_TIME_INPUT.enable()
         config.BLACK_TYPE_INPUT.enable()
-        self.board = Board(self.window, self.board_setup[self.setting_result["selected_layout"]])
+        self.board = Board(
+            self.window, self.board_setup[self.setting_result["selected_layout"]])
         self.player_each_time = [int(re.search(r'\d+', self.setting_result["black_time"]).group()),
                                  int(re.search(r'\d+', self.setting_result["white_time"]).group())]
-        self.player_each_move = int(re.search(r'\d+', self.setting_result["moves"]).group())
+        self.player_each_move = int(
+            re.search(r'\d+', self.setting_result["moves"]).group())
 
-        config.SELECTED_INITIAL.set_text(self.setting_result["selected_layout"])
+        config.SELECTED_INITIAL.set_text(
+            self.setting_result["selected_layout"])
         config.WHITE_TIME_INPUT.set_text(self.setting_result["white_time"])
         config.WHITE_TYPE_INPUT.set_text(self.setting_result["white_type"])
         config.BLACK_TIME_INPUT.set_text(self.setting_result["black_time"])
@@ -400,10 +401,13 @@ class GameMenu:
         self.white_player.drop_down_time_hist.kill()
         self.black_player.drop_move_hist.kill()
         self.white_player.drop_move_hist.kill()
-        self.black_player = PlayerSection(self.manager, self.black_player_panel)
-        self.white_player = PlayerSection(self.manager, self.white_player_panel)
+        self.black_player = PlayerSection(
+            self.manager, self.black_player_panel)
+        self.white_player = PlayerSection(
+            self.manager, self.white_player_panel)
         self.player_turn = TeamEnum.BLACK
-        self.board = Board(self.window, self.board_setup[self.setting_result["selected_layout"]])
+        self.board = Board(
+            self.window, self.board_setup[self.setting_result["selected_layout"]])
 
     def display_menu(self):
         self.manager.root_container.show()
@@ -462,36 +466,47 @@ class GameMenu:
     def is_computer_computer(self):
         return self.setting_result["white_type"] == "Computer" and self.setting_result["black_type"] == "Computer"
 
-
     def switch_player(self):
         score = 14
         # Use this to get the board state
         self.board.__str__()
         if self.player_turn == TeamEnum.BLACK:
-            self.black_player.time_hist_list.append(f"{self.each_time_count:.1f} secs")
+            self.black_player.time_hist_list.append(
+                f"{self.each_time_count:.1f} secs")
             self.black_player.total_time_count += self.each_time_count
-            self.black_player.total_time_info.set_text(f"{self.black_player.total_time_count:.1f} secs")
-            self.black_player.drop_down_time_hist.set_item_list(self.black_player.time_hist_list)
+            self.black_player.total_time_info.set_text(
+                f"{self.black_player.total_time_count:.1f} secs")
+            self.black_player.drop_down_time_hist.set_item_list(
+                self.black_player.time_hist_list)
             self.black_player.your_turn.set_text("")
-            self.black_player.score_count = score - len(self.board.white_marble_list)
-            self.black_player.score_info.set_text(f"{self.black_player.score_count}")
+            self.black_player.score_count = score - \
+                len(self.board.white_marble_list)
+            self.black_player.score_info.set_text(
+                f"{self.black_player.score_count}")
             self.black_player.drop_move_hist_list.append(f"{self.move}")
-            self.black_player.drop_move_hist.set_item_list(self.black_player.drop_move_hist_list)
+            self.black_player.drop_move_hist.set_item_list(
+                self.black_player.drop_move_hist_list)
             move_counts = len(self.black_player.drop_move_hist_list)
             self.black_player.total_move_info.set_text(f"{move_counts} moves")
             self.white_player.your_turn.set_text("Your Turn!")
             self.player_turn = TeamEnum.WHITE
             self.start_count = True
         else:
-            self.white_player.time_hist_list.append(f"{self.each_time_count:.1f} secs")
+            self.white_player.time_hist_list.append(
+                f"{self.each_time_count:.1f} secs")
             self.white_player.total_time_count += self.each_time_count
-            self.white_player.total_time_info.set_text(f"{self.white_player.total_time_count:.1f} secs")
-            self.white_player.drop_down_time_hist.set_item_list(self.white_player.time_hist_list)
+            self.white_player.total_time_info.set_text(
+                f"{self.white_player.total_time_count:.1f} secs")
+            self.white_player.drop_down_time_hist.set_item_list(
+                self.white_player.time_hist_list)
             self.white_player.your_turn.set_text("")
-            self.white_player.score_count = score - len(self.board.black_marble_list)
-            self.white_player.score_info.set_text(f"{self.black_player.score_count}")
+            self.white_player.score_count = score - \
+                len(self.board.black_marble_list)
+            self.white_player.score_info.set_text(
+                f"{self.black_player.score_count}")
             self.white_player.drop_move_hist_list.append(f"{self.move}")
-            self.white_player.drop_move_hist.set_item_list(self.white_player.drop_move_hist_list)
+            self.white_player.drop_move_hist.set_item_list(
+                self.white_player.drop_move_hist_list)
             move_counts = len(self.white_player.drop_move_hist_list)
             self.white_player.total_move_info.set_text(f"{move_counts} moves")
             self.black_player.your_turn.set_text("Your Turn!")
