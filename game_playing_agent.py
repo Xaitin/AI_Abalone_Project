@@ -1,14 +1,12 @@
-from enums.team_enum import TeamEnum
 import math
-from models.board import Board
 import random
-
+from constants import *
 from state_space_generator import StateSpaceGenerator as ssg
 from eval_func_geoff import EvaluationFunction as ef
 
 
 class GamePlayingAgent:
-    def __init__(self, input_list):
+    def __init__(self, input_list=DEFAULT_AGENT_LIST):
         self._input_list = input_list
         self._agent_color = input_list[0]
         self._state_space_gen = ssg()
@@ -18,6 +16,11 @@ class GamePlayingAgent:
         self.greatest_move_value = 0
         self.next_opponent_moves_values = None
         self.next_opponents_moves = None
+
+
+    def get_ssg_list_position_2d(self, input_list):
+        self._state_space_gen.read_input_list(input_list)
+        return self._state_space_gen.state_space.marble_positions_2d
 
     def make_turn(self):
         self._state_space_gen.read_input_list(self._input_list)
@@ -34,7 +37,7 @@ class GamePlayingAgent:
         if len(self.next_moves) == 1:
             print(self.next_moves[0])
             print(self.next_move_board_states[0])
-            return self.next_move_board_states[0]
+            return self.next_moves[0], self.next_move_board_states[0]
         else:
             lowest_opponent_value = math.inf
             for i in range(len(self.next_moves)):
@@ -51,7 +54,7 @@ class GamePlayingAgent:
             move_to_choose = indexes[random.randint(0, len(indexes) - 1)]
             print(self.next_moves[move_to_choose])
             print(self.next_move_board_states[move_to_choose])
-            return self.next_move_board_states[move_to_choose]
+            return self.next_moves[move_to_choose], self.next_move_board_states[move_to_choose]
         # This is our list of best moves and states with a depth of 2
 
     def assign_move_values(self):
@@ -134,11 +137,11 @@ def main():
         running_count += 1
         print(f"Move #: {running_count}")
         print("White Moving")
-        new_state = agent.make_turn()
+        new_move, new_state = agent.make_turn()
         print("Black Moving")
         agent.set_input_list(["b",
                               new_state])
-        new_state_w = agent.make_turn()
+        new_move_w, new_state_w = agent.make_turn()
         agent.set_input_list(["w",
                               new_state_w])
         if running_count == 20:

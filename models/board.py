@@ -2,15 +2,12 @@ import copy
 from models.state_space import StateSpace
 from helper.direction_helper import DirectionHelper
 from operator import add, sub
-
 import pygame
-
 from constants import WHITE, BOARD_SIZE, INITIAL_GAME_BOARD_SETUPS, WINDOW_WIDTH, WINDOW_HEIGHT, EMPTY_GAME_BOARD_ARRAY, BOARD_ARRAY_SIZE, OUTSIDE_OF_THE_BOARD_VALUE
 from enums.direction import DirectionEnum
 from enums.move_type import MoveType
 from enums.team_enum import TeamEnum
 from helper.coordinate_helper import CoordinateHelper
-from models import marble
 from models.hexagon import Hexagon
 from models.marble import Marble
 from models.move import Move
@@ -19,7 +16,7 @@ SETUP_CONSTANT = 0
 
 
 class Board:
-    def __init__(self, win, setup=0):
+    def __init__(self, win, setup=0, update_state=False, position_2d=None):
         # 2D array
         self.hexagons = {}
         self.selected_hexagon = None
@@ -27,18 +24,21 @@ class Board:
         self.black_left = self.white_left = 14
         self.win = win
         self.init_hexagons(win)
-
+        self.position_2d = position_2d
         self.teams = [None, pygame.sprite.Group(), pygame.sprite.Group()]
         self.marbles = pygame.sprite.Group()
         self.team_of_turn = TeamEnum.BLACK
         self.black_marble_list = list()
         self.white_marble_list = list()
         win.fill(WHITE)
-        self.initialize_marbles(self.teams, setup)
+        if not update_state:
+            self.initialize_marbles(self.teams, setup)
+        else:
+            self.update_marbles_by_get_input_list(self.teams, self.position_2d)
         self.state_space = StateSpace(marble_positions=self.__str__(
         ), player=TeamEnum.get_team_str(self.team_of_turn))
 
-    def __str__(self) -> str:
+    def __str__(self):
         marble_str_arr = []
         marble_str_arr += sorted([str(marble) for marble in self.marbles.sprites()
                                   if marble.team == TeamEnum.BLACK.value])
@@ -46,15 +46,14 @@ class Board:
                                   if marble.team == TeamEnum.WHITE.value])
         for marble_str in marble_str_arr:
             print(marble_str, end=', ')
-        print()
-
+        print("marble list:", marble_str_arr)
         return marble_str_arr
 
     def switch_player(self):
         self.team_of_turn = TeamEnum.WHITE if self.team_of_turn == TeamEnum.BLACK else TeamEnum.BLACK
 
     def get_agent_input(self):
-        board_str_arr = self.__str__
+        board_str_arr = self.__str__()
         result = ""
         for arr in board_str_arr:
             result += arr + ","
@@ -67,6 +66,8 @@ class Board:
                 for z in board_range:
                     if (x + y + z == 0):
                         self.hexagons[(x, y)] = Hexagon(self, x, y, z, win)
+
+
 
     def initialize_marbles(self, teams, setup=0):
         for row, row_value in enumerate(INITIAL_GAME_BOARD_SETUPS[setup]):
@@ -83,6 +84,24 @@ class Board:
                                 CoordinateHelper.from2DArraytoCube(position_2d))
                 except ValueError:
                     pass
+
+    def update_marbles_by_get_input_list(self, teams, position_2d_array):
+        if position_2d_array is not None:
+            for row, row_value in enumerate(position_2d_array):
+                for col, value in enumerate(row_value):
+                    try:
+                        if value > 0:
+                            position_2d = [row, col]
+                            Marble(position_2d, value, teams[value], self.marbles)
+                            if value == 2:
+                                self.white_marble_list.append(
+                                    CoordinateHelper.from2DArraytoCube(position_2d))
+                            if value == 1:
+                                self.black_marble_list.append(
+                                    CoordinateHelper.from2DArraytoCube(position_2d))
+                    except ValueError:
+                        pass
+
 
     def update(self):
         self.draw_hexagons()
@@ -158,12 +177,12 @@ class Board:
                         map(add, second_marble.position_2d, direction))
                     if clicked_marble.position_2d == second_marble_next_spot:
                         self.add_selected_marble(clicked_marble)
-        print(self.selected_marbles)
-        print([marble.position_2d for marble in self.selected_marbles])
+        # print(self.selected_marbles)
+        # print([marble.position_2d for marble in self.selected_marbles])
         return False
 
     def check_position_2d(self):
-        print(self.black_marble_list)
+        # print(self.black_marble_list)
         for index in self.black_marble_list:
             if index in self.boundary():
                 print("black", index)

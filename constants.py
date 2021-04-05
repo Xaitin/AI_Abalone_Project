@@ -193,3 +193,6 @@ ENEMY_SQUARE_VALUES = {
     "B1": 4, "B2": 3, "B3": 3, "B4": 3, "B5": 3, "B6": 4,
     "A1": 4, "A2": 4, "A3": 4, "A4": 4, "A5": 4
 }
+
+
+DEFAULT_AGENT_LIST = ["w", "A1b,A2b,A3b,A4b,A5b,B1b,B2b,B3b,B4b,B5b,B6b,C3b,C4b,C5b,G5w,G6w,G7w,H4w,H5w,H6w,H7w,H8w,H9w,I5w,I6w,I7w,I8w,I9w"]

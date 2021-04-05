@@ -1,19 +1,16 @@
 from game_playing_agent import GamePlayingAgent
 import re
-
 import pygame
 import pygame_gui
 from pygame_gui.elements import UIPanel, UIButton, UITextEntryLine
 from pygame_gui.elements.ui_text_box import UITextBox
-
 from config import ConfigMenu
-from player_section import PlayerSection
 from constants import *
-from enums.team_enum import TeamEnum
 from enums.direction import DirectionEnum
 from enums.team_enum import TeamEnum
 from models.board import Board
 from player_section import PlayerSection
+
 
 class GameMenu:
 
@@ -29,8 +26,8 @@ class GameMenu:
         self.initial_board = 0
 
         # agent initialization
-        # self.agent = GamePlayingAgent()
-        
+        self.agent = GamePlayingAgent()
+
         self.run_display = True
         self.display.fill(BLACK)
         self.config_menu = None
@@ -117,7 +114,8 @@ class GameMenu:
         self.suggested_entry = UITextEntryLine(
             pygame.Rect((WINDOW_WIDTH // 2 - 5.7 * shift_w, TITLE_DISTANCE_TOP + temp), (80, -1)), self.manager)
 
-        self.draw_text("Suggested move", self.font_size//2, (WINDOW_WIDTH // 2 - 1.7*temp, TITLE_DISTANCE_TOP + 1.2*temp))
+        self.draw_text("Suggested move", self.font_size // 2,
+                       (WINDOW_WIDTH // 2 - 1.7 * temp, TITLE_DISTANCE_TOP + 1.2 * temp))
 
         self.black_player_panel = UIPanel(
             relative_rect=pygame.Rect(self.black_panel_position, (PANEL_WIDTH, PANEL_HEIGHT)),
@@ -145,6 +143,7 @@ class GameMenu:
         self.black_player = PlayerSection(self.manager, self.black_player_panel)
         self.white_player = PlayerSection(self.manager, self.white_player_panel)
         # endregion Initialization
+
     @staticmethod
     def button(x, y, w, h, text, manager):
         return UIButton(relative_rect=pygame.Rect((x, y), (w, h)), text=text, manager=manager)
@@ -193,6 +192,8 @@ class GameMenu:
                         self.start_game = False
                         print('Stop!')
                     if event.ui_element == self.pause_button:
+                        self.pause_button.set_text("Continue")
+                        self.pause()
                         print('Pause!')
                     if event.ui_element == self.undo_button:
                         print('Undo!')
@@ -269,8 +270,26 @@ class GameMenu:
                                                   self.config_menu.GER_DAISY_BUTTON, self.config_menu.BEL_DAISY_BUTTON)
                             print('Belgian Daisy')
 
-
             self.manager.process_events(event)
+
+    def pause(self):
+        pause = True
+        while pause:
+            for event in pygame.event.get():
+
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_c:
+                        pause = False
+                    elif event.key == pygame.K_q:
+                        pygame.quit()
+                        quit()
+                if event.type == pygame.USEREVENT:
+                    if event.user_type == pygame_gui.UI_BUTTON_PRESSED:
+                        if event.ui_element == self.pause_button:
+                            self.pause_button.set_text("Pause")
+                            pause = False
+            self.display.fill(BLACK)
+        quit()
 
     def on_direction_button_click(self, ui_element: UIButton):
         if not self.board.is_marble_selected():
@@ -279,22 +298,29 @@ class GameMenu:
         direction_str = ui_element.text
         direction = DirectionEnum[direction_str]
         move = self.board.generate_move(direction)
-        print(move)
+        # print(move)
         is_valid_move = self.board.validate_move(move)
-        # if is_agent
         if is_valid_move:
-            if self.is_agent_computer():
-                self.move = self.board.apply_move(move)
-                self.board.reset_selected_marbles()
-                self.board.switch_player()
-                self.board.update_state_space()
-                # self.switch_player()
-                self.switch_player()
-            else:
-                self.move = self.board.apply_move(move)
-                self.switch_player()
-        else: 
+            self.move = self.board.apply_move(move)
+            self.switch_player()
+            self.agent_play()
+        else:
             print("Invalid move detected!")
+
+    def agent_play(self):
+        if self.is_agent_computer():
+            new_state = self.board.get_agent_input()
+            input_list = ["b", new_state]
+            self.agent.set_input_list(input_list)
+            new_move, new_state_from_agent = self.agent.make_turn()
+            self.move = new_move
+            new_input_list = ["w", new_state_from_agent]
+            new_pose_2d = self.agent.get_ssg_list_position_2d(new_input_list)
+            self.board = Board(self.window, self.board_setup[self.setting_result["selected_layout"]], True, new_pose_2d)
+            self.board.reset_selected_marbles()
+            self.board.switch_player()
+            self.board.update_state_space()
+            self.switch_player()
 
     def on_direction_key_pushed(self, key):
         if not self.board.is_marble_selected():
@@ -307,7 +333,7 @@ class GameMenu:
         if is_valid_move:
             self.board.apply_move(move)
             self.switch_player()
-        else: 
+        else:
             print("Invalid move detected!")
 
     @staticmethod
@@ -341,7 +367,8 @@ class GameMenu:
         config.BLACK_TIME_INPUT.enable()
         config.BLACK_TYPE_INPUT.enable()
         self.board = Board(self.window, self.board_setup[self.setting_result["selected_layout"]])
-        self.player_each_time = [int(re.search(r'\d+', self.setting_result["black_time"]).group()), int(re.search(r'\d+', self.setting_result["white_time"]).group())]
+        self.player_each_time = [int(re.search(r'\d+', self.setting_result["black_time"]).group()),
+                                 int(re.search(r'\d+', self.setting_result["white_time"]).group())]
         self.player_each_move = int(re.search(r'\d+', self.setting_result["moves"]).group())
 
         config.SELECTED_INITIAL.set_text(self.setting_result["selected_layout"])
@@ -352,12 +379,14 @@ class GameMenu:
 
     def resetting_board_player_panel(self):
         self.start_count = True
+        self.initialize_one_time = True
         self.black_player.drop_down_time_hist.kill()
         self.white_player.drop_down_time_hist.kill()
         self.black_player.drop_move_hist.kill()
         self.white_player.drop_move_hist.kill()
         self.black_player = PlayerSection(self.manager, self.black_player_panel)
         self.white_player = PlayerSection(self.manager, self.white_player_panel)
+        self.player_turn = TeamEnum.BLACK
         self.board = Board(self.window, self.board_setup[self.setting_result["selected_layout"]])
 
     def display_menu(self):
@@ -373,6 +402,7 @@ class GameMenu:
         self.current_time = 0
         self.player_turn = TeamEnum.BLACK
         self.each_time_count = 0
+        self.initialize_one_time = True
         while self.game_playing:
             time_delta = clock.tick(30) / 1000.0
             self.time_count += time_delta
@@ -380,15 +410,11 @@ class GameMenu:
             self.manager.update(time_delta)
             self.window.blit(self.display, (0, 0))
             self.manager.draw_ui(self.window)
-            start = 1
             if not self.open_config and self.start_game:
                 if self.is_agent_computer():
-                    if start == 1:
-                        start += 1
-                        self.player_turn = TeamEnum.WHITE
-                        # self.board.reset_selected_marbles()
-                        self.board.switch_player()
-                        self.board.update_state_space()
+                    if self.initialize_one_time:
+                        self.agent_play()
+                        self.initialize_one_time = False
 
                 if self.start_count:
                     self.current_time = self.time_count
@@ -404,9 +430,11 @@ class GameMenu:
         self.each_time_count = start_zero
         time_in_secs = self.player_each_time[0] - start_zero
         if self.player_turn == TeamEnum.BLACK:
-            self.black_player.time_limit_info.set_text(f"{time_in_secs:.1f} secs" if time_in_secs>=0 else f"{time_in_secs:.1f} secs!")
+            self.black_player.time_limit_info.set_text(
+                f"{time_in_secs:.1f} secs" if time_in_secs >= 0 else f"{time_in_secs:.1f} secs!")
         else:
-            self.white_player.time_limit_info.set_text(f"{time_in_secs:.1f} secs" if time_in_secs>=0 else f"{time_in_secs:.1f} secs!")
+            self.white_player.time_limit_info.set_text(
+                f"{time_in_secs:.1f} secs" if time_in_secs >= 0 else f"{time_in_secs:.1f} secs!")
 
     def is_agent_computer(self):
         return self.setting_result["white_type"] == "Human" and self.setting_result["black_type"] == "Computer"
@@ -416,22 +444,18 @@ class GameMenu:
         # Use this to get the board state
         self.board.__str__()
         if self.player_turn == TeamEnum.BLACK:
-            if self.is_agent_computer():
-                self.player_turn = TeamEnum.WHITE
-                self.start_count = True
-            else:
-                self.black_player.time_hist_list.append(f"{self.each_time_count:.1f} secs")
-                self.black_player.total_time_count += self.each_time_count
-                self.black_player.total_time_info.set_text(f"{self.black_player.total_time_count:.1f} secs")
-                self.black_player.drop_down_time_hist.set_item_list(self.black_player.time_hist_list)
-                self.black_player.your_turn.set_text("")
-                self.black_player.score_count = score - len(self.board.white_marble_list)
-                self.black_player.score_info.set_text(f"{self.black_player.score_count}")
-                self.black_player.drop_move_hist_list.append(f"{self.move}")
-                self.black_player.drop_move_hist.set_item_list(self.black_player.drop_move_hist_list)
-                self.white_player.your_turn.set_text("Your Turn!")
-                self.player_turn = TeamEnum.WHITE
-                self.start_count = True
+            self.black_player.time_hist_list.append(f"{self.each_time_count:.1f} secs")
+            self.black_player.total_time_count += self.each_time_count
+            self.black_player.total_time_info.set_text(f"{self.black_player.total_time_count:.1f} secs")
+            self.black_player.drop_down_time_hist.set_item_list(self.black_player.time_hist_list)
+            self.black_player.your_turn.set_text("")
+            self.black_player.score_count = score - len(self.board.white_marble_list)
+            self.black_player.score_info.set_text(f"{self.black_player.score_count}")
+            self.black_player.drop_move_hist_list.append(f"{self.move}")
+            self.black_player.drop_move_hist.set_item_list(self.black_player.drop_move_hist_list)
+            self.white_player.your_turn.set_text("Your Turn!")
+            self.player_turn = TeamEnum.WHITE
+            self.start_count = True
         else:
             self.white_player.time_hist_list.append(f"{self.each_time_count:.1f} secs")
             self.white_player.total_time_count += self.each_time_count
@@ -449,9 +473,7 @@ class GameMenu:
     def is_agent_computer(self):
         return self.setting_result["white_type"] == "Human" and self.setting_result["black_type"] == "Computer"
 
-
     def finish(self):
-
         self.start_game = False
 
 
