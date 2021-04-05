@@ -1,5 +1,8 @@
+
 import math
 import random
+from datetime import datetime
+
 from constants import *
 from state_space_generator import StateSpaceGenerator as ssg
 from eval_func_geoff import EvaluationFunction as ef
@@ -32,6 +35,13 @@ class GamePlayingAgent:
             self.next_move_board_states.append(stri[:-1])
         self.next_moves = self._state_space_gen.state_space.get_move_list()
         self.next_moves_values = self.assign_move_values()
+        # depth 2
+        self.next_moves, self.next_move_board_states, self.next_moves_values = self.find_best_next_moves()
+        self.next_opponent_moves_values, self.next_opponents_moves = self.find_next_opponent_moves()
+        # depth 4
+        self.next_moves, self.next_move_board_states, self.next_moves_values = self.find_best_next_moves()
+        self.next_opponent_moves_values, self.next_opponents_moves = self.find_next_opponent_moves()
+        # depth 6
         self.next_moves, self.next_move_board_states, self.next_moves_values = self.find_best_next_moves()
         self.next_opponent_moves_values, self.next_opponents_moves = self.find_next_opponent_moves()
         if len(self.next_moves) == 1:
@@ -130,23 +140,28 @@ class GamePlayingAgent:
 def main():
     running = True
     running_count = 0
-    my_list = ["w",
+    my_list = ["b",
                "A1b,A2b,A3b,A4b,A5b,B1b,B2b,B3b,B4b,B5b,B6b,C3b,C4b,C5b,G5w,G6w,G7w,H4w,H5w,H6w,H7w,H8w,H9w,I5w,I6w,I7w,I8w,I9w"]
     agent = GamePlayingAgent(my_list)
+    start_time = datetime.now()
+    print(f"start time: {start_time}\n")
     while running:
         running_count += 1
-        print(f"Move #: {running_count}")
-        print("White Moving")
-        new_move, new_state = agent.make_turn()
+        print(f"===Move #: {running_count}===")
         print("Black Moving")
-        agent.set_input_list(["b",
+        new_move, new_state = agent.make_turn()
+        print("White Moving")
+        agent.set_input_list(["w",
                               new_state])
         new_move_w, new_state_w = agent.make_turn()
-        agent.set_input_list(["w",
+        agent.set_input_list(["b",
                               new_state_w])
         if running_count == 20:
             running = False
-
+    end_time = datetime.now()
+    exe_time = end_time - start_time
+    print(f"\nend time: {end_time}")
+    print(f"execution time (sec): {exe_time.total_seconds()}")
 
 if __name__ == '__main__':
     main()
