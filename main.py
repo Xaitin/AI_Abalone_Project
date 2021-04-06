@@ -63,7 +63,7 @@ class GameMenu:
                                                    2, TITLE_DISTANCE_TOP + self.button_h // 2))
 
         # win title
-        self.win = UILabel(relative_rect=pygame.Rect((WINDOW_WIDTH // 3, WINDOW_HEIGHT // 2), (400, 30)),
+        self.win = UILabel(relative_rect=pygame.Rect((WINDOW_WIDTH // 3.1, WINDOW_HEIGHT - 30), (400, 30)),
                            text=f'', manager=self.manager)
 
         # Buttons on the top
@@ -635,33 +635,33 @@ class GameMenu:
             self.start_count = True
 
     def finish_game(self):
-        print("Moves", self.setting_result["moves"])
+        # print("Moves", self.setting_result["moves"])
         if self.white_player.score_count == 6:
-            self.start_game = False
+            # self.start_game = False
             self.win.set_text("Congratulations! White player is winner!")
             # self.win = self.draw_text("Congratulations! White player is winner!", self.font_size_win,
             #                           (WINDOW_WIDTH // 2, WINDOW_HEIGHT // 2))
         elif self.black_player.score_count == 6:
-            self.start_game = False
+            # self.start_game = False
             self.win.set_text("Congratulations! Black player is winner!")
             # self.win = self.draw_text("Congratulations! Black player is winner!", self.font_size_win,
             #                           (WINDOW_WIDTH // 2, WINDOW_HEIGHT // 2))
         elif self.white_player.move_counts == self.setting_result["moves"] and self.black_player.move_counts == \
                 self.setting_result["moves"]:
             if self.white_player.score_count > self.black_player.score_count:
-                self.start_game = False
+                # self.start_game = False
                 self.win.set_text("White player is winner with the higher score!")
                 # self.win = self.draw_text("Congratulations! White player is winner with the higher score!",
                 #                           self.font_size_win,
                 #                           (WINDOW_WIDTH // 2, WINDOW_HEIGHT // 2))
             elif self.white_player.score_count < self.black_player.score_count:
-                self.start_game = False
+                # self.start_game = False
                 self.win.set_text("Black player is winner with the higher score!")
                 # self.win = self.draw_text("Congratulations! Black player is winner with the higher score!",
                 #                           self.font_size_win,
                 #                           (WINDOW_WIDTH // 2, WINDOW_HEIGHT // 2))
             else:
-                self.start_game = False
+                # self.start_game = False
                 self.win.set_text("It's Tie!")
                 # self.win = self.draw_text("It's Tie!", self.font_size_win,
                 #                           (WINDOW_WIDTH // 2, WINDOW_HEIGHT // 2))
