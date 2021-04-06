@@ -543,7 +543,7 @@ class GameMenu:
             self.black_player.drop_down_time_hist.set_item_list(
                 self.black_player.time_hist_list)
             self.black_player.your_turn.set_text("")
-            self.black_player.score_count = score - self.board.white_left
+            self.black_player.score_count = len(self.board.white_dead_marbles)
             self.black_player.score_info.set_text(
                 f"{self.black_player.score_count}")
             self.black_player.drop_move_hist_list.append(f"{self.move}")
@@ -564,7 +564,7 @@ class GameMenu:
             self.white_player.drop_down_time_hist.set_item_list(
                 self.white_player.time_hist_list)
             self.white_player.your_turn.set_text("")
-            self.white_player.score_count = score - self.board.black_left
+            self.white_player.score_count = len(self.board.black_dead_marbles)
             self.white_player.score_info.set_text(
                 f"{self.white_player.score_count}")
             self.white_player.drop_move_hist_list.append(f"{self.move}")
