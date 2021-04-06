@@ -209,14 +209,14 @@ class GameMenu:
                                                       self.window)
                         print('Config!')
                     if event.ui_element == self.start_button:
-                        if self.stop_click:
+                        if self.pause_click:
+                            self.pause = False
+                            self.pause_click = False
+                        else:
                             self.resetting_board_player_panel()
                             self.open_config = False
                             self.start_game = True
                             self.stop_click = False
-                        elif self.pause_click:
-                            self.pause = False
-                            self.pause_click = False
                         print('Start!')
                     if event.ui_element == self.stop_button:
                         self.stop_click = True
@@ -232,6 +232,7 @@ class GameMenu:
                     if event.ui_element == self.reset_button:
                         self.resetting_board_player_panel()
                         self.start_game = False
+                        self.pause_click = False
 
                     if event.ui_element in self.direction_buttons:
                         self.pause = False
