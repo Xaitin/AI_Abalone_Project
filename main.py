@@ -329,9 +329,9 @@ class GameMenu:
             direction = DirectionEnum.get_from_key(input)
 
         move = self.board.generate_move(direction)
-        print(move)
         is_valid_move = self.board.validate_move(move)
         if is_valid_move:
+            self.move = move
             self.board.apply_move(move)
             self.switch_player()
         else:
