@@ -127,6 +127,10 @@ class GameMenu:
             PANEL_WIDTH, TITLE_DISTANCE_TOP * 2 + self.button_h
         ]
 
+        self.apply_move_button = self.create_button(WINDOW_WIDTH // 1.7,
+                                            TITLE_DISTANCE_TOP + temp,
+                                            button_w_dir*2, button_h_dir*0.8, "Apply",
+                                            self.manager)
         self.suggested_entry = UITextEntryLine(
             pygame.Rect((WINDOW_WIDTH // 2 - 5.7 * shift_w, TITLE_DISTANCE_TOP + temp), (120, -1)), self.manager)
 
