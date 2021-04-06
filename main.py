@@ -53,6 +53,9 @@ class GameMenu:
         self.setting_result["black_type"] = "Computer"
         self.setting_result["moves"] = 10
         self.player_each_time = [5, 5]
+        self.white_state_list = list()
+        self.black_state_list = list()
+
         # Texts
         self.draw_text("Abalone", self.font_size, (WINDOW_WIDTH //
                                                    2, TITLE_DISTANCE_TOP + self.button_h // 2))
@@ -212,6 +215,7 @@ class GameMenu:
                         self.pause = True
                         print('Pause!')
                     if event.ui_element == self.undo_button:
+                        self.undo()
                         print('Undo!')
                     if event.ui_element == self.reset_button:
                         self.resetting_board_player_panel()
@@ -226,9 +230,15 @@ class GameMenu:
                             self.agent_suggested('w')
                         elif self.is_computer_computer():
                             if self.player_turn == TeamEnum.BLACK:
-                                self.agent_suggested()
+                                """
+                                agent_suggested: give suggestions not play itself
+                                agent_play: agent play itself
+                                """
+                                # self.agent_suggested()
+                                self.agent_play()
                             else:
-                                self.agent_suggested('w')
+                                # self.agent_suggested('w')
+                                self.agent_play('w')
 
                     if self.config_menu != None:
                         if event.ui_element == self.config_menu.START_BUTTON:
@@ -298,24 +308,60 @@ class GameMenu:
 
             self.manager.process_events(event)
 
-    # def pause(self):
-    #     pause = True
-    #     while pause:
-    #         for event in pygame.event.get():
-    #
-    #             if event.type == pygame.KEYDOWN:
-    #                 if event.key == pygame.K_c:
-    #                     pause = False
-    #                 elif event.key == pygame.K_q:
-    #                     pygame.quit()
-    #                     quit()
-    #             if event.type == pygame.USEREVENT:
-    #                 if event.user_type == pygame_gui.UI_BUTTON_PRESSED:
-    #                     if event.ui_element == self.pause_button:
-    #                         self.pause_button.set_text("Pause")
-    #                         pause = False
-    #         self.display.fill(BLACK)
-    #     quit()
+    def store_move_hist_in_state(self):
+        if self.player_turn == TeamEnum.WHITE:
+            print("add state ", ["w", self.board.get_agent_input()])
+            self.white_state_list.append(["w", self.board.get_agent_input()])
+        else:
+            print("add state ", ["b", self.board.get_agent_input()])
+            self.black_state_list.append(["b", self.board.get_agent_input()])
+
+    def undo(self):
+        score = 14
+        if self.player_turn == TeamEnum.WHITE:
+            if len(self.black_state_list) >= 2:
+                last_previous_state = self.black_state_list[-1]
+                self.black_state_list.pop(-1)
+                previous_pose_2d = self.agent.get_ssg_list_position_2d(last_previous_state)
+                self.board = Board(
+                    self.window, self.board_setup[self.setting_result["selected_layout"]], True, previous_pose_2d)
+                prev_time = self.prev_black_time_count
+                self.undo_player_info(self.black_player, self.white_player, score, prev_time)
+                self.player_turn = TeamEnum.BLACK
+            else:
+                print("no previous step")
+        else:
+            if len(self.white_state_list) >= 2:
+                last_previous_state = self.white_state_list[-1]
+                self.white_state_list.pop(-1)
+                previous_pose_2d = self.agent.get_ssg_list_position_2d(last_previous_state)
+                self.board = Board(
+                    self.window, self.board_setup[self.setting_result["selected_layout"]], True, previous_pose_2d)
+                prev_time = self.prev_white_time_count
+                self.undo_player_info(self.white_player, self.black_player, score, prev_time)
+                self.player_turn = TeamEnum.WHITE
+            else:
+                print("no previous step")
+
+    def undo_player_info(self, player, opponent, score, prev_time):
+        player.time_hist_list.pop(-1)
+        player.drop_down_time_hist.kill()
+        player.drop_move_hist.kill()
+        player.total_time_count -= prev_time
+        player.total_time_info.set_text(
+            f"{self.white_player.total_time_count:.1f} secs")
+        player.drop_down_time_hist.set_item_list(
+            self.white_player.time_hist_list)
+        player.your_turn.set_text("Your Turn!")
+        player.score_count = score - self.board.black_left
+        player.score_info.set_text(
+            f"{self.white_player.score_count}")
+        player.drop_move_hist_list.pop(-1)
+        player.drop_move_hist.set_item_list(
+            self.white_player.drop_move_hist_list)
+        player.move_counts = len(self.white_player.drop_move_hist_list)
+        player.total_move_info.set_text(f"{self.white_player.move_counts} moves")
+        opponent.your_turn.set_text("")
 
     def on_direction_input(self, input: UIButton or int):
         if not self.board.is_marble_selected():
@@ -332,6 +378,7 @@ class GameMenu:
         is_valid_move = self.board.validate_move(move)
         if is_valid_move:
             self.move = move
+            self.store_move_hist_in_state()
             self.board.apply_move(move)
             self.switch_player()
         else:
@@ -350,6 +397,7 @@ class GameMenu:
         self.agent.set_input_list(input_list)
         new_move, new_state_from_agent = self.agent.make_turn()
         self.move = new_move
+        # self.board.apply_move(new_move)
         opponent_agent = "w" if agent == "b" else "b"
         new_input_list = [opponent_agent, new_state_from_agent]
         new_pose_2d = self.agent.get_ssg_list_position_2d(new_input_list)
@@ -407,6 +455,8 @@ class GameMenu:
     def resetting_board_player_panel(self):
         self.start_count = True
         self.initialize_one_time = True
+        self.white_state_list = list()
+        self.black_state_list = list()
         self.black_player.drop_down_time_hist.kill()
         self.white_player.drop_down_time_hist.kill()
         self.black_player.drop_move_hist.kill()
@@ -484,6 +534,7 @@ class GameMenu:
         # Use this to get the board state
         self.board.__str__()
         if self.player_turn == TeamEnum.BLACK:
+            self.prev_black_time_count = self.each_time_count
             self.black_player.time_hist_list.append(
                 f"{self.each_time_count:.1f} secs")
             self.black_player.total_time_count += self.each_time_count
@@ -504,6 +555,7 @@ class GameMenu:
             self.player_turn = TeamEnum.WHITE
             self.start_count = True
         else:
+            self.prev_white_time_count = self.each_time_count
             self.white_player.time_hist_list.append(
                 f"{self.each_time_count:.1f} secs")
             self.white_player.total_time_count += self.each_time_count
