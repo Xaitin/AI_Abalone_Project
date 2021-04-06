@@ -171,10 +171,13 @@ class ConfigMenu(UIWindow):
         gap = 40
         black_white_h = 260 - 2*gap
         time_list = list()
-        move_list = list()
-        for i in range(1, 11):
+        for i in range(1, 7):
             time_list.append(f"{i * 5} secs")
-            move_list.append(f"{i * 5} moves")
+            # move_list.append(f"{i * 5} moves")
+        move_list = list()
+        for i in range(1, 4):
+            # time_list.append(f"{i * 5} secs")
+            move_list.append(f"{5 * 2**i} moves")
 
         self.PLAYER1_LABEL = UITextBox(
             html_text=f"<body bgcolor={UI_TEXT_BG_COLOR}><font face='verdana' color={UI_TEXT_COLOR} size=1><b><i>"
