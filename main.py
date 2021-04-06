@@ -56,7 +56,8 @@ class GameMenu:
         self.player_each_time = [5, 5]
         self.white_state_list = list()
         self.black_state_list = list()
-
+        self.stop_click = True
+        self.pause_click = False
         # Texts
         self.draw_text("Abalone", self.font_size, (WINDOW_WIDTH //
                                                    2, TITLE_DISTANCE_TOP + self.button_h // 2))
@@ -208,15 +209,21 @@ class GameMenu:
                                                       self.window)
                         print('Config!')
                     if event.ui_element == self.start_button:
-                        self.open_config = False
-                        self.resetting_board_player_panel()
-                        self.start_game = True
-                        self.pause = False
+                        if self.stop_click:
+                            self.resetting_board_player_panel()
+                            self.open_config = False
+                            self.start_game = True
+                            self.stop_click = False
+                        elif self.pause_click:
+                            self.pause = False
+                            self.pause_click = False
                         print('Start!')
                     if event.ui_element == self.stop_button:
-                        self.game_playing = False
+                        self.stop_click = True
+                        self.pause = True
                         print('Stop!')
                     if event.ui_element == self.pause_button:
+                        self.pause_click = True
                         self.pause = True
                         print('Pause!')
                     if event.ui_element == self.undo_button:
