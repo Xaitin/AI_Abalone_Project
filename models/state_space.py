@@ -146,7 +146,7 @@ class StateSpace:
             if position.team != self.player_of_turn:
                 continue
             position_cube = position.get_position()
-            position_2d = CoordinateHelper.fromCubeto2DArray(position_cube)
+            position_2d = CoordinateHelper.from_cube_to_2d_array(position_cube)
             surroundings = copy.deepcopy(self.get_surrounding_dir_positions(position_2d=position_2d))
             for dir, spot in surroundings:
                 spot_val = self.marble_positions_2d[spot[0]][spot[1]]
@@ -171,7 +171,7 @@ class StateSpace:
                 continue
 
             first_marble_pos = first_marble.position
-            first_marble_pos_2d = CoordinateHelper.fromCubeto2DArray(first_marble_pos)
+            first_marble_pos_2d = CoordinateHelper.from_cube_to_2d_array(first_marble_pos)
             # print("fromCubeto2DArray", first_marble_pos_2d)
 
             surroundings = copy.deepcopy(self.get_surrounding_dir_positions(first_marble_pos_2d))
@@ -206,7 +206,7 @@ class StateSpace:
                 continue
 
             first_marble_pos = first_marble.position
-            first_marble_pos_2d = CoordinateHelper.fromCubeto2DArray(first_marble_pos)
+            first_marble_pos_2d = CoordinateHelper.from_cube_to_2d_array(first_marble_pos)
             surroundings = copy.deepcopy(self.get_surrounding_dir_positions(first_marble_pos_2d))
 
             for dir, second_marble_pos_2d in surroundings:
@@ -453,7 +453,7 @@ class StateSpace:
             return new_state
 
     def is_friendly_marble_spots(self, position_cube):
-        position_2d = CoordinateHelper.fromCubeto2DArray(position_cube, with_gutter=True)
+        position_2d = CoordinateHelper.from_cube_to_2d_array(position_cube, with_gutter=True)
 
         if self.marble_positions_2d[position_2d[0]][position_2d[1]] == self.player_of_turn.value:
             return True
@@ -462,7 +462,7 @@ class StateSpace:
 
     def is_empty_spot(self, position_2d, position_cube=None):
         if position_cube is not None:
-            position_2d = CoordinateHelper.fromCubeto2DArray(position_cube, with_gutter=True)
+            position_2d = CoordinateHelper.from_cube_to_2d_array(position_cube, with_gutter=True)
 
         if self.marble_positions_2d[position_2d[0]][position_2d[1]] == EMPTY_SPOT_VALUE:
             return True
@@ -477,13 +477,13 @@ class StateSpace:
         return surrounding_positions_2d
 
     def get_state_value_by_cube_pos(self, pos, state=None):
-        pos_2d = CoordinateHelper.fromCubeto2DArray(pos, with_gutter=True)
+        pos_2d = CoordinateHelper.from_cube_to_2d_array(pos, with_gutter=True)
         if state == None:
             return self.marble_positions_2d[pos_2d[0]][pos_2d[1]]
         return state[pos_2d[0]][pos_2d[1]]
 
     def set_state_value_by_cube_pos(self, pos, new_val, state=None):
-        pos_2d = CoordinateHelper.fromCubeto2DArray(pos, with_gutter=True)
+        pos_2d = CoordinateHelper.from_cube_to_2d_array(pos, with_gutter=True)
         if state == None:
             self.marble_positions_2d[pos_2d[0]][pos_2d[1]] = new_val
         state[pos_2d[0]][pos_2d[1]] = new_val
@@ -500,7 +500,7 @@ class StateSpace:
     def to_2d_array(self, marble_positions):
         result_array = copy.deepcopy(EMPTY_GAME_BOARD_ARRAY)
         for position in marble_positions:
-            array_position_row, array_position_col = CoordinateHelper.fromCubeto2DArray(position.get_position())
+            array_position_row, array_position_col = CoordinateHelper.from_cube_to_2d_array(position.get_position())
             result_array[array_position_row][array_position_col] = position.get_team().value
 
         # print(result_array)
@@ -518,11 +518,11 @@ class StateSpace:
                 value = marble_positions_2d[i][j]
                 if value != EMPTY_SPOT_VALUE and value != OUTSIDE_OF_THE_BOARD_VALUE:
                     if value == TeamEnum.BLACK.value:
-                        cube_vector = CoordinateHelper.from2DArraytoCube((i, j))
+                        cube_vector = CoordinateHelper.from_2d_array_to_cube((i, j))
                         cube_str = CoordinateHelper.from_cube_to_cube_str(cube_vector)
                         black_marble_position_list.append(cube_str + 'b')
                     elif value == TeamEnum.WHITE.value:
-                        cube_vector = CoordinateHelper.from2DArraytoCube((i, j))
+                        cube_vector = CoordinateHelper.from_2d_array_to_cube((i, j))
                         cube_str = CoordinateHelper.from_cube_to_cube_str(cube_vector)
                         white_marble_position_list.append(cube_str + 'w')
 

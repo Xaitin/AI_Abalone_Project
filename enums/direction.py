@@ -52,7 +52,6 @@ class DirectionEnum(enum.Enum):
             DirectionEnum.NW: (-1, 0),
             DirectionEnum.W: (0, -1)
         }
-
         return direction_vector_mapper.get(direction_enum)
 
     @staticmethod

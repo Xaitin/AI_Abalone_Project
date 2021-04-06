@@ -11,6 +11,7 @@ from enums.direction import DirectionEnum
 from enums.team_enum import TeamEnum
 from game_playing_agent import GamePlayingAgent
 from models.board import Board
+from models.move import Move
 from player_section import PlayerSection
 
 
@@ -395,17 +396,20 @@ class GameMenu:
         new_state = self.board.get_agent_input()
         input_list = [agent, new_state]
         self.agent.set_input_list(input_list)
-        new_move, new_state_from_agent = self.agent.make_turn()
+        new_move_str, new_state_from_agent = self.agent.make_turn()
+        new_move = Move.get_from_move_string(new_move_str)
         self.move = new_move
-        # self.board.apply_move(new_move)
-        opponent_agent = "w" if agent == "b" else "b"
-        new_input_list = [opponent_agent, new_state_from_agent]
-        new_pose_2d = self.agent.get_ssg_list_position_2d(new_input_list)
-        self.board = Board(
-            self.window, self.board_setup[self.setting_result["selected_layout"]], True, new_pose_2d)
-        self.board.reset_selected_marbles()
-        self.board.switch_player()
-        self.board.update_state_space()
+        print("new_move from the agent!", new_move_str)
+        self.board.select_marbles_from_move(new_move)
+        self.board.apply_move(new_move)
+        # opponent_agent = "w" if agent == "b" else "b"
+        # new_input_list = [opponent_agent, new_state_from_agent]
+        # new_pose_2d = self.agent.get_ssg_list_position_2d(new_input_list)
+        # self.board = Board(
+        #     self.window, self.board_setup[self.setting_result["selected_layout"]], True, new_pose_2d)
+        # self.board.reset_selected_marbles()
+        # self.board.switch_player()
+        # self.board.update_state_space()
         self.switch_player()
 
     @staticmethod
@@ -493,7 +497,7 @@ class GameMenu:
             self.manager.draw_ui(self.window)
             if not self.open_config and self.start_game:
                 if not self.pause:
-                    if self.is_agent_computer() or self.is_computer_computer():
+                    if self.is_agent_computer():
                         if self.initialize_one_time:
                             print("pass agent move")
                             self.agent_play()

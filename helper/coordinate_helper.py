@@ -21,7 +21,7 @@ class CoordinateHelper:
         return _left, _top
 
     @staticmethod
-    def from2DArraytoCube(position_2d: Tuple[int, int], with_gutter=True):
+    def from_2d_array_to_cube(position_2d: Tuple[int, int], with_gutter=True):
         # print("2DArray", position_2d)
         # The "-1" that was originally here for each variable is now used when this function is used in state_space.
         # It was removed because it shifted the marble positions on the game board.
@@ -30,12 +30,12 @@ class CoordinateHelper:
         return position_2d[1] - BOARD_SIZE, position_2d[0] - BOARD_SIZE
 
     @staticmethod
-    def fromCubeto2DArray(cube_position):
+    def from_cube_to_2d_array(cube_position):
         return cube_position[1] + BOARD_SIZE + 1, cube_position[0] + BOARD_SIZE + 1
 
     @staticmethod
-    def from2DArraytoXY(position_2d):
-        cubePos = CoordinateHelper.from2DArraytoCube(position_2d)
+    def from_2d_array_to_xy(position_2d):
+        cubePos = CoordinateHelper.from_2d_array_to_cube(position_2d)
         # print("Cube Pos", cubePos)
         return CoordinateHelper.fromCubetoXY(cubePos)
 
@@ -45,6 +45,12 @@ class CoordinateHelper:
         x = int(coord[1]) - NUMBER_SHIFT
         y = LETTER_SHIFT - ord(coord[0])
         return x, y
+
+    @staticmethod
+    def from_cube_str_to_2d(coord):
+        # ex. input: F6 -> output: (1, -1)
+        pos_cube = CoordinateHelper.from_cube_str_to_cube(coord)
+        return CoordinateHelper.from_cube_to_2d_array(pos_cube)
 
     @staticmethod
     def from_cube_to_cube_str(cube):
@@ -57,9 +63,9 @@ class CoordinateHelper:
     def from_2d_to_cube_str(position_2d: Tuple[int, int], with_gutter=True):
         if with_gutter:
             return CoordinateHelper.from_cube_to_cube_str(
-                CoordinateHelper.from2DArraytoCube(position_2d, with_gutter=with_gutter))
+                CoordinateHelper.from_2d_array_to_cube(position_2d, with_gutter=with_gutter))
         return CoordinateHelper.from_cube_to_cube_str(
-            CoordinateHelper.from2DArraytoCube(position_2d, with_gutter=with_gutter))
+            CoordinateHelper.from_2d_array_to_cube(position_2d, with_gutter=with_gutter))
 
     @staticmethod
     def get_manhattan_distance(position_a: Tuple[int, int], position_b: Tuple[int, int]) -> int:

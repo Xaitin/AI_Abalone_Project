@@ -1,3 +1,4 @@
+from operator import add
 from typing import List, Tuple
 from helper.coordinate_helper import CoordinateHelper
 from enums.direction import DirectionEnum
@@ -18,6 +19,27 @@ class Move:
 
     def get_move_type(self):
         return self.move_type
+
+    @staticmethod
+    def get_from_move_string(move_str):
+        move_info = move_str.split('-')
+        move_type = MoveType.get_from_str(move_info[0])
+        first_spot = CoordinateHelper.from_cube_str_to_2d(move_info[1])
+        second_spot = CoordinateHelper.from_cube_str_to_2d(move_info[2])
+        direction = DirectionEnum[move_info[3]]
+        direction_2d = DirectionEnum.get_direction_vector_2d(direction)
+
+        spots = list()
+        spots.append(first_spot)
+        next_spot = tuple(map(add, first_spot, direction_2d))
+        next_next_spot = tuple(map(add, next_spot, direction_2d))
+        if next_spot == second_spot:
+            spots.append(next_spot)
+        elif next_next_spot == second_spot:
+            spots.append(next_spot)
+            spots.append(next_next_spot)
+
+        return Move(move_type=move_type, spots=spots, direction=direction_2d)
 
     def __str__(self):
         _str_move_type = 'i' if self.move_type == MoveType.InLine else 's'

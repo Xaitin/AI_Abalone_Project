@@ -15,7 +15,7 @@ class Marble(Sprite):
         self.image = self.get_team_marble_img(team)
         self.team = team
         self.position_2d = tuple(position_2d)
-        self.position_cube = CoordinateHelper.from2DArraytoCube(position_2d)
+        self.position_cube = CoordinateHelper.from_2d_array_to_cube(position_2d)
         self.xy_pos = None
         self.xy_center = None
         self.rect = None
@@ -27,7 +27,7 @@ class Marble(Sprite):
     def move_by_position_cube(self, new_position_cube):
         print(
             f"Moving Marble from {self.position_cube} to {new_position_cube}")
-        self.position_2d = CoordinateHelper.fromCubeto2DArray(
+        self.position_2d = CoordinateHelper.from_cube_to_2d_array(
             new_position_cube)
         self.recalc_position()
 
@@ -54,15 +54,15 @@ class Marble(Sprite):
 
     def recalc_position(self):
         self.xy_pos = [val - MARBLE_SIZE /
-                       2 for val in CoordinateHelper.from2DArraytoXY(position_2d=self.position_2d)]
-        self.xy_center = [val for val in CoordinateHelper.from2DArraytoXY(
+                       2 for val in CoordinateHelper.from_2d_array_to_xy(position_2d=self.position_2d)]
+        self.xy_center = [val for val in CoordinateHelper.from_2d_array_to_xy(
             position_2d=self.position_2d)]
         self.rect = pygame.Rect(
             self.xy_pos[0], self.xy_pos[1], MARBLE_SIZE, MARBLE_SIZE)
 
     def move_position_2d(self, new_position_2d):
         self.position_2d = new_position_2d
-        self.position_cube = CoordinateHelper.from2DArraytoCube(
+        self.position_cube = CoordinateHelper.from_2d_array_to_cube(
             new_position_2d)
         self.recalc_position()
 

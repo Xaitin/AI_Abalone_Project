@@ -81,10 +81,10 @@ class Board:
                         Marble(position_2d, value, teams[value], self.marbles)
                         if value == 2:
                             self.white_marble_list.append(
-                                CoordinateHelper.from2DArraytoCube(position_2d))
+                                CoordinateHelper.from_2d_array_to_cube(position_2d))
                         if value == 1:
                             self.black_marble_list.append(
-                                CoordinateHelper.from2DArraytoCube(position_2d))
+                                CoordinateHelper.from_2d_array_to_cube(position_2d))
                 except ValueError:
                     pass
 
@@ -98,10 +98,10 @@ class Board:
                             Marble(position_2d, value, teams[value], self.marbles)
                             if value == 2:
                                 self.white_marble_list.append(
-                                    CoordinateHelper.from2DArraytoCube(position_2d))
+                                    CoordinateHelper.from_2d_array_to_cube(position_2d))
                             if value == 1:
                                 self.black_marble_list.append(
-                                    CoordinateHelper.from2DArraytoCube(position_2d))
+                                    CoordinateHelper.from_2d_array_to_cube(position_2d))
                     except ValueError:
                         pass
 
@@ -247,6 +247,12 @@ class Board:
         print(valid_moves)
         return str(move) in self.state_space.get_move_list()
 
+    def select_marbles_from_move(self, move: Move):
+        self.selected_marbles = []
+        for spot in move.spots:
+            marble_on_spot = next(marble for marble in self.marbles.sprites() if marble.position_2d == spot)
+            self.selected_marbles.append(marble_on_spot)
+
     def apply_move(self, move: Move):
         marbles = self.marbles.sprites()
         # marbles_for_move = list(filter(lambda marble: marble.position_2d in
@@ -317,10 +323,12 @@ class Board:
             if marble.get_manhattan_distance_from_origin() > BOARD_SIZE:
                 print("outside of the board marble: ", marble)
                 marble.kill()
-                if marble.team == TeamEnum.BLACK:
+                if marble.team == TeamEnum.BLACK.value:
+                    print("A black marble died")
                     self.black_dead_marbles.append(marble)
                     self.black_left -= 1
-                else:
+                elif marble.team == TeamEnum.WHITE.value:
+                    print("A white marble died")
                     self.white_dead_marbles.append(marble)
                     self.white_left -= 1
 
