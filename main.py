@@ -2,7 +2,7 @@ import re
 
 import pygame
 import pygame_gui
-from pygame_gui.elements import UIPanel, UIButton, UITextEntryLine
+from pygame_gui.elements import UIPanel, UIButton, UITextEntryLine, UILabel
 from pygame_gui.elements.ui_text_box import UITextBox
 
 from config import ConfigMenu
@@ -13,6 +13,7 @@ from game_playing_agent import GamePlayingAgent
 from models.board import Board
 from models.move import Move
 from player_section import PlayerSection
+import _thread
 
 
 class GameMenu:
@@ -43,7 +44,6 @@ class GameMenu:
         self.adjust = 30
         self.font_size = 30
         self.font_size_win = 15
-        self.win = None
         self.board_setup = dict()
         self.setting_result = dict()
         self.board_setup["Standard"] = 0
@@ -52,7 +52,7 @@ class GameMenu:
         self.setting_result["selected_layout"] = "Standard"
         self.setting_result["white_type"] = "Human"
         self.setting_result["black_type"] = "Computer"
-        self.setting_result["moves"] = 10
+        self.setting_result["moves"] = 5
         self.player_each_time = [5, 5]
         self.white_state_list = list()
         self.black_state_list = list()
@@ -61,6 +61,10 @@ class GameMenu:
         # Texts
         self.draw_text("Abalone", self.font_size, (WINDOW_WIDTH //
                                                    2, TITLE_DISTANCE_TOP + self.button_h // 2))
+
+        # win title
+        self.win = UILabel(relative_rect=pygame.Rect((WINDOW_WIDTH // 2.5, WINDOW_HEIGHT // 2), (300, 30)),
+                           text=f'', manager=self.manager)
 
         # Buttons on the top
         self.config_button = self.create_button(WINDOW_WIDTH // 2 - BUTTON_DISTANCE_3 - self.button_w,
@@ -132,7 +136,14 @@ class GameMenu:
                                                               TITLE_DISTANCE_TOP + temp,
                                                               button_w_dir * 2, button_h_dir * 0.8, "Apply",
                                                               self.manager)
-        self.apply_suggested_move_button.disable() # will be enabled when agent suggest the move
+
+        self.switch_comp_button = self.create_button(WINDOW_WIDTH // index + temp * 2.5 - self.button_w + shift_w,
+                                                     sub_h + 0.6 * temp,
+                                                     button_w_dir * 4, button_h_dir * 0.8, "Switch Agent",
+                                                     self.manager)
+        self.switch_comp_button.hide()
+
+        self.apply_suggested_move_button.disable()  # will be enabled when agent suggest the move
 
         self.suggested_entry = UITextEntryLine(
             pygame.Rect((WINDOW_WIDTH // 2 - 5.7 * shift_w, TITLE_DISTANCE_TOP + temp), (120, -1)), self.manager)
@@ -180,7 +191,7 @@ class GameMenu:
         text_surface = font.render(text, True, (255, 255, 255))
         text_rect = text_surface.get_rect()
         text_rect.center = (pose[0], pose[1])
-        self.display.blit(text_surface, text_rect)
+        return self.display.blit(text_surface, text_rect)
 
     def check_event(self):
         for event in pygame.event.get():
@@ -247,17 +258,18 @@ class GameMenu:
                             self.agent_suggested()
                         elif self.is_computer_agent() and self.player_turn == TeamEnum.WHITE:
                             self.agent_suggested('w')
-                        elif self.is_computer_computer():
-                            if self.player_turn == TeamEnum.BLACK:
-                                """
-                                agent_suggested: give suggestions not play itself
-                                agent_play: agent play itself
-                                """
-                                # self.agent_suggested()
-                                self.agent_play()
-                            else:
-                                # self.agent_suggested('w')
-                                self.agent_play('w')
+
+                    if event.ui_element == self.switch_comp_button:
+                        if self.player_turn == TeamEnum.BLACK:
+                            """
+                            agent_suggested: give suggestions not play itself
+                            agent_play: agent play itself
+                            """
+                            # self.agent_suggested()
+                            self.agent_play()
+                        else:
+                            # self.agent_suggested('w')
+                            self.agent_play('w')
 
                     if self.config_menu != None:
                         if event.ui_element == self.config_menu.START_BUTTON:
@@ -473,7 +485,7 @@ class GameMenu:
             self.window, self.board_setup[self.setting_result["selected_layout"]])
         self.player_each_time = [int(re.search(r'\d+', self.setting_result["black_time"]).group()),
                                  int(re.search(r'\d+', self.setting_result["white_time"]).group())]
-        self.player_each_move = int(
+        self.setting_result["moves"] = int(
             re.search(r'\d+', self.setting_result["moves"]).group())
 
         config.SELECTED_INITIAL.set_text(
@@ -499,8 +511,23 @@ class GameMenu:
         self.player_turn = TeamEnum.BLACK
         self.board = Board(
             self.window, self.board_setup[self.setting_result["selected_layout"]])
-        if self.win is not None:
-            self.win.kill()
+        self.win.rebuild()
+        if self.is_computer_computer():
+            self.NW_button.hide()
+            self.NE_button.hide()
+            self.W_button.hide()
+            self.E_button.hide()
+            self.SW_button.hide()
+            self.SE_button.hide()
+            self.switch_comp_button.show()
+        else:
+            self.NW_button.show()
+            self.NE_button.show()
+            self.W_button.show()
+            self.E_button.show()
+            self.SW_button.show()
+            self.SE_button.show()
+            self.switch_comp_button.hide()
 
     def display_menu(self):
         self.manager.root_container.show()
@@ -608,30 +635,61 @@ class GameMenu:
             self.start_count = True
 
     def finish_game(self):
+        print("Moves", self.setting_result["moves"])
         if self.white_player.score_count == 6:
             self.start_game = False
-            self.win = self.draw_text("Congratulations! White player is winner!", self.font_size_win,
-                                      (WINDOW_WIDTH // 2, WINDOW_HEIGHT // 2))
+            self.win.set_text("Congratulations! White player is winner!")
+            # self.win = self.draw_text("Congratulations! White player is winner!", self.font_size_win,
+            #                           (WINDOW_WIDTH // 2, WINDOW_HEIGHT // 2))
         elif self.black_player.score_count == 6:
             self.start_game = False
-            self.win = self.draw_text("Congratulations! Black player is winner!", self.font_size_win,
-                                      (WINDOW_WIDTH // 2, WINDOW_HEIGHT // 2))
+            self.win.set_text("Congratulations! Black player is winner!")
+            # self.win = self.draw_text("Congratulations! Black player is winner!", self.font_size_win,
+            #                           (WINDOW_WIDTH // 2, WINDOW_HEIGHT // 2))
         elif self.white_player.move_counts == self.setting_result["moves"] and self.black_player.move_counts == \
                 self.setting_result["moves"]:
             if self.white_player.score_count > self.black_player.score_count:
                 self.start_game = False
-                self.win = self.draw_text("Congratulations! White player is winner with the higher score!",
-                                          self.font_size_win,
-                                          (WINDOW_WIDTH // 2, WINDOW_HEIGHT // 2))
+                self.win.set_text("Congratulations! White player is winner with the higher score!")
+                # self.win = self.draw_text("Congratulations! White player is winner with the higher score!",
+                #                           self.font_size_win,
+                #                           (WINDOW_WIDTH // 2, WINDOW_HEIGHT // 2))
             elif self.white_player.score_count < self.black_player.score_count:
                 self.start_game = False
-                self.win = self.draw_text("Congratulations! Black player is winner with the higher score!",
-                                          self.font_size_win,
-                                          (WINDOW_WIDTH // 2, WINDOW_HEIGHT // 2))
+                self.win.set_text("Congratulations! Black player is winner with the higher score!")
+                # self.win = self.draw_text("Congratulations! Black player is winner with the higher score!",
+                #                           self.font_size_win,
+                #                           (WINDOW_WIDTH // 2, WINDOW_HEIGHT // 2))
             else:
                 self.start_game = False
-                self.win = self.draw_text("It's Tie!", self.font_size_win,
-                                          (WINDOW_WIDTH // 2, WINDOW_HEIGHT // 2))
+                self.win.set_text("It's Tie!")
+                # self.win = self.draw_text("It's Tie!", self.font_size_win,
+                #                           (WINDOW_WIDTH // 2, WINDOW_HEIGHT // 2))
+
+
+def timer(context):
+    try:
+        count_time = 0
+        while True:
+            pygame.time.delay(100)
+
+            if context.player_turn == TeamEnum.BLACK:
+                count_time += 0.1
+                time_in_secs = context.player_each_time[0] - count_time
+                context.black_player.time_limit_info.set_text(
+                    f"{count_time:.1f} secs" if time_in_secs >= 0 else f"{time_in_secs:.1f} secs!")
+            else:
+                count_time += 0.1
+                time_in_secs = context.player_each_time[0] - count_time
+                context.white_player.time_limit_info.set_text(
+                    f"{time_in_secs:.1f} secs" if time_in_secs >= 0 else f"{time_in_secs:.1f} secs!")
+
+    except RuntimeError:
+        print("RuntimeError from time_oscillator.")
+
+
+def start_time(context):
+    _thread.start_new_thread(timer, (context,))
 
 
 def main():
