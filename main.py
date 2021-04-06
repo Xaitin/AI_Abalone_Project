@@ -128,10 +128,12 @@ class GameMenu:
             PANEL_WIDTH, TITLE_DISTANCE_TOP * 2 + self.button_h
         ]
 
-        self.apply_move_button = self.create_button(WINDOW_WIDTH // 1.7,
-                                            TITLE_DISTANCE_TOP + temp,
-                                            button_w_dir*2, button_h_dir*0.8, "Apply",
-                                            self.manager)
+        self.apply_suggested_move_button = self.create_button(WINDOW_WIDTH // 1.7,
+                                                              TITLE_DISTANCE_TOP + temp,
+                                                              button_w_dir * 2, button_h_dir * 0.8, "Apply",
+                                                              self.manager)
+        self.apply_suggested_move_button.disable() # will be enabled when agent suggest the move
+
         self.suggested_entry = UITextEntryLine(
             pygame.Rect((WINDOW_WIDTH // 2 - 5.7 * shift_w, TITLE_DISTANCE_TOP + temp), (120, -1)), self.manager)
 
@@ -232,6 +234,10 @@ class GameMenu:
                     if event.ui_element == self.reset_button:
                         self.resetting_board_player_panel()
                         self.start_game = False
+
+                    if event.ui_element == self.apply_suggested_move_button:
+                        self.apply_suggested_move(self.suggested_entry.text)
+                        self.apply_suggested_move_button.disable()
 
                     if event.ui_element in self.direction_buttons:
                         self.pause = False
@@ -402,6 +408,15 @@ class GameMenu:
         self.agent.set_input_list(input_list)
         new_move, new_state_from_agent = self.agent.make_turn()
         self.suggested_entry.set_text(new_move)
+        self.apply_suggested_move_button.enable()
+
+    def apply_suggested_move(self, move_str):
+        new_move = Move.get_from_move_string(move_str)
+        self.move = new_move
+        print("move from the agent applied!", move_str)
+        self.board.select_marbles_from_move(new_move)
+        self.board.apply_move(new_move)
+        self.switch_player()
 
     def agent_play(self, agent="b"):
         new_state = self.board.get_agent_input()
