@@ -1,4 +1,4 @@
-from operator import add
+from operator import add, sub
 from typing import List, Tuple
 from helper.coordinate_helper import CoordinateHelper
 from enums.direction import DirectionEnum
@@ -31,13 +31,20 @@ class Move:
 
         spots = list()
         spots.append(first_spot)
-        next_spot = tuple(map(add, first_spot, direction_2d))
-        next_next_spot = tuple(map(add, next_spot, direction_2d))
-        if next_spot == second_spot:
-            spots.append(next_spot)
-        elif next_next_spot == second_spot:
-            spots.append(next_spot)
-            spots.append(next_next_spot)
+
+        distance = CoordinateHelper.get_manhattan_distance(first_spot, second_spot)
+        if distance == 0:
+            pass
+        elif distance == 1:
+            spots.append(second_spot)
+        elif distance == 2:
+            direction_from_first_to_second = tuple(map(lambda x, y: (x - y) / 2, second_spot, first_spot))
+            middle_spot = tuple(map(add, first_spot, direction_from_first_to_second))
+            spots.append(middle_spot)
+            spots.append(second_spot)
+        else:
+            print("something went wrong at get_from_move_string")
+            return None
 
         return Move(move_type=move_type, spots=spots, direction=direction_2d)
 
@@ -55,7 +62,7 @@ class Move:
             spot_str_arr = sorted([first_spot_str, second_spot_str])
             first_spot_str = spot_str_arr[0]
             second_spot_str = spot_str_arr[1]
-            
+
         else:
             first_spot_str = CoordinateHelper.from_2d_to_cube_str(self.spots[0])
             second_spot_str = CoordinateHelper.from_2d_to_cube_str(self.spots[-1])
