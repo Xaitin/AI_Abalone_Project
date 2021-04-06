@@ -608,7 +608,7 @@ class GameMenu:
             self.start_count = True
 
     def finish_game(self):
-        if self.black_player.score_count == 6:
+        if self.white_player.score_count == 6:
             self.start_game = False
             self.win = self.draw_text("Congratulations! White player is winner!", self.font_size_win,
                                       (WINDOW_WIDTH // 2, WINDOW_HEIGHT // 2))
