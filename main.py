@@ -65,6 +65,7 @@ class GameMenu:
         # win title
         self.win = UILabel(relative_rect=pygame.Rect((WINDOW_WIDTH // 3.1, WINDOW_HEIGHT - 30), (400, 30)),
                            text=f'', manager=self.manager)
+        self.win.hide()
 
         # Buttons on the top
         self.config_button = self.create_button(WINDOW_WIDTH // 2 - BUTTON_DISTANCE_3 - self.button_w,
@@ -498,6 +499,9 @@ class GameMenu:
     def resetting_board_player_panel(self):
         self.start_count = True
         self.initialize_one_time = True
+        self.win.hide()
+        self.win.set_text(f"")
+        self.suggested_entry.set_text(f"")
         self.white_state_list = list()
         self.black_state_list = list()
         self.black_player.drop_down_time_hist.kill()
@@ -638,11 +642,13 @@ class GameMenu:
         # print("Moves", self.setting_result["moves"])
         if self.white_player.score_count == 6:
             # self.start_game = False
+            self.win.show()
             self.win.set_text("Congratulations! White player is winner!")
             # self.win = self.draw_text("Congratulations! White player is winner!", self.font_size_win,
             #                           (WINDOW_WIDTH // 2, WINDOW_HEIGHT // 2))
         elif self.black_player.score_count == 6:
             # self.start_game = False
+            self.win.show()
             self.win.set_text("Congratulations! Black player is winner!")
             # self.win = self.draw_text("Congratulations! Black player is winner!", self.font_size_win,
             #                           (WINDOW_WIDTH // 2, WINDOW_HEIGHT // 2))
