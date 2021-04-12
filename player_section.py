@@ -46,7 +46,7 @@ class PlayerSection:
             relative_rect=pygame.Rect((pose_x, pose_y + 6 * gap), (-1, -1)), manager=self.manager,
             container=self.player
         )
-        label_len = 80
+        label_len = 100
         self.score_info = UILabel(
             relative_rect=pygame.Rect((pose_x + 3 * gap // 1, pose_y), (label_len, 30)),
             text='0', manager=manager, container=player)
