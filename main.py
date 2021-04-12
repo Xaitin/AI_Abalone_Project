@@ -436,7 +436,10 @@ class GameMenu:
         new_state = self.board.get_agent_input()
         input_list = [agent, new_state]
         self.agent.set_input_list(input_list)
-        new_move_str, new_state_from_agent = self.agent.make_turn()
+        if len(self.black_state_list) == 0:
+            new_move_str, new_state_from_agent = self.agent.make_first_random_move()
+        else:
+            new_move_str, new_state_from_agent = self.agent.make_turn()
         new_move = Move.get_from_move_string(new_move_str)
         self.move = new_move
         print("new_move from the agent!", new_move_str)
