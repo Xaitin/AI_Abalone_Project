@@ -66,7 +66,7 @@ class GameMenu:
                                                    2, TITLE_DISTANCE_TOP + self.button_h // 2))
 
         # win title
-        self.win = UILabel(relative_rect=pygame.Rect((WINDOW_WIDTH // 3.1, WINDOW_HEIGHT - 170), (400, 30)),
+        self.win = UILabel(relative_rect=pygame.Rect((WINDOW_WIDTH // 3.0, WINDOW_HEIGHT - 170), (400, 30)),
                            text=f'', manager=self.manager)
         self.win.hide()
 
@@ -141,8 +141,8 @@ class GameMenu:
                                                               button_w_dir * 2, button_h_dir * 0.8, "Apply",
                                                               self.manager)
 
-        self.switch_comp_button = self.create_button(WINDOW_WIDTH // index + temp * 2.5 - self.button_w + shift_w,
-                                                     sub_h + 0.6 * temp,
+        self.switch_comp_button = self.create_button(WINDOW_WIDTH // index + temp * 2.2 - self.button_w + shift_w,
+                                                     sub_h + 0.01 * temp,
                                                      button_w_dir * 4, button_h_dir * 0.8, "Switch Agent",
                                                      self.manager)
         self.switch_comp_button.hide()
