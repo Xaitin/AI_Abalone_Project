@@ -645,7 +645,7 @@ class GameMenu:
                     f"{self.each_time_count:.1f} secs")
                 self.black_player.total_time_count += self.each_time_count
                 self.black_player.total_time_info.set_text(
-                    f"{self.black_player.total_time_count:.2f} secs")
+                    f"{self.black_player.total_time_count:.1f} secs")
                 self.black_player.drop_down_time_hist.set_item_list(
                     self.black_player.time_hist_list)
 
