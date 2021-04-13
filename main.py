@@ -58,12 +58,13 @@ class GameMenu:
         self.black_state_list = list()
         self.stop_click = True
         self.pause_click = False
+        self.black_player_first_move = True
         # Texts
         self.draw_text("Abalone", self.font_size, (WINDOW_WIDTH //
                                                    2, TITLE_DISTANCE_TOP + self.button_h // 2))
 
         # win title
-        self.win = UILabel(relative_rect=pygame.Rect((WINDOW_WIDTH // 3.1, WINDOW_HEIGHT - 30), (400, 30)),
+        self.win = UILabel(relative_rect=pygame.Rect((WINDOW_WIDTH // 3.1, WINDOW_HEIGHT - 180), (400, 30)),
                            text=f'', manager=self.manager)
         self.win.hide()
 
@@ -219,7 +220,7 @@ class GameMenu:
                 if event.user_type == pygame_gui.UI_BUTTON_PRESSED:
                     if event.ui_element == self.config_button:
                         self.open_config = True
-                        self.config_menu = ConfigMenu(pygame.Rect((150, 5), (800, 700)), self.manager, self.display,
+                        self.config_menu = ConfigMenu(pygame.Rect((200, 15), (800, 700)), self.manager, self.display,
                                                       self.window)
                         print('Config!')
                     if event.ui_element == self.start_button:
@@ -448,7 +449,11 @@ class GameMenu:
         new_state = self.board.get_agent_input()
         input_list = [agent, new_state]
         self.agent.set_input_list(input_list)
-        new_move_str, new_state_from_agent = self.agent.make_turn()
+        if self.black_player_first_move:
+            new_move_str, new_state_from_agent = self.agent.make_first_random_move()
+            self.black_player_first_move = False
+        else:
+            new_move_str, new_state_from_agent = self.agent.make_turn()
         new_move = Move.get_from_move_string(new_move_str)
         self.move = new_move
         print("new_move from the agent!", new_move_str)

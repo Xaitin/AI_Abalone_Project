@@ -27,6 +27,18 @@ class GamePlayingAgent:
         self._state_space_gen.read_input_list(input_list)
         return self._state_space_gen.state_space.marble_positions_2d
 
+    def make_first_random_move(self):
+        self._state_space_gen.read_input_list(self._input_list)
+        board_states = self._state_space_gen.state_space.generate_all_resulting_board_states()
+        for line in board_states:
+            stri = ""
+            for marble in line:
+                stri += marble + ","
+            self.next_move_board_states.append(stri[:-1])
+        self.next_moves = self._state_space_gen.state_space.get_move_list()
+        move_to_choose = random.randint(0, len(self.next_moves) - 1)
+        return self.next_moves[move_to_choose], self.next_move_board_states[move_to_choose]
+
     def make_turn(self):
         self._state_space_gen.read_input_list(self._input_list)
         board_states = self._state_space_gen.state_space.generate_all_resulting_board_states()
