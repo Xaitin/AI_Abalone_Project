@@ -19,7 +19,7 @@ SETUP_CONSTANT = 0
 
 
 class Board:
-    def __init__(self, win, setup=0, update_state=False, position_2d=None):
+    def __init__(self, win, setup=0, update_state=False, position_2d=None, team_of_turn=TeamEnum.BLACK):
         # 2D array
         self.hexagons = {}
         self.selected_hexagon = None
@@ -30,7 +30,7 @@ class Board:
         self.position_2d = position_2d
         self.teams = [None, pygame.sprite.Group(), pygame.sprite.Group()]
         self.marbles = pygame.sprite.Group()
-        self.team_of_turn = TeamEnum.BLACK
+        self.team_of_turn = team_of_turn
         self.black_marble_list = list()
         self.white_marble_list = list()
         self.black_dead_marbles = list()
