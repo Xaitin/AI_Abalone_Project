@@ -351,31 +351,39 @@ class GameMenu:
     def undo(self):
         score = 14
         if self.player_turn == TeamEnum.WHITE:
-            if len(self.black_state_list) >= 2:
-                last_previous_state = self.black_state_list[-1]
-                self.black_state_list.pop(-1)
-                previous_pose_2d = self.agent.get_ssg_list_position_2d(last_previous_state)
-                self.board = Board(
-                    self.window, self.board_setup[self.setting_result["selected_layout"]], True, previous_pose_2d)
-                prev_time = self.prev_black_time_count
-                self.undo_player_info(self.black_player, self.white_player, score, prev_time)
-                self.player_turn = TeamEnum.BLACK
-            else:
-                print("no previous step")
+            last_previous_state = self.black_state_list[-1]
+            self.black_state_list.pop(-1)
+            previous_pose_2d = self.agent.get_ssg_list_position_2d(last_previous_state)
+            self.board = Board(
+                self.window, self.board_setup[self.setting_result["selected_layout"]], True, previous_pose_2d, TeamEnum.BLACK)
+            prev_time = self.prev_black_time_count
+            self.undo_player_info(self.black_player, self.white_player, score, prev_time)
+            self.player_turn = TeamEnum.BLACK
+
         else:
-            if len(self.white_state_list) >= 2:
-                last_previous_state = self.white_state_list[-1]
-                self.white_state_list.pop(-1)
-                previous_pose_2d = self.agent.get_ssg_list_position_2d(last_previous_state)
-                self.board = Board(
-                    self.window, self.board_setup[self.setting_result["selected_layout"]], True, previous_pose_2d)
-                prev_time = self.prev_white_time_count
-                self.undo_player_info(self.white_player, self.black_player, score, prev_time)
-                self.player_turn = TeamEnum.WHITE
-            else:
-                print("no previous step")
+            last_previous_state = self.white_state_list[-1]
+            self.white_state_list.pop(-1)
+            previous_pose_2d = self.agent.get_ssg_list_position_2d(last_previous_state)
+            self.board = Board(
+                self.window, self.board_setup[self.setting_result["selected_layout"]], True, previous_pose_2d, TeamEnum.WHITE)
+            prev_time = self.prev_white_time_count
+            self.undo_player_info(self.white_player, self.black_player, score, prev_time)
+            self.player_turn = TeamEnum.WHITE
+
+
+
 
     def undo_player_info(self, player, opponent, score, prev_time):
+        if self.is_agent_computer() and self.player_turn == TeamEnum.WHITE:
+            self.apply_suggested_move_button.enable()
+        elif self.is_agent_computer() and self.player_turn == TeamEnum.BLACK:
+            self.suggested_entry.set_text("")
+            self.apply_suggested_move_button.disable()
+        elif self.is_computer_agent() and self.player_turn == TeamEnum.BLACK:
+            self.apply_suggested_move_button.enable()
+        elif self.is_agent_computer() and self.player_turn == TeamEnum.WHITE:
+            self.suggested_entry.set_text("")
+            self.apply_suggested_move_button.disable()
         player.time_hist_list.pop(-1)
         player.drop_down_time_hist.kill()
         player.drop_move_hist.kill()
@@ -396,6 +404,8 @@ class GameMenu:
         opponent.your_turn.set_text("")
 
     def on_direction_input(self, input: UIButton or int):
+        self.store_move_hist_in_state()
+
         if not self.board.is_marble_selected():
             print("Warning: Select marbles, first")
             return
@@ -409,8 +419,8 @@ class GameMenu:
         move = self.board.generate_move(direction)
         is_valid_move = self.board.validate_move(move)
         if is_valid_move:
+            print("is_valid_move")
             self.move = move
-            self.store_move_hist_in_state()
             self.board.apply_move(move)
             self.switch_player()
         else:
@@ -425,6 +435,7 @@ class GameMenu:
         self.apply_suggested_move_button.enable()
 
     def apply_suggested_move(self, move_str):
+        self.store_move_hist_in_state()
         new_move = Move.get_from_move_string(move_str)
         self.move = new_move
         print("move from the agent applied!", move_str)
@@ -433,6 +444,7 @@ class GameMenu:
         self.switch_player()
 
     def agent_play(self, agent="b"):
+        self.store_move_hist_in_state()
         new_state = self.board.get_agent_input()
         input_list = [agent, new_state]
         self.agent.set_input_list(input_list)
@@ -442,14 +454,6 @@ class GameMenu:
         print("new_move from the agent!", new_move_str)
         self.board.select_marbles_from_move(new_move)
         self.board.apply_move(new_move)
-        # opponent_agent = "w" if agent == "b" else "b"
-        # new_input_list = [opponent_agent, new_state_from_agent]
-        # new_pose_2d = self.agent.get_ssg_list_position_2d(new_input_list)
-        # self.board = Board(
-        #     self.window, self.board_setup[self.setting_result["selected_layout"]], True, new_pose_2d)
-        # self.board.reset_selected_marbles()
-        # self.board.switch_player()
-        # self.board.update_state_space()
         self.switch_player()
 
     @staticmethod
@@ -592,7 +596,6 @@ class GameMenu:
         return self.setting_result["white_type"] == "Computer" and self.setting_result["black_type"] == "Computer"
 
     def switch_player(self):
-        score = 14
         # Use this to get the board state
         self.board.__str__()
         if self.player_turn == TeamEnum.BLACK:
@@ -663,14 +666,9 @@ class GameMenu:
             elif self.white_player.score_count < self.black_player.score_count:
                 # self.start_game = False
                 self.win.set_text("Black player is winner with the higher score!")
-                # self.win = self.draw_text("Congratulations! Black player is winner with the higher score!",
-                #                           self.font_size_win,
-                #                           (WINDOW_WIDTH // 2, WINDOW_HEIGHT // 2))
             else:
                 # self.start_game = False
                 self.win.set_text("It's Tie!")
-                # self.win = self.draw_text("It's Tie!", self.font_size_win,
-                #                           (WINDOW_WIDTH // 2, WINDOW_HEIGHT // 2))
 
 
 def timer(context):
