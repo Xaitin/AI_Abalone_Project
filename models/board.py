@@ -108,9 +108,11 @@ class Board:
     def update(self):
         self.draw_hexagons()
         # self.check_position_2d()
-        self.marbles.draw(self.win)
-        for marble in self.selected_marbles:
-            marble.draw_selection_circle(self.win)
+        marble: Marble
+        for marble in self.marbles.sprites():
+            marble.draw(self.win)
+            if marble in self.selected_marbles:
+                marble.draw_selection_circle(self.win)
 
     def on_click(self, click_position):
         x, y = click_position

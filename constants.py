@@ -39,9 +39,12 @@ RED = (255, 0, 0)
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
 BLUE = (0, 0, 255)
-BOARD_COLOR = (132, 152, 191)
+BOARD_COLOR = (132, 131, 183)
 HEXAGON_OUTLINE_COLOR = (193, 199, 217)
 SELECTED_HEXAGON_COLOR = (79, 99, 140)
+# TEXT_ON_MARBLE_COLOR = (71, 74, 129)
+# TEXT_ON_HEXAGON_COLOR = (62, 56, 104)
+TEXT_ON_HEXAGON_COLOR = (41, 57, 79)
 WHITE_HEX = "'#FFFFFF'"
 BLUE_HEX = "'#0000FF'"
 BLACK_HEX = "'#000000'"
@@ -166,9 +169,10 @@ MANHATTAN_WEIGHT = [
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
 ]
 
-
-DEFAULT_MARBLE_POSITION = ['C5b', 'D5b', 'E4b', 'E5b', 'E6b', 'F5b', 'F6b', 'F7b', 'F8b', 'G6b', 'H6b', 'C3w', 'C4w', 'D3w', 'D4w', 'D6w', 'E7w', 'F4w', 'G5w', 'G7w', 'G8w', 'G9w', 'H7w', 'H8w', 'H9w']
-STANDARD_MARBLE_POSITION = ['A1b', 'A2b', 'A3b', 'A4b', 'A5b', 'B1b', 'B2b', 'B3b', 'B5b', 'B6b', 'C3b', 'C4b', 'C5b', 'G5w', 'G6w', 'G7w', 'H4w', 'H5w', 'H6w', 'H7w', 'H9w', 'I5w', 'I6w', 'I7w', 'I8w', 'I9w']
+DEFAULT_MARBLE_POSITION = ['C5b', 'D5b', 'E4b', 'E5b', 'E6b', 'F5b', 'F6b', 'F7b', 'F8b', 'G6b', 'H6b', 'C3w', 'C4w',
+                           'D3w', 'D4w', 'D6w', 'E7w', 'F4w', 'G5w', 'G7w', 'G8w', 'G9w', 'H7w', 'H8w', 'H9w']
+STANDARD_MARBLE_POSITION = ['A1b', 'A2b', 'A3b', 'A4b', 'A5b', 'B1b', 'B2b', 'B3b', 'B5b', 'B6b', 'C3b', 'C4b', 'C5b',
+                            'G5w', 'G6w', 'G7w', 'H4w', 'H5w', 'H6w', 'H7w', 'H9w', 'I5w', 'I6w', 'I7w', 'I8w', 'I9w']
 
 FRIENDLY_SQUARE_VALUES = {
     "I5": -100, "I6": -100, "I7": -100, "I8": -100, "I9": -100,
@@ -194,5 +198,5 @@ ENEMY_SQUARE_VALUES = {
     "A1": 100, "A2": 100, "A3": 100, "A4": 100, "A5": 100
 }
 
-
-DEFAULT_AGENT_LIST = ["w", "A1b,A2b,A3b,A4b,A5b,B1b,B2b,B3b,B4b,B5b,B6b,C3b,C4b,C5b,G5w,G6w,G7w,H4w,H5w,H6w,H7w,H8w,H9w,I5w,I6w,I7w,I8w,I9w"]
+DEFAULT_AGENT_LIST = ["w",
+                      "A1b,A2b,A3b,A4b,A5b,B1b,B2b,B3b,B4b,B5b,B6b,C3b,C4b,C5b,G5w,G6w,G7w,H4w,H5w,H6w,H7w,H8w,H9w,I5w,I6w,I7w,I8w,I9w"]

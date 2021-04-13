@@ -1,12 +1,13 @@
 from _operator import add
+from operator import sub
 
 import pygame
 from pygame.sprite import AbstractGroup, Sprite
 
-from constants import MARBLE_SIZE, RED
+from constants import MARBLE_SIZE, RED, WHITE, BLACK
 from enums.direction import DirectionEnum
-from helper.coordinate_helper import CoordinateHelper
 from enums.team_enum import TeamEnum
+from helper.coordinate_helper import CoordinateHelper
 
 
 class Marble(Sprite):
@@ -19,10 +20,19 @@ class Marble(Sprite):
         self.xy_pos = None
         self.xy_center = None
         self.rect = None
+
+        # Text label part
+        self.font = pygame.font.SysFont('arial', 15, bold=False)
+        self.text = CoordinateHelper.from_2d_to_cube_str(position_2d)
+        self.text_color = BLACK if team == TeamEnum.WHITE.value else WHITE
+        self.position_text = self.font.render(self.text, True, self.text_color)
+        self.offset = (self.position_text.get_width() / 2, self.position_text.get_height() / 2)
+
         self.recalc_position()
 
     def draw(self, window):
         window.blit(self.image, dest=self.xy_pos)
+        window.blit(self.position_text, dest=tuple(map(sub, self.xy_center, self.offset)))
 
     def move_by_position_cube(self, new_position_cube):
         print(
@@ -50,7 +60,7 @@ class Marble(Sprite):
     def draw_selection_circle(self, win):
         # pygame.Rect(self.xy_pos, (MARBLE_SIZE, MARBLE_SIZE))
         pygame.draw.circle(win, color=RED, center=self.xy_center,
-                           radius=MARBLE_SIZE/2, width=2)
+                           radius=MARBLE_SIZE / 2, width=2)
 
     def recalc_position(self):
         self.xy_pos = [val - MARBLE_SIZE /
@@ -59,6 +69,10 @@ class Marble(Sprite):
             position_2d=self.position_2d)]
         self.rect = pygame.Rect(
             self.xy_pos[0], self.xy_pos[1], MARBLE_SIZE, MARBLE_SIZE)
+        self.text = CoordinateHelper.from_2d_to_cube_str(self.position_2d)
+        self.position_text = self.font.render(self.text, True, self.text_color)
+        self.offset = (self.position_text.get_width() / 2, self.position_text.get_height() / 2)
+
 
     def move_position_2d(self, new_position_2d):
         self.position_2d = new_position_2d

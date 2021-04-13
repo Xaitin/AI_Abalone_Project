@@ -59,7 +59,7 @@ class GameMenu:
         self.stop_click = True
         self.pause_click = False
         # Texts
-        self.draw_text("Abalone", self.font_size, (WINDOW_WIDTH //
+        self.draw_text("ABALONE", TITLE_FONT_SIZE, (WINDOW_WIDTH //
                                                    2, TITLE_DISTANCE_TOP + self.button_h // 2))
 
         # win title
@@ -89,34 +89,34 @@ class GameMenu:
         self.reset_button = self.create_button(WINDOW_WIDTH // 2 + BUTTON_DISTANCE_3, TITLE_DISTANCE_TOP, self.button_w,
                                                self.button_h, "reset",
                                                self.manager)
-
-        temp = 60
+        temp_directions = 60
+        temp = 80
         button_w_dir = self.button_w // 2
         button_h_dir = self.button_h // 1.4
         index = 2.8
         sub_h = WINDOW_HEIGHT - 100
         shift_w = 5
 
-        self.NW_button = self.create_button(WINDOW_WIDTH // index + temp * 3 - self.button_w + shift_w,
-                                            sub_h - 0.6 * temp,
+        self.NW_button = self.create_button(WINDOW_WIDTH // index + temp_directions * 3 - self.button_w + shift_w,
+                                            sub_h - 0.6 * temp_directions,
                                             button_w_dir, button_h_dir, "NW",
                                             self.manager)
-        self.NE_button = self.create_button(WINDOW_WIDTH // index + temp * 4 - self.button_w + shift_w,
-                                            sub_h - 0.6 * temp,
+        self.NE_button = self.create_button(WINDOW_WIDTH // index + temp_directions * 4 - self.button_w + shift_w,
+                                            sub_h - 0.6 * temp_directions,
                                             button_w_dir, button_h_dir, "NE",
                                             self.manager)
-        self.W_button = self.create_button(WINDOW_WIDTH // index + temp * 2.5 - self.button_w + shift_w, sub_h,
+        self.W_button = self.create_button(WINDOW_WIDTH // index + temp_directions * 2.5 - self.button_w + shift_w, sub_h,
                                            button_w_dir, button_h_dir, "W",
                                            self.manager)
-        self.E_button = self.create_button(WINDOW_WIDTH // index + temp * 4.5 - self.button_w + shift_w, sub_h,
+        self.E_button = self.create_button(WINDOW_WIDTH // index + temp_directions * 4.5 - self.button_w + shift_w, sub_h,
                                            button_w_dir, button_h_dir, "E",
                                            self.manager)
-        self.SW_button = self.create_button(WINDOW_WIDTH // index + temp * 3 - self.button_w + shift_w,
-                                            sub_h + 0.6 * temp,
+        self.SW_button = self.create_button(WINDOW_WIDTH // index + temp_directions * 3 - self.button_w + shift_w,
+                                            sub_h + 0.6 * temp_directions,
                                             button_w_dir, button_h_dir, "SW",
                                             self.manager)
-        self.SE_button = self.create_button(WINDOW_WIDTH // index + temp * 4 - self.button_w + shift_w,
-                                            sub_h + 0.6 * temp,
+        self.SE_button = self.create_button(WINDOW_WIDTH // index + temp_directions * 4 - self.button_w + shift_w,
+                                            sub_h + 0.6 * temp_directions,
                                             button_w_dir, button_h_dir, "SE",
                                             self.manager)
 
