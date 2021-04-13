@@ -41,16 +41,23 @@ class EvaluationFunction:
                              round(sum([marble[1] for marble in _white_marbles]) / len(_white_marbles)))
         center = (5, 5)
 
-        modified_center = (round(center[0] + self.com_black_2d[0] + self.com_white_2d[0] / 3),
-                           round(center[1] + self.com_black_2d[1] + self.com_white_2d[1] / 3))
+        modified_center = (round((center[0] + self.com_black_2d[0] + self.com_white_2d[0]) / 3),
+                           round((center[1] + self.com_black_2d[1] + self.com_white_2d[1]) / 3))
 
-        manhattan_distances_black = [CoordinateHelper.get_manhattan_distance(modified_center, marble_2d) for marble_2d in _black_marbles]
-        manhattan_distances_white = [CoordinateHelper.get_manhattan_distance(modified_center, marble_2d) for marble_2d in _white_marbles]
+        manhattan_distances_black = [CoordinateHelper.get_manhattan_distance(modified_center, marble_2d) for marble_2d
+                                     in _black_marbles]
+        manhattan_distances_white = [CoordinateHelper.get_manhattan_distance(modified_center, marble_2d) for marble_2d
+                                     in _white_marbles]
 
         black_value = sum(manhattan_distances_black) + dead_marble_constant * n_black_dead
         white_value = sum(manhattan_distances_white) + dead_marble_constant * n_white_dead
+        if self._friendly_color == 'b':
+            return white_value - black_value
+        else:
+            return black_value - white_value
 
-        return abs(black_value - white_value)
+        # Just to conform with the game_playing_agent we have.
+        # return abs(black_value - white_value)
 
 
 def main():

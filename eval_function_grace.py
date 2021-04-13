@@ -89,3 +89,15 @@ class EvaluationFunction:
             return len(self._black_marbles)
         else:
             return len(self._white_marbles)
+
+def main():
+    board = 'A1b,A2b,A3b,A4b,A5b,B2b,B3b,B4b,B5b,B6b,C2b,C3b,C5b,C6b,F5w,G5w,G6w,G7w,H4w,H5w,H6w,H7w,H8w,H9w,I6w,I7w,I8w,I9w'
+    color = 'b'
+    prev = ['b',
+            'A1b,A2b,A3b,A4b,A5b,B1b,B2b,B3b,B4b,B5b,B6b,C3b,C5b,C6b,F5w,G5w,G6w,G7w,H4w,H5w,H6w,H7w,H8w,H9w,I6w,I7w,I8w,I9w']
+    ef = EvaluationFunction(board, color)
+    print("evaluation of the board state -> ", ef.evaluate_move())
+
+
+if __name__ == "__main__":
+    main()

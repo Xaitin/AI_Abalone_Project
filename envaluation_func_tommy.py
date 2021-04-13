@@ -154,7 +154,7 @@ class Evaluation:
         return strength_score
 
 
-if __name__ == '__main__':
+def main():
     # state1 = INITIAL_GAME_BOARD_SETUPS[2]
 
     # initial_state = INITIAL_GAME_BOARD_SETUPS[0]
@@ -190,3 +190,6 @@ if __name__ == '__main__':
     print(f" white:  {tommy_AI_Evaluation_white.get_evaluation_score()}")
     tommy_AI_Evaluation_black = Evaluation(TeamEnum.BLACK, DEFAULT_MARBLE_POSITION)
     print(f" black:  {tommy_AI_Evaluation_black.get_evaluation_score()}")
+
+if __name__ == '__main__':
+    main()
