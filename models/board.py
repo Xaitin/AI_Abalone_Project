@@ -19,8 +19,11 @@ SETUP_CONSTANT = 0
 
 
 class Board:
-    def __init__(self, win, setup=0, update_state=False, position_2d=None, team_of_turn=TeamEnum.BLACK):
+    def __init__(self, win, setup=0, update_state=False, position_2d=None, team_of_turn=TeamEnum.BLACK,
+                 black_dead_marbles=None, white_dead_marbles=None):
         # 2D array
+        if black_dead_marbles is None:
+            black_dead_marbles = []
         self.hexagons = {}
         self.selected_hexagon = None
         self.selected_marbles = []
@@ -33,8 +36,14 @@ class Board:
         self.team_of_turn = team_of_turn
         self.black_marble_list = list()
         self.white_marble_list = list()
-        self.black_dead_marbles = list()
-        self.white_dead_marbles = list()
+        if black_dead_marbles == None:
+            self.black_dead_marbles = list()
+        else:
+            self.black_dead_marbles = black_dead_marbles
+        if white_dead_marbles == None:
+            self.white_dead_marbles = list()
+        else:
+            self.white_dead_marbles = white_dead_marbles
         win.fill(WHITE)
         if not update_state:
             self.initialize_marbles(self.teams, setup)

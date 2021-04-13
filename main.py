@@ -372,7 +372,7 @@ class GameMenu:
             self.black_state_list.pop(-1)
             previous_pose_2d = self.agent.get_ssg_list_position_2d(last_previous_state)
             self.board = Board(
-                self.window, self.board_setup[self.setting_result["selected_layout"]], True, previous_pose_2d, TeamEnum.BLACK)
+                self.window, self.board_setup[self.setting_result["selected_layout"]], True, previous_pose_2d, TeamEnum.BLACK, self.prev_black_dead_marbles, self.prev_white_dead_marbles)
             prev_time = self.prev_black_time_count
             self.undo_player_info(self.black_player, self.white_player, score, prev_time)
             self.player_turn = TeamEnum.BLACK
@@ -382,7 +382,7 @@ class GameMenu:
             self.white_state_list.pop(-1)
             previous_pose_2d = self.agent.get_ssg_list_position_2d(last_previous_state)
             self.board = Board(
-                self.window, self.board_setup[self.setting_result["selected_layout"]], True, previous_pose_2d, TeamEnum.WHITE)
+                self.window, self.board_setup[self.setting_result["selected_layout"]], True, previous_pose_2d, TeamEnum.WHITE, self.prev_black_dead_marbles, self.prev_white_dead_marbles)
             prev_time = self.prev_white_time_count
             self.undo_player_info(self.white_player, self.black_player, score, prev_time)
             self.player_turn = TeamEnum.WHITE
@@ -412,9 +412,9 @@ class GameMenu:
         player.drop_down_time_hist.set_item_list(
             self.white_player.time_hist_list)
         player.your_turn.set_text("Your Turn!")
-        player.score_count = score - self.board.black_left
-        player.score_info.set_text(
-            f"{self.white_player.score_count}")
+        # player.score_count = score - self.board.black_left
+        # player.score_info.set_text(
+        #     f"{self.white_player.score_count}")
         player.drop_move_hist_list.pop(-1)
         player.drop_move_hist.set_item_list(
             self.white_player.drop_move_hist_list)
@@ -650,6 +650,7 @@ class GameMenu:
 
             self.black_player.your_turn.set_text("")
             self.black_player.score_count = len(self.board.white_dead_marbles)
+            self.prev_white_dead_marbles = self.board.white_dead_marbles
             self.black_player.score_info.set_text(
                 f"{self.black_player.score_count}")
             self.black_player.drop_move_hist_list.append(f"{self.move}")
@@ -690,6 +691,7 @@ class GameMenu:
 
             self.white_player.your_turn.set_text("")
             self.white_player.score_count = len(self.board.black_dead_marbles)
+            self.prev_black_dead_marbles = self.board.black_dead_marbles
             self.white_player.score_info.set_text(
                 f"{self.white_player.score_count}")
             self.white_player.drop_move_hist_list.append(f"{self.move}")
