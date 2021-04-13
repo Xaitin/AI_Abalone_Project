@@ -14,6 +14,7 @@ from models.board import Board
 from models.move import Move
 from player_section import PlayerSection
 import _thread
+import time
 
 
 class GameMenu:
@@ -59,12 +60,13 @@ class GameMenu:
         self.stop_click = True
         self.pause_click = False
         self.black_player_first_move = True
+        self.agent_time = 0
         # Texts
         self.draw_text("ABALONE", TITLE_FONT_SIZE, (WINDOW_WIDTH //
                                                    2, TITLE_DISTANCE_TOP + self.button_h // 2))
 
         # win title
-        self.win = UILabel(relative_rect=pygame.Rect((WINDOW_WIDTH // 3.1, WINDOW_HEIGHT - 180), (400, 30)),
+        self.win = UILabel(relative_rect=pygame.Rect((WINDOW_WIDTH // 3.0, WINDOW_HEIGHT - 170), (400, 30)),
                            text=f'', manager=self.manager)
         self.win.hide()
 
@@ -139,8 +141,8 @@ class GameMenu:
                                                               button_w_dir * 2, button_h_dir * 0.8, "Apply",
                                                               self.manager)
 
-        self.switch_comp_button = self.create_button(WINDOW_WIDTH // index + temp * 2.5 - self.button_w + shift_w,
-                                                     sub_h + 0.6 * temp,
+        self.switch_comp_button = self.create_button(WINDOW_WIDTH // index + temp * 2.2 - self.button_w + shift_w,
+                                                     sub_h + 0.01 * temp,
                                                      button_w_dir * 4, button_h_dir * 0.8, "Switch Agent",
                                                      self.manager)
         self.switch_comp_button.hide()
@@ -246,6 +248,7 @@ class GameMenu:
                         print('Undo!')
                     if event.ui_element == self.reset_button:
                         self.resetting_board_player_panel()
+                        self.black_player_first_move = True
                         self.start_game = False
                         self.pause_click = False
 
@@ -257,9 +260,15 @@ class GameMenu:
                         self.pause = False
                         self.on_direction_input(event.ui_element)
                         if self.is_agent_computer() and self.player_turn == TeamEnum.BLACK:
+                            start_time = time.time()
                             self.agent_suggested()
+                            end_time = time.time()
+                            self.agent_time = end_time - start_time
                         elif self.is_computer_agent() and self.player_turn == TeamEnum.WHITE:
+                            start_time = time.time()
                             self.agent_suggested('w')
+                            end_time = time.time()
+                            self.agent_time = end_time - start_time
 
                     if event.ui_element == self.switch_comp_button:
                         if self.player_turn == TeamEnum.BLACK:
@@ -341,6 +350,13 @@ class GameMenu:
 
             self.manager.process_events(event)
 
+    def count_time(self, func):
+        start_time = time.time()
+        func()
+        end_time = time.time()
+        self.agent_time = end_time - start_time
+
+
     def store_move_hist_in_state(self):
         if self.player_turn == TeamEnum.WHITE:
             print("add state ", ["w", self.board.get_agent_input()])
@@ -351,22 +367,23 @@ class GameMenu:
 
     def undo(self):
         score = 14
+        print("show list", self.black_state_list, self.white_state_list)
         if self.player_turn == TeamEnum.WHITE and len(self.black_state_list) > 0:
             last_previous_state = self.black_state_list[-1]
             self.black_state_list.pop(-1)
             previous_pose_2d = self.agent.get_ssg_list_position_2d(last_previous_state)
             self.board = Board(
-                self.window, self.board_setup[self.setting_result["selected_layout"]], True, previous_pose_2d, TeamEnum.BLACK)
+                self.window, self.board_setup[self.setting_result["selected_layout"]], True, previous_pose_2d, TeamEnum.BLACK, self.prev_black_dead_marbles, self.prev_white_dead_marbles)
             prev_time = self.prev_black_time_count
             self.undo_player_info(self.black_player, self.white_player, score, prev_time)
             self.player_turn = TeamEnum.BLACK
 
-        elif self.player_turn == TeamEnum.WHITE and len(self.white_state_list) > 0:
+        elif self.player_turn == TeamEnum.BLACK and len(self.white_state_list) > 0:
             last_previous_state = self.white_state_list[-1]
             self.white_state_list.pop(-1)
             previous_pose_2d = self.agent.get_ssg_list_position_2d(last_previous_state)
             self.board = Board(
-                self.window, self.board_setup[self.setting_result["selected_layout"]], True, previous_pose_2d, TeamEnum.WHITE)
+                self.window, self.board_setup[self.setting_result["selected_layout"]], True, previous_pose_2d, TeamEnum.WHITE, self.prev_black_dead_marbles, self.prev_white_dead_marbles)
             prev_time = self.prev_white_time_count
             self.undo_player_info(self.white_player, self.black_player, score, prev_time)
             self.player_turn = TeamEnum.WHITE
@@ -396,9 +413,9 @@ class GameMenu:
         player.drop_down_time_hist.set_item_list(
             self.white_player.time_hist_list)
         player.your_turn.set_text("Your Turn!")
-        player.score_count = score - self.board.black_left
-        player.score_info.set_text(
-            f"{self.white_player.score_count}")
+        # player.score_count = score - self.board.black_left
+        # player.score_info.set_text(
+        #     f"{self.white_player.score_count}")
         player.drop_move_hist_list.pop(-1)
         player.drop_move_hist.set_item_list(
             self.white_player.drop_move_hist_list)
@@ -497,6 +514,7 @@ class GameMenu:
             self.window, self.board_setup[self.setting_result["selected_layout"]])
         self.player_each_time = [int(re.search(r'\d+', self.setting_result["black_time"]).group()),
                                  int(re.search(r'\d+', self.setting_result["white_time"]).group())]
+        print("each time", self.player_each_time)
         self.setting_result["moves"] = int(
             re.search(r'\d+', self.setting_result["moves"]).group())
 
@@ -585,13 +603,14 @@ class GameMenu:
     def add_timer(self):
         start_zero = self.time_count - self.current_time
         self.each_time_count = start_zero
-        time_in_secs = self.player_each_time[0] - start_zero
         if self.player_turn == TeamEnum.BLACK:
+            time_in_secs = self.player_each_time[0] - start_zero
             self.black_player.time_limit_info.set_text(
-                f"{time_in_secs:.1f} secs" if time_in_secs >= 0 else f"{time_in_secs:.1f} secs!")
+                f"{time_in_secs:.2f} secs" if time_in_secs >= 0 else f"{time_in_secs:.2f} secs!")
         else:
+            time_in_secs = self.player_each_time[1] - start_zero
             self.white_player.time_limit_info.set_text(
-                f"{time_in_secs:.1f} secs" if time_in_secs >= 0 else f"{time_in_secs:.1f} secs!")
+                f"{time_in_secs:.2f} secs" if time_in_secs >= 0 else f"{time_in_secs:.2f} secs!")
 
     def is_agent_computer(self):
         return self.setting_result["white_type"] == "Human" and self.setting_result["black_type"] == "Computer"
@@ -607,15 +626,34 @@ class GameMenu:
         self.board.__str__()
         if self.player_turn == TeamEnum.BLACK:
             self.prev_black_time_count = self.each_time_count
-            self.black_player.time_hist_list.append(
-                f"{self.each_time_count:.1f} secs")
-            self.black_player.total_time_count += self.each_time_count
-            self.black_player.total_time_info.set_text(
-                f"{self.black_player.total_time_count:.1f} secs")
-            self.black_player.drop_down_time_hist.set_item_list(
-                self.black_player.time_hist_list)
+            if self.is_agent_computer() and self.player_turn == TeamEnum.BLACK:
+                self.black_player.time_hist_list.append(
+                    f"{self.agent_time:.2f} secs")
+                self.black_player.total_time_count += self.agent_time
+                self.black_player.total_time_info.set_text(
+                    f"{self.black_player.total_time_count:.2f} secs")
+                self.black_player.drop_down_time_hist.set_item_list(
+                    self.black_player.time_hist_list)
+            elif self.is_computer_agent() and self.player_turn == TeamEnum.WHITE:
+                self.black_player.time_hist_list.append(
+                    f"{self.agent_time:.2f} secs")
+                self.black_player.total_time_count += self.agent_time
+                self.black_player.total_time_info.set_text(
+                    f"{self.black_player.total_time_count:.2f} secs")
+                self.black_player.drop_down_time_hist.set_item_list(
+                    self.black_player.time_hist_list)
+            else:
+                self.black_player.time_hist_list.append(
+                    f"{self.each_time_count:.2f} secs")
+                self.black_player.total_time_count += self.each_time_count
+                self.black_player.total_time_info.set_text(
+                    f"{self.black_player.total_time_count:.2f} secs")
+                self.black_player.drop_down_time_hist.set_item_list(
+                    self.black_player.time_hist_list)
+
             self.black_player.your_turn.set_text("")
             self.black_player.score_count = len(self.board.white_dead_marbles)
+            self.prev_white_dead_marbles = self.board.white_dead_marbles
             self.black_player.score_info.set_text(
                 f"{self.black_player.score_count}")
             self.black_player.drop_move_hist_list.append(f"{self.move}")
@@ -628,15 +666,35 @@ class GameMenu:
             self.start_count = True
         else:
             self.prev_white_time_count = self.each_time_count
-            self.white_player.time_hist_list.append(
-                f"{self.each_time_count:.1f} secs")
-            self.white_player.total_time_count += self.each_time_count
-            self.white_player.total_time_info.set_text(
-                f"{self.white_player.total_time_count:.1f} secs")
-            self.white_player.drop_down_time_hist.set_item_list(
-                self.white_player.time_hist_list)
+
+            if self.is_agent_computer() and self.player_turn == TeamEnum.BLACK:
+                self.white_player.time_hist_list.append(
+                    f"{self.agent_time:.2f} secs")
+                self.white_player.total_time_count += self.agent_time
+                self.white_player.total_time_info.set_text(
+                    f"{self.white_player.total_time_count:.2f} secs")
+                self.white_player.drop_down_time_hist.set_item_list(
+                    self.white_player.time_hist_list)
+            elif self.is_computer_agent() and self.player_turn == TeamEnum.WHITE:
+                self.white_player.time_hist_list.append(
+                    f"{self.agent_time:.2f} secs")
+                self.white_player.total_time_count += self.agent_time
+                self.white_player.total_time_info.set_text(
+                    f"{self.white_player.total_time_count:.2f} secs")
+                self.white_player.drop_down_time_hist.set_item_list(
+                    self.white_player.time_hist_list)
+            else:
+                self.white_player.time_hist_list.append(
+                    f"{self.each_time_count:.2f} secs")
+                self.white_player.total_time_count += self.each_time_count
+                self.white_player.total_time_info.set_text(
+                    f"{self.white_player.total_time_count:.2f} secs")
+                self.white_player.drop_down_time_hist.set_item_list(
+                    self.white_player.time_hist_list)
+
             self.white_player.your_turn.set_text("")
             self.white_player.score_count = len(self.board.black_dead_marbles)
+            self.prev_black_dead_marbles = self.board.black_dead_marbles
             self.white_player.score_info.set_text(
                 f"{self.white_player.score_count}")
             self.white_player.drop_move_hist_list.append(f"{self.move}")
@@ -664,43 +722,17 @@ class GameMenu:
             #                           (WINDOW_WIDTH // 2, WINDOW_HEIGHT // 2))
         elif self.white_player.move_counts == self.setting_result["moves"] and self.black_player.move_counts == \
                 self.setting_result["moves"]:
+            self.win.show()
             if self.white_player.score_count > self.black_player.score_count:
-                # self.start_game = False
                 self.win.set_text("White player is winner with the higher score!")
-                # self.win = self.draw_text("Congratulations! White player is winner with the higher score!",
-                #                           self.font_size_win,
-                #                           (WINDOW_WIDTH // 2, WINDOW_HEIGHT // 2))
             elif self.white_player.score_count < self.black_player.score_count:
-                # self.start_game = False
                 self.win.set_text("Black player is winner with the higher score!")
             else:
-                # self.start_game = False
                 self.win.set_text("It's Tie!")
 
 
-def timer(context):
-    try:
-        count_time = 0
-        while True:
-            pygame.time.delay(100)
-
-            if context.player_turn == TeamEnum.BLACK:
-                count_time += 0.1
-                time_in_secs = context.player_each_time[0] - count_time
-                context.black_player.time_limit_info.set_text(
-                    f"{count_time:.1f} secs" if time_in_secs >= 0 else f"{time_in_secs:.1f} secs!")
-            else:
-                count_time += 0.1
-                time_in_secs = context.player_each_time[0] - count_time
-                context.white_player.time_limit_info.set_text(
-                    f"{time_in_secs:.1f} secs" if time_in_secs >= 0 else f"{time_in_secs:.1f} secs!")
-
-    except RuntimeError:
-        print("RuntimeError from time_oscillator.")
 
 
-def start_time(context):
-    _thread.start_new_thread(timer, (context,))
 
 
 def main():
