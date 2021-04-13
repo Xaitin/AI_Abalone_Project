@@ -733,8 +733,6 @@ class GameMenu:
 
 
 
-def start_time(context):
-    _thread.start_new_thread(timer, (context,))
 
 
 def main():
