@@ -605,10 +605,10 @@ class GameMenu:
         time_in_secs = self.player_each_time[0] - start_zero
         if self.player_turn == TeamEnum.BLACK:
             self.black_player.time_limit_info.set_text(
-                f"{time_in_secs:.1f} secs" if time_in_secs >= 0 else f"{time_in_secs:.1f} secs!")
+                f"{time_in_secs:.2f} secs" if time_in_secs >= 0 else f"{time_in_secs:.2f} secs!")
         else:
             self.white_player.time_limit_info.set_text(
-                f"{time_in_secs:.1f} secs" if time_in_secs >= 0 else f"{time_in_secs:.1f} secs!")
+                f"{time_in_secs:.2f} secs" if time_in_secs >= 0 else f"{time_in_secs:.2f} secs!")
 
     def is_agent_computer(self):
         return self.setting_result["white_type"] == "Human" and self.setting_result["black_type"] == "Computer"
@@ -642,10 +642,10 @@ class GameMenu:
                     self.black_player.time_hist_list)
             else:
                 self.black_player.time_hist_list.append(
-                    f"{self.each_time_count:.1f} secs")
+                    f"{self.each_time_count:.2f} secs")
                 self.black_player.total_time_count += self.each_time_count
                 self.black_player.total_time_info.set_text(
-                    f"{self.black_player.total_time_count:.1f} secs")
+                    f"{self.black_player.total_time_count:.2f} secs")
                 self.black_player.drop_down_time_hist.set_item_list(
                     self.black_player.time_hist_list)
 
@@ -683,10 +683,10 @@ class GameMenu:
                     self.white_player.time_hist_list)
             else:
                 self.white_player.time_hist_list.append(
-                    f"{self.each_time_count:.1f} secs")
+                    f"{self.each_time_count:.2f} secs")
                 self.white_player.total_time_count += self.each_time_count
                 self.white_player.total_time_info.set_text(
-                    f"{self.white_player.total_time_count:.1f} secs")
+                    f"{self.white_player.total_time_count:.2f} secs")
                 self.white_player.drop_down_time_hist.set_item_list(
                     self.white_player.time_hist_list)
 
