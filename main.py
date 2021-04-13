@@ -741,7 +741,7 @@ def timer(context):
                     f"{count_time:.1f} secs" if time_in_secs >= 0 else f"{time_in_secs:.1f} secs!")
             else:
                 count_time += 0.1
-                time_in_secs = context.player_each_time[0] - count_time
+                time_in_secs = context.player_each_time[1] - count_time
                 context.white_player.time_limit_info.set_text(
                     f"{time_in_secs:.1f} secs" if time_in_secs >= 0 else f"{time_in_secs:.1f} secs!")
 
