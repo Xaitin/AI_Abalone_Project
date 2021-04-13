@@ -14,6 +14,7 @@ from models.board import Board
 from models.move import Move
 from player_section import PlayerSection
 import _thread
+import time
 
 
 class GameMenu:
@@ -59,6 +60,7 @@ class GameMenu:
         self.stop_click = True
         self.pause_click = False
         self.black_player_first_move = True
+        self.agent_time = 0
         # Texts
         self.draw_text("ABALONE", TITLE_FONT_SIZE, (WINDOW_WIDTH //
                                                    2, TITLE_DISTANCE_TOP + self.button_h // 2))
@@ -257,9 +259,15 @@ class GameMenu:
                         self.pause = False
                         self.on_direction_input(event.ui_element)
                         if self.is_agent_computer() and self.player_turn == TeamEnum.BLACK:
+                            start_time = time.time()
                             self.agent_suggested()
+                            end_time = time.time()
+                            self.agent_time = end_time - start_time
                         elif self.is_computer_agent() and self.player_turn == TeamEnum.WHITE:
+                            start_time = time.time()
                             self.agent_suggested('w')
+                            end_time = time.time()
+                            self.agent_time = end_time - start_time
 
                     if event.ui_element == self.switch_comp_button:
                         if self.player_turn == TeamEnum.BLACK:
@@ -340,6 +348,13 @@ class GameMenu:
                             print('Belgian Daisy')
 
             self.manager.process_events(event)
+
+    def count_time(self, func):
+        start_time = time.time()
+        func()
+        end_time = time.time()
+        self.agent_time = end_time - start_time
+
 
     def store_move_hist_in_state(self):
         if self.player_turn == TeamEnum.WHITE:
@@ -608,13 +623,31 @@ class GameMenu:
         self.board.__str__()
         if self.player_turn == TeamEnum.BLACK:
             self.prev_black_time_count = self.each_time_count
-            self.black_player.time_hist_list.append(
-                f"{self.each_time_count:.1f} secs")
-            self.black_player.total_time_count += self.each_time_count
-            self.black_player.total_time_info.set_text(
-                f"{self.black_player.total_time_count:.1f} secs")
-            self.black_player.drop_down_time_hist.set_item_list(
-                self.black_player.time_hist_list)
+            if self.is_agent_computer() and self.player_turn == TeamEnum.BLACK:
+                self.black_player.time_hist_list.append(
+                    f"{self.agent_time:.1f} secs")
+                self.black_player.total_time_count += self.agent_time
+                self.black_player.total_time_info.set_text(
+                    f"{self.black_player.total_time_count:.1f} secs")
+                self.black_player.drop_down_time_hist.set_item_list(
+                    self.black_player.time_hist_list)
+            elif self.is_computer_agent() and self.player_turn == TeamEnum.WHITE:
+                self.black_player.time_hist_list.append(
+                    f"{self.agent_time:.1f} secs")
+                self.black_player.total_time_count += self.agent_time
+                self.black_player.total_time_info.set_text(
+                    f"{self.black_player.total_time_count:.1f} secs")
+                self.black_player.drop_down_time_hist.set_item_list(
+                    self.black_player.time_hist_list)
+            else:
+                self.black_player.time_hist_list.append(
+                    f"{self.each_time_count:.1f} secs")
+                self.black_player.total_time_count += self.each_time_count
+                self.black_player.total_time_info.set_text(
+                    f"{self.black_player.total_time_count:.1f} secs")
+                self.black_player.drop_down_time_hist.set_item_list(
+                    self.black_player.time_hist_list)
+
             self.black_player.your_turn.set_text("")
             self.black_player.score_count = len(self.board.white_dead_marbles)
             self.black_player.score_info.set_text(
@@ -629,13 +662,32 @@ class GameMenu:
             self.start_count = True
         else:
             self.prev_white_time_count = self.each_time_count
-            self.white_player.time_hist_list.append(
-                f"{self.each_time_count:.1f} secs")
-            self.white_player.total_time_count += self.each_time_count
-            self.white_player.total_time_info.set_text(
-                f"{self.white_player.total_time_count:.1f} secs")
-            self.white_player.drop_down_time_hist.set_item_list(
-                self.white_player.time_hist_list)
+
+            if self.is_agent_computer() and self.player_turn == TeamEnum.BLACK:
+                self.white_player.time_hist_list.append(
+                    f"{self.agent_time:.1f} secs")
+                self.white_player.total_time_count += self.agent_time
+                self.white_player.total_time_info.set_text(
+                    f"{self.white_player.total_time_count:.1f} secs")
+                self.white_player.drop_down_time_hist.set_item_list(
+                    self.white_player.time_hist_list)
+            elif self.is_computer_agent() and self.player_turn == TeamEnum.WHITE:
+                self.white_player.time_hist_list.append(
+                    f"{self.agent_time:.1f} secs")
+                self.white_player.total_time_count += self.agent_time
+                self.white_player.total_time_info.set_text(
+                    f"{self.white_player.total_time_count:.1f} secs")
+                self.white_player.drop_down_time_hist.set_item_list(
+                    self.white_player.time_hist_list)
+            else:
+                self.white_player.time_hist_list.append(
+                    f"{self.each_time_count:.1f} secs")
+                self.white_player.total_time_count += self.each_time_count
+                self.white_player.total_time_info.set_text(
+                    f"{self.white_player.total_time_count:.1f} secs")
+                self.white_player.drop_down_time_hist.set_item_list(
+                    self.white_player.time_hist_list)
+
             self.white_player.your_turn.set_text("")
             self.white_player.score_count = len(self.board.black_dead_marbles)
             self.white_player.score_info.set_text(
