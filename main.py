@@ -248,6 +248,7 @@ class GameMenu:
                         print('Undo!')
                     if event.ui_element == self.reset_button:
                         self.resetting_board_player_panel()
+                        self.black_player_first_move = True
                         self.start_game = False
                         self.pause_click = False
 
