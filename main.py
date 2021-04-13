@@ -514,6 +514,7 @@ class GameMenu:
             self.window, self.board_setup[self.setting_result["selected_layout"]])
         self.player_each_time = [int(re.search(r'\d+', self.setting_result["black_time"]).group()),
                                  int(re.search(r'\d+', self.setting_result["white_time"]).group())]
+        print("each time", self.player_each_time)
         self.setting_result["moves"] = int(
             re.search(r'\d+', self.setting_result["moves"]).group())
 
@@ -602,11 +603,12 @@ class GameMenu:
     def add_timer(self):
         start_zero = self.time_count - self.current_time
         self.each_time_count = start_zero
-        time_in_secs = self.player_each_time[0] - start_zero
         if self.player_turn == TeamEnum.BLACK:
+            time_in_secs = self.player_each_time[0] - start_zero
             self.black_player.time_limit_info.set_text(
                 f"{time_in_secs:.2f} secs" if time_in_secs >= 0 else f"{time_in_secs:.2f} secs!")
         else:
+            time_in_secs = self.player_each_time[1] - start_zero
             self.white_player.time_limit_info.set_text(
                 f"{time_in_secs:.2f} secs" if time_in_secs >= 0 else f"{time_in_secs:.2f} secs!")
 
@@ -729,25 +731,6 @@ class GameMenu:
                 self.win.set_text("It's Tie!")
 
 
-def timer(context):
-    try:
-        count_time = 0
-        while True:
-            pygame.time.delay(100)
-
-            if context.player_turn == TeamEnum.BLACK:
-                count_time += 0.1
-                time_in_secs = context.player_each_time[0] - count_time
-                context.black_player.time_limit_info.set_text(
-                    f"{count_time:.1f} secs" if time_in_secs >= 0 else f"{time_in_secs:.1f} secs!")
-            else:
-                count_time += 0.1
-                time_in_secs = context.player_each_time[1] - count_time
-                context.white_player.time_limit_info.set_text(
-                    f"{time_in_secs:.1f} secs" if time_in_secs >= 0 else f"{time_in_secs:.1f} secs!")
-
-    except RuntimeError:
-        print("RuntimeError from time_oscillator.")
 
 
 def start_time(context):
