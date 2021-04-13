@@ -66,7 +66,7 @@ class GameMenu:
                                                    2, TITLE_DISTANCE_TOP + self.button_h // 2))
 
         # win title
-        self.win = UILabel(relative_rect=pygame.Rect((WINDOW_WIDTH // 3.1, WINDOW_HEIGHT - 180), (400, 30)),
+        self.win = UILabel(relative_rect=pygame.Rect((WINDOW_WIDTH // 3.1, WINDOW_HEIGHT - 170), (400, 30)),
                            text=f'', manager=self.manager)
         self.win.hide()
 
@@ -717,17 +717,12 @@ class GameMenu:
             #                           (WINDOW_WIDTH // 2, WINDOW_HEIGHT // 2))
         elif self.white_player.move_counts == self.setting_result["moves"] and self.black_player.move_counts == \
                 self.setting_result["moves"]:
+            self.win.show()
             if self.white_player.score_count > self.black_player.score_count:
-                # self.start_game = False
                 self.win.set_text("White player is winner with the higher score!")
-                # self.win = self.draw_text("Congratulations! White player is winner with the higher score!",
-                #                           self.font_size_win,
-                #                           (WINDOW_WIDTH // 2, WINDOW_HEIGHT // 2))
             elif self.white_player.score_count < self.black_player.score_count:
-                # self.start_game = False
                 self.win.set_text("Black player is winner with the higher score!")
             else:
-                # self.start_game = False
                 self.win.set_text("It's Tie!")
 
 
