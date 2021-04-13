@@ -625,7 +625,7 @@ class GameMenu:
             self.prev_black_time_count = self.each_time_count
             if self.is_agent_computer() and self.player_turn == TeamEnum.BLACK:
                 self.black_player.time_hist_list.append(
-                    f"{self.agent_time:.1f} secs")
+                    f"{self.agent_time:.2f} secs")
                 self.black_player.total_time_count += self.agent_time
                 self.black_player.total_time_info.set_text(
                     f"{self.black_player.total_time_count:.1f} secs")
@@ -633,7 +633,7 @@ class GameMenu:
                     self.black_player.time_hist_list)
             elif self.is_computer_agent() and self.player_turn == TeamEnum.WHITE:
                 self.black_player.time_hist_list.append(
-                    f"{self.agent_time:.1f} secs")
+                    f"{self.agent_time:.2f} secs")
                 self.black_player.total_time_count += self.agent_time
                 self.black_player.total_time_info.set_text(
                     f"{self.black_player.total_time_count:.1f} secs")
