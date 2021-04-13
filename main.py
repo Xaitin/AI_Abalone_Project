@@ -351,6 +351,7 @@ class GameMenu:
 
     def undo(self):
         score = 14
+        print("show list", self.black_state_list, self.white_state_list)
         if self.player_turn == TeamEnum.WHITE and len(self.black_state_list) > 0:
             last_previous_state = self.black_state_list[-1]
             self.black_state_list.pop(-1)
@@ -361,7 +362,7 @@ class GameMenu:
             self.undo_player_info(self.black_player, self.white_player, score, prev_time)
             self.player_turn = TeamEnum.BLACK
 
-        elif self.player_turn == TeamEnum.WHITE and len(self.white_state_list) > 0:
+        elif self.player_turn == TeamEnum.BLACK and len(self.white_state_list) > 0:
             last_previous_state = self.white_state_list[-1]
             self.white_state_list.pop(-1)
             previous_pose_2d = self.agent.get_ssg_list_position_2d(last_previous_state)
